@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepalicious | Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen ">
+        <div class="bg-white p-10 rounded-lg shadow-lg w-96">
+            <h1 class="text-3xl font-semibold text-center text-blue-600 "><span><a href="">EasyRent</a></span> / <span>Register</span></h1>
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input required class="focus:outline-none focus:shadow mt-6 p-2 border rounded w-full" name="first_name" type="text" placeholder="First name">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="last_name" type="text" placeholder="Last name">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="address" type="address" placeholder="Address">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="contact" type="tel" placeholder="Contact Number">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="email" type="email" placeholder="Email">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="username" type="username" placeholder="Username">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password1" type="password" placeholder="Password">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password2" type="password" placeholder="Re-Password">
+
+            <select class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" id="id_user_type">
+                <option value="tenant">Register as Tenant</option>
+                <option value="owner">Register as Owner</option>
+            </select>
+
+            <div id="documentImageField" style="display: none;">
+                <p class="pt-2 pb-2 text-[16px] text-gray-500">Upload your documents pictures here.</p>
+            <input class="block w-full text-sm text-slate-500
+            file:mr-4 file:py-2 file:px-4 file:rounded-md
+            file:border-0 file:text-sm file:font-semibold
+            file:bg-pink-100 file:text-pink-600
+            hover:file:bg-pink-100" type="file" name="img" id="id_document_image" accept="image/png, image/jpeg" multiple>
+            </div>
+
+
+            
+        <div class="pt-2 text-red-500 font-medium text-[13px]">
+        {% if form.errors %}
+       
+          {% for field, error in form.errors.items %}
+           {{ error }}
+          {% endfor %}
+
+        {% endif %}
+        </div>   
+
+            <input class="mt-6 w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 cursor-pointer" type="submit" value="Register">
+        </form>
+
+
+
+        </div>
+    </div>
+
+
+<!-- Choose user type -->
+<script>
+    // Get the user type field and document image field
+    const userTypeField = document.getElementById("id_user_type");
+    const documentImageField = document.getElementById("documentImageField");
+    const documentImageInput = document.getElementById("id_document_image");
+    // Add an event listener to the user type field
+    userTypeField.addEventListener("change", toggleDocumentImageVisibility);
+
+    function toggleDocumentImageVisibility() {
+        // Check the value of the user type field
+        const userType = userTypeField.value;
+
+        // Toggle visibility of the document image field based on the user type
+        if (userType === "owner") {
+            documentImageField.style.display = "block";
+            documentImageInput.required = true;
+        } else {
+            documentImageField.style.display = "none";
+            documentImageInput.required = false;
+        }
+    }
+</script>
+
+    
+</body>
+</html>
