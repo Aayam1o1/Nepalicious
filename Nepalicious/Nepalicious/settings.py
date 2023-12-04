@@ -125,17 +125,17 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# # FOr messages
-# import os
-# from django.contrib.messages import constants as messages
+# FOr messages
+import os
+from django.contrib.messages import constants as messages
 
-# MESSAGE_TAGS = {
-#     messages.DEBUG: 'alert-info',
-#     messages.INFO: 'alert-info',
-#     messages.SUCCESS: 'alert-success',
-#     messages.WARNING: 'alert-warning',
-#     messages.ERROR: 'alert-danger',
-# }
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
 
 #upload Image
 
@@ -149,10 +149,3 @@ STATICFILES_DIRS =[
 MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-
-# # SEND GMAIL TO USER
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'rohan.khadka005@gmail.com' 
-# EMAIL_HOST_PASSWORD = 'l p u r o y s j p j w a d t u e' 
-# EMAIL_USE_TLS = True

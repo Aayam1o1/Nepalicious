@@ -7,5 +7,15 @@
 </head>
 <body>
     This is landing page
+
+    {% if request.user.is_authenticated %}
+
+    <a href="{% url 'logout' %}">Logout</a>
+
+    {% else %}
+
+    <a href="{% url 'login' %}">Login</a>
+
+    {% endif %}
 </body>
 </html>
