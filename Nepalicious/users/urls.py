@@ -8,6 +8,11 @@ urlpatterns = [
     path('register', views.registerUser, name='register'),
     path('login/', views.loginUser, name='login'),
     path('logout', views.logoutUser, name='logout'),
+    path('index', views.index, name='index'),
+    path('adminHome', views.adminDashboard, name='adminHome'),
+    path('userRequests/<int:userID>/', views.userRequests, name='userRequests'),
+    
     
     
 ]
+

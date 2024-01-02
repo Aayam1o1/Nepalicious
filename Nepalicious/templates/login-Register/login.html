@@ -1,31 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nepalicious | Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white p-10 rounded-lg shadow-lg w-96">
-            <h1 class="text-3xl font-semibold text-center text-blue-600"> <span><a href="">Nepalicious</a></span> / <span>Login</span></h1>
-            <form action="" method="post">
-                {% csrf_token %}
-            <input  required name="username" type="text" class="focus:outline-none focus:shadow mt-6 p-3 border rounded w-full" placeholder="Username">
-            <input required name="password" type="password" class="focus:outline-none focus:shadow mt-4 p-3 border rounded w-full" placeholder="Password">
-            <div>
-                {% for messages in messages %}
-                  <p class="pt-4 text-red-500" id="messages">{{messages}}</p>
-                
-                {% endfor %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="h-[100vh]">
+    <img src="" alt="">
+    <div class="wrapper-login-wrapper flex h-[100vh]">
+      <!-- section1 -->
+      <div class="w-[50%]">
+        <div>
+          <div class="text-center bg-orange-500">
+            <h1 class="text-5xl text-center uppercase font-semibold py-2">
+              Welcome Back
+            </h1>
+            <p class="">Please enter your details.</p>
+          </div>
+          <form action="" method="post" class="w-[60%] m-auto ">
+            {% csrf_token %}
+            <div class="flex flex-col items-start">
+              <label for="Username">Username</label>
+              <input name="username" type="username" class="rounded-lg bg-[#f9f9f9]"  required/>
             </div>
-            <button class="mt-6 w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700">Login</button>
-            </form>
-            <p class="text-center mt-4" ><a class="text-blue-500 hover:underline" href="#">Forgot password?</a></p>
-            <p class="text-center text-gray-600  mt-1">Don't have an account? <a href="#" class="text-blue-500 hover:underline">Sign Up</a></p>
+
+            <div class="flex flex-col items-start">
+              <label for="password">Password</label>
+              <input name="password" type="password" class="rounded-lg bg-[#f9f9f9]" required />
+            </div>
+            <!-- forgot password and remember me section -->
+
+            <div>
+              <a href="#">Forgot password?</a>
+            </div>
+
+            <!-- sign in button -->
+            <div>
+              <button>Sign in</button>
+            </div>
+          </form>
         </div>
-        
+      </div>
+
+      <!-- section 2 -->
+      <div class="w-[50%] relative h-[100%] bg-[rgba(0,0,0,0.1)]">
+        <img src="./loginimage.jpg" alt="" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-[rgba(0,0,0,0.5)]">
+          <!-- overlay -->
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

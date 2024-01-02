@@ -12,10 +12,21 @@
 
     <a href="{% url 'logout' %}">Logout</a>
 
+    <br>
+    <br>
+    {% if request.user.is_superuser %}
+        <a href="{% url 'adminHome' %}"> ADMIN DASHBOARD </a>
+    <br>
+
+    {% endif %}
+
     {% else %}
 
     <a href="{% url 'login' %}">Login</a>
 
     {% endif %}
+
+
+
 </body>
 </html>

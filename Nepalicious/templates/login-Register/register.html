@@ -6,27 +6,39 @@
     <title>Nepalicious | Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
+    
+
 </head>
 <body class="bg-gray-100">
     <div class="flex items-center justify-center min-h-screen ">
         <div class="bg-white p-10 rounded-lg shadow-lg w-96">
             <h1 class="text-3xl font-semibold text-center text-blue-600 "><span><a href="">Nepalicious</a></span> / <span>Register</span></h1>
-        <form method="post" action="" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
+
+
+            <div class="border-4 border-[#B6B6B6] rounded-full h-[6rem] w-[6rem] ml-[6rem] mt-4 mb-10" id="profileImageField">
+                <img id="image-preview" src="../../static/photos/userProfilePictures/defaultProfile.jpg" alt="" class="h-[6rem] w-[6rem] rounded-full pb-3">
+                <input id="image-input" class="mb-[5rem]" type="file" name="profileImg" accept="image/png, image/jpeg" multiple>
+            </div>
+
+            
             <input required class="focus:outline-none focus:shadow mt-6 p-2 border rounded w-full" name="first_name" type="text" placeholder="First name">
             <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="last_name" type="text" placeholder="Last name">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="contactNumber" type="tel" placeholder="Contact Number">
+            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="address" type="address" placeholder="Address">
             <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="email" type="email" placeholder="Email">
             <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="username" type="username" placeholder="Username">
             <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password1" type="password" placeholder="Password">
             <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password2" type="password" placeholder="Re-Password">
 
             <select class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" id="id_user_type">
-                <option value="guest">Register as Guest</option>
-                <option value="chef">Register as Chef</option>
-                <option value="vendor">Register as Vendor</option>
-                <option value="admin">Register as Admin</option>
+                <option name="guest" value="guest">Register as Guest</option>
+                <option name="chef" value="chef">Register as Chef</option>
+                <option name="vendor" value="vendor">Register as Vendor</option>
+                <option name="restaurant" value="restaurant">Register as Restaurant</option>
             </select>
+
+            <input type="hidden" name="requestedGroup" value="" id="requested_group">
 
             <div id="documentImageField" style="display: none;">
                 <p class="pt-2 pb-2 text-[16px] text-gray-500">Upload your documents pictures here.</p>
@@ -34,7 +46,7 @@
             file:mr-4 file:py-2 file:px-4 file:rounded-md
             file:border-0 file:text-sm file:font-semibold
             file:bg-pink-100 file:text-pink-600
-            hover:file:bg-pink-100" type="file" name="img" id="id_document_image" accept="image/png, image/jpeg" multiple>
+            hover:file:bg-pink-100" type="file" name="documentImg" id="id_document_image" accept="image/png, image/jpeg" multiple>
             </div>
 
 
@@ -64,6 +76,11 @@
     const userTypeField = document.getElementById("id_user_type");
     const documentImageField = document.getElementById("documentImageField");
     const documentImageInput = document.getElementById("id_document_image");
+
+    <!-- skdf -->
+    const userGroup = document.getElementById('requested_group');
+
+
     // Add an event listener to the user type field
     userTypeField.addEventListener("change", toggleDocumentImageVisibility);
 
@@ -71,8 +88,10 @@
         // Check the value of the user type field
         const userType = userTypeField.value;
 
+        userGroup.value = userType
+
         // Toggle visibility of the document image field based on the user type
-        if (userType === "owner") {
+        if (userType === "chef" || userType === "vendor" || userType === "restaurant") {
             documentImageField.style.display = "block";
             documentImageInput.required = true;
         } else {
@@ -80,6 +99,29 @@
             documentImageInput.required = false;
         }
     }
+</script>
+
+<script>
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+
+    imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            // Clear the preview when no file is selected
+            imagePreview.src = '';
+        }
+    });
+
+
+
 </script>
 
     

@@ -149,3 +149,11 @@ STATICFILES_DIRS =[
 MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+
+
+# Email setup
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'nepalicious.webapp@gmail.com' 
+EMAIL_HOST_PASSWORD = 'zoec vvpv wjqh cnbp' 
+EMAIL_USE_TLS = True
