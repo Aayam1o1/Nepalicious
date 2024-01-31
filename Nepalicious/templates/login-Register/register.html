@@ -1,129 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nepalicious | Register</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
-    
-
 </head>
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center min-h-screen ">
-        <div class="bg-white p-10 rounded-lg shadow-lg w-96">
-            <h1 class="text-3xl font-semibold text-center text-blue-600 "><span><a href="">Nepalicious</a></span> / <span>Register</span></h1>
-            <form method="post" action="" enctype="multipart/form-data">
-            {% csrf_token %}
 
+<body>
+    {% extends '../headerfooter/base.html' %} {% block content %}
+    <section class="wrapper-register-page-parent relative h-[120vh] flex items-center justify-center overflow-y-hidden">
 
-            <div class="border-4 border-[#B6B6B6] rounded-full h-[6rem] w-[6rem] ml-[6rem] mt-4 mb-10" id="profileImageField">
-                <img id="image-preview" src="../../static/photos/userProfilePictures/defaultProfile.jpg" alt="" class="h-[6rem] w-[6rem] rounded-full pb-3">
-                <input id="image-input" class="mb-[5rem]" type="file" name="profileImg" accept="image/png, image/jpeg" multiple>
+        <div>
+            <!-- background wrapper and background image -->
+            <div class="bg-image h-[100vh] absolute inset-0 -z-[10] flex w-full">
+                <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-[150%] object-cover relative" />
+                <!-- overlay filter -->
+                <div class="overlay h-[150%] bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
             </div>
-
-            
-            <input required class="focus:outline-none focus:shadow mt-6 p-2 border rounded w-full" name="first_name" type="text" placeholder="First name">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="last_name" type="text" placeholder="Last name">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="address" type="address" placeholder="Address">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="email" type="email" placeholder="Email">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="username" type="username" placeholder="Username">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password1" type="password" placeholder="Password">
-            <input required class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" name="password2" type="password" placeholder="Re-Password">
-
-            <select class="focus:outline-none focus:shadow mt-2 p-2 border rounded w-full" id="id_user_type">
-                <option name="guest" value="guest">Register as Guest</option>
-                <option name="chef" value="chef">Register as Chef</option>
-                <option name="vendor" value="vendor">Register as Vendor</option>
-                <option name="restaurant" value="restaurant">Register as Restaurant</option>
-            </select>
-
-            <input type="hidden" name="requestedGroup" value="" id="requested_group">
-
-            <div id="documentImageField" style="display: none;">
-                <p class="pt-2 pb-2 text-[16px] text-gray-500">Upload your documents pictures here.</p>
-            <input class="block w-full text-sm text-slate-500
-            file:mr-4 file:py-2 file:px-4 file:rounded-md
-            file:border-0 file:text-sm file:font-semibold
-            file:bg-pink-100 file:text-pink-600
-            hover:file:bg-pink-100" type="file" name="documentImg" id="id_document_image" accept="image/png, image/jpeg" multiple>
-            </div>
-
-
-            
-        <div class="pt-2 text-red-500 font-medium text-[13px]">
-        {% if form.errors %}
-       
-          {% for field, error in form.errors.items %}
-           {{ error }}
-          {% endfor %}
-
-        {% endif %}
-        </div>   
-
-            <input class="mt-6 w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 cursor-pointer" type="submit" value="Register">
-        </form>
-
-
-            <p class="text-center text-gray-600 mt-4">Already have an account? <a href="#" class="text-blue-500 hover:underline">Login</a></p>
         </div>
-    </div>
+        <div class="register-page-child flex w-full h-full">
+            <!-- register page child container here -->
+            <section class="register-container-parent overflow-y-hidden w-full flex items-center justify-center">
+                <div class="register-container-child p-12 bg-white h-[90%] rounded-xl">
+                    <!-- welcome messages here -->
+                    <h1 class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest">
+                        Register
+                    </h1>
+                    <form action="" method="post" class="flex flex-col gap-y-5">
+                        {% csrf_token %}
+                        <!-- choose user type -->
+                        <div class="user-type-choose">
+                            <ul class="flex justify-center items-center gap-x-3 text-">
+                                <li><a href="#">User</a></li>
+                                |
+                                <li><a href="#">Chef</a></li>
+                                |
+                                <li><a href="#">Vendor</a></li>
+                                |
+                                <li><a href="#">Restaurant</a></li>
+                            </ul>
+                        </div>
+                        <div class="name flex flex-col gap-y-1">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Enter your email" />
+                        </div>
 
+                        <!--  -->
+                        <div class="username flex flex-col gap-y-1">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Enter username" />
+                        </div>
 
-<!-- Choose user type -->
-<script>
-    // Get the user type field and document image field
-    const userTypeField = document.getElementById("id_user_type");
-    const documentImageField = document.getElementById("documentImageField");
-    const documentImageInput = document.getElementById("id_document_image");
+                        <!--  -->
+                        <div class="contact-number flex flex-col gap-y-1">
+                            <label for="contact">Contact Number</label>
+                            <input type="text" id="contact" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Enter number" />
+                        </div>
 
-    <!-- skdf -->
-    const userGroup = document.getElementById('requested_group');
+                        <!--  -->
+                        <div class="email flex flex-col gap-y-1">
+                            <label for="email">Email</label>
+                            <input type="text" id="email" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Enter email" />
+                        </div>
 
+                        <!--  -->
+                        <div class="password flex flex-col gap-y-1">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Enter password" />
+                        </div>
 
-    // Add an event listener to the user type field
-    userTypeField.addEventListener("change", toggleDocumentImageVisibility);
+                        <!--  -->
+                        <div class="re-enterpass flex flex-col gap-y-1">
+                            <label for="re-enterpass">Password</label>
+                            <input type="password" id="re-enterpass" class="border py-[0.4rem] rounded-md pl-2"
+                                placeholder="Re-enter password..." />
+                        </div>
 
-    function toggleDocumentImageVisibility() {
-        // Check the value of the user type field
-        const userType = userTypeField.value;
+                        <!-- signin button -->
 
-        userGroup.value = userType
+                        <div class="sign-in-button w-full text-center">
+                            <button
+                                class="w-full bg-[#FFC061] py-2 shadow-[0px_4px_10px_0px_rgba(233, 68, 75, 0.25)] rounded-xl text-white font-semibold">
+                                Sign Up
+                            </button>
+                        </div>
 
-        // Toggle visibility of the document image field based on the user type
-        if (userType === "chef" || userType === "vendor" || userType === "restaurant") {
-            documentImageField.style.display = "block";
-            documentImageInput.required = true;
-        } else {
-            documentImageField.style.display = "none";
-            documentImageInput.required = false;
-        }
-    }
-</script>
-
-<script>
-    const imageInput = document.getElementById('image-input');
-    const imagePreview = document.getElementById('image-preview');
-
-    imageInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-            };
-
-            reader.readAsDataURL(this.files[0]);
-        } else {
-            // Clear the preview when no file is selected
-            imagePreview.src = '';
-        }
-    });
-
-
-
-</script>
-
-    
+                        <!--  -->
+                        <div>
+                            <div>
+                                Already have an account?
+                                <a href="#" class="text-[#F89500] hover:underline">Sign in</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </section>
+    {% endblock %}
 </body>
+
 </html>

@@ -17,6 +17,10 @@ from django.core.mail import send_mail
 def index(request):
     return render(request, 'landingPage/index.html')  
 
+# render header
+def header(request):
+    return render(request, 'headerFooter/header.html')
+
 #Login
 def loginUser(request):
     if request.method == 'POST':
@@ -24,11 +28,14 @@ def loginUser(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
             
-            
         if user is not None:
             login(request, user)
-             
-            return redirect('index')
+            
+            # Check if the user is an admin
+            if user.username == "admin":
+                return redirect('adminHome')
+            else:
+                return redirect('index')
 
         else:
             messages.info(request, 'Username or Password is incorrect')

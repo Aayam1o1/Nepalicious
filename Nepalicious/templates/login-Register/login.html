@@ -6,50 +6,94 @@
     <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="h-[100vh]">
-    <img src="" alt="">
-    <div class="wrapper-login-wrapper flex h-[100vh]">
-      <!-- section1 -->
-      <div class="w-[50%]">
+  <body>
+    {% extends '../headerfooter/base.html' %} {% block content %}
+    <!-- background wrapper and background image -->
+    <section
+      class="wrapper-login-page-parent relative h-[100vh] flex items-center justify-center overflow-y-hidden"
+    >
+      <div class="bg-image w-full h-[100vh] absolute inset-0 -z-10 flex w-full">
         <div>
-          <div class="text-center bg-orange-500">
-            <h1 class="text-5xl text-center uppercase font-semibold py-2">
+          <img
+            src="../../static/images/loginRegister/background.jpg"
+            alt=""
+            class="w-[100%] h-[150%] object-cover relative"
+          />
+          <!-- overlay filter -->
+          <div
+            class="overlay h-[150%] absolute inset-0 bg-[rgba(0,0,0,0.3)]"
+          ></div>
+        </div>
+      </div>
+      
+      <div class="login-page-child flex w-full h-[80vh]">
+        <!-- login page child container here -->
+        <section
+          class="login-container-parent w-full flex items-center justify-center"
+        >
+          <div class="login-container-child p-12 bg-white rounded-xl mb-20">
+            <!-- welcome messages here -->
+            <h1
+              class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest"
+            >
               Welcome Back
             </h1>
-            <p class="">Please enter your details.</p>
+            <form action="" method="post" class="flex flex-col gap-y-5">
+              {% csrf_token %}
+              <div class="username flex flex-col gap-y-1">
+                <label for="username">Username</label>
+                <input
+                  type="username"
+                  name="username"
+                  class="border py-[0.4rem] rounded-md pl-2"
+                  placeholder="Enter username..."
+                  required
+                />
+              </div>
+
+              <!--  -->
+              <div class="password flex flex-col gap-y-1">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  class="border py-[0.4rem] rounded-md pl-2"
+                  placeholder="Enter password..."
+                  required
+                />
+              </div>
+
+              <!--  forgot password -->
+              <div class="text-right">
+                <span>
+                  <a href="#" class="text-sm text-gray-400 hover:underline"
+                    >Forgot password?</a
+                  >
+                </span>
+              </div>
+
+              <!-- signin button -->
+
+              <div class="sign-in-button w-full text-center">
+                <button
+                  class="w-full bg-[#FFC061] py-2 shadow-[0px_4px_10px_0px_rgba(233, 68, 75, 0.25)] rounded-xl text-white font-semibold"
+                >
+                  Sign in
+                </button>
+              </div>
+
+              <!--  -->
+              <div>
+                <div>
+                  Don't have an account?
+                  <a href="#" class="text-[#F89500]">Sign up for free!</a>
+                </div>
+              </div>
+            </form>
           </div>
-          <form action="" method="post" class="w-[60%] m-auto ">
-            {% csrf_token %}
-            <div class="flex flex-col items-start">
-              <label for="Username">Username</label>
-              <input name="username" type="username" class="rounded-lg bg-[#f9f9f9]"  required/>
-            </div>
-
-            <div class="flex flex-col items-start">
-              <label for="password">Password</label>
-              <input name="password" type="password" class="rounded-lg bg-[#f9f9f9]" required />
-            </div>
-            <!-- forgot password and remember me section -->
-
-            <div>
-              <a href="#">Forgot password?</a>
-            </div>
-
-            <!-- sign in button -->
-            <div>
-              <button>Sign in</button>
-            </div>
-          </form>
-        </div>
+        </section>
       </div>
-
-      <!-- section 2 -->
-      <div class="w-[50%] relative h-[100%] bg-[rgba(0,0,0,0.1)]">
-        <img src="./loginimage.jpg" alt="" class="w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-[rgba(0,0,0,0.5)]">
-          <!-- overlay -->
-        </div>
-      </div>
-    </div>
+    </section>
+    {% endblock %}
   </body>
 </html>

@@ -6,6 +6,8 @@
     <title>Landing Page</title>
 </head>
 <body>
+{% extends '../headerfooter/base.html' %}
+{% block content %}
     This is landing page
 
     {% if request.user.is_authenticated %}
@@ -27,6 +29,6 @@
     {% endif %}
 
 
-
+{% endblock %}
 </body>
 </html>

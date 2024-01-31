@@ -18,7 +18,7 @@ class usersDetail(models.Model):
      
 # to save default picture
 def defaultProfilePicture():
-    return '../static/photos/userProfilePictures/defaultProfile.jpg'
+    return '../static/images/defaultUserProfilePictures/defaultProfile.jpg'
  
  #for uplaoded user profile picture
 class UserProfilePicture(models.Model):
