@@ -1,34 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=, initial-scale=1.0">
     <title>Landing Page</title>
 </head>
+
 <body>
-{% extends '../headerfooter/base.html' %}
-{% block content %}
-    This is landing page
+    {% extends '../headerfooter/base.html' %}
+    {% block content %}
+    <div class="wrapper1 mt-[4rem] h-[70vh]">
+        <div class="grid grid-cols-2 items-center m-2">
+            <div class="flex flex-col justify-content-center mt-5 ml-[15rem] mb-10">
+                <h1 class="text-5xl font-bold">Cooking Made Fun</h1>
+                <br>
+                <h1 class="text-5xl font-bold">and Easy: Unleash</h1>
+                <br>
+                <h1 class="text-5xl font-bold">Your Inner Chef</h1>
+                
+                <p class="mt-5 ml-2 ">Discover different recipes. Help you to find the easiest way to cook</p>
+                <div class="mt-[2rem]">
+                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
+                        Explore recipes
+                    </button>
+                </div>
+            </div>
+            <div class="ml-[4rem] mb-[4rem]">
+                <img class="h-[90%] w-[35rem]" src="../../static/images/homepage/curry.avif" alt="">
+            </div>
+            
+        </div>
+       
+    </div>
 
-    {% if request.user.is_authenticated %}
+    <div id="aboutNepalicious" class="my-[3rem] items-center h-[70vh]">
+        <div class="text-center text-5xl">
+            <h1>Why Nepalicious ?? </h1>
+           
+        </div>
+        <div class="mt-8 ml-[9rem] flex justify-around items-center w-[80%] ">
+            <div class="w-[20rem] text-center ">
+                <img src="../../static/images/homepage/chefkiss.svg" alt="" class="ml-[1rem] mb-[3rem]">
+                <p class="">Unbeatable quality We source directly from top-rated growers, so we can sell the finest quality plants at the very best prices.</p>
+            </div>
+            <div class="w-[20rem] text-center ml-[2rem]">
+                <img src="../../static/images/homepage/rice.svg" alt="" class="ml-[1rem]">
+                <p class="">Delivery to your door We’ll bring your plants to your door, anywhere in GB. If you’re not 100% happy, tell us within 30 days and we’ll sort it. </p>
+            </div>
+            <div class="w-[20rem] text-center ml-[2rem]">
+                <img src="../../static/images/homepage/marketcart.svg" alt="" class="ml-[1rem] mb-7">
+                <p class="">All the help you need We’ll send you a free plant-parenting course and our plant doctors are always on call.</p>
+            </div>
+        </div>
+    </div>
 
-    <a href="{% url 'logout' %}">Logout</a>
+    <div class="wrapper1 mt-[7rem] h-[70vh]">
+        <div class="grid grid-cols-2 items-center m-2">
+            <div class="ml-[9em] mb-[4rem]">
+                <img class="h-[29rem] w-[35rem]" src="../../static/images/homepage/restaurant.svg" alt="">
+            </div>
 
-    <br>
-    <br>
-    {% if request.user.is_superuser %}
-        <a href="{% url 'adminHome' %}"> ADMIN DASHBOARD </a>
-    <br>
+            <div class="flex flex-col justify-content-center ml-[4.5rem] mb-[6rem]">
+                <h1 class="text-5xl font-bold">Dine  at local</h1>
+                <br>
+                <h1 class="text-5xl font-bold">restaurants: Enjoy</h1>
+                <br>
+                <h1 class="text-5xl font-bold"> Nepalese Cuisines</h1>
+                
+                <p class="mt-5 ml-3 ">Discover different recipes. Help you to find the easiest way to cook</p>
+                <div class="mt-[2rem] ml-2">
+                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
+                        Explore recipes
+                    </button>
+                </div>
+            </div>
+        </div>
+       
+    </div>
 
-    {% endif %}
+    <div class="wrapper3 mb-[8rem] h-[70vh]">
+        <div class="grid grid-cols-2 items-center m-2">
+            <div class="flex flex-col justify-content-center mt-5 ml-[15rem] mb-10">
+                <h1 class="text-5xl font-bold">Cooking Made Fun</h1>
+                <br>
+                <h1 class="text-5xl font-bold">and Easy: Unleash</h1>
+                <br>
+                <h1 class="text-5xl font-bold">Your Inner Chef</h1>
+                
+                <p class="mt-5 ">Discover different recipes. Help you to find the easiest way to cook</p>
+                <div class="mt-[2rem] ml-2">
+                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
+                        Explore recipes
+                    </button>
+                </div>
+            </div>
+            <div class="ml-[5rem] mb-[4rem]">
+                <img class="h-[90%] w-[35rem]" src="../../static/images/homepage/market.svg" alt="">
+            </div>
+            
+        </div>
+       
+    </div>
 
-    {% else %}
-
-    <a href="{% url 'login' %}">Login</a>
-
-    {% endif %}
-
-
-{% endblock %}
+    {% endblock %}
 </body>
+
 </html>

@@ -62,7 +62,7 @@ def registerUser(request):
             with transaction.atomic():
                 user = form.save()
                 # saving details of the user
-                userDetails = usersDetail(user=user, address = request.POST.get('address'), requestedGroup = request.POST.get('requestedGroup'))
+                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('phone_number'),requestedGroup = request.POST.get('requestedGroup'))
                 userDetails.save()
                 
                  #Creating an instance and saving it to the database is necessary

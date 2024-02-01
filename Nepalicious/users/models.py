@@ -11,7 +11,8 @@ class usersDetail(models.Model):
    
    user = models.OneToOneField(User, on_delete=models.CASCADE)
    address = models.CharField(max_length=50,blank=False)
-   requestedGroup = models.CharField(max_length=50,blank=False)
+   phone_number = models.CharField(null=True, blank=False, max_length=10)
+   requestedGroup = models.CharField(max_length=50,blank=False, default ='user')
    
    def __str__(self):
         return f"{self.user.username}'s Details"
@@ -35,6 +36,4 @@ class userDocument(models.Model):
     
     def __str__(self):
         return f'{self.user.username} documents'
-    
-    
     
