@@ -32,36 +32,37 @@
             color: #F89500;
           }
     </style>
+    
+    
     <script>
-        
         document.addEventListener("DOMContentLoaded", function () {
-            const userGroup = document.getElementById('requested_group');
+            const userGroup = document.getElementById('UserRequestedGroup');
             const documentImageField = document.getElementById("documentImageField");
             const documentInput = document.getElementById("id_document_image");
-    
+            const userRequestedGroupInput = document.getElementById("UserRequestedGroup");
+        
             // Initialize the active anchor
             var activeAnchor = null;
-
+        
             function selectUserType(userType, event) {
                 event.preventDefault(); // Prevent default link behavior
-              
+                      
                 // Toggle the display property based on the selected user type
                 document.getElementById("documentImageField").style.display =
-                  userType.toLowerCase() !== "user" ? "block" : "none";
-              
+                    userType.toLowerCase() !== "user" ? "block" : "none";
+                      
                 // Reset the font color of the previously clicked anchor
                 const currentActiveUser = document.querySelector(".active-user");
                 currentActiveUser.classList.remove("active-user");
-              
+                      
                 // Set the font color of the clicked anchor to orange
                 event.currentTarget.classList.add("active-user");
-              
+                      
                 // Set the value of the requested_group field
-                const userGroup = document.getElementById("requested_group");
                 userGroup.value = userType;
-              }
+                userRequestedGroupInput.value = userType; // Set the hidden input value
+            }
             
-    
             // Attach click event handlers to each list item
             var listItems = document.querySelectorAll(".user-type-choose ul li");
             listItems.forEach(function (item) {
@@ -70,45 +71,47 @@
                     selectUserType(userType, event);
                 });
             });
-    
+            
             // Set the default user type to "user" and trigger the click event
             selectUserType("user", { currentTarget: listItems[0] });
+            listItems[0].classList.add("active-user"); // Set the active class for the default user type
             listItems[0].style.color = "#F89500"; // Set color for the default user type
         });
+        
     </script>
-    
     
     
     
 </head>
 
 <body>
-    {% extends '../headerfooter/base.html' %} {% block content %}
-    <section class="wrapper-register-page-parent relative h-[200vh] flex items-center justify-center overflow-y-hidden">
+    {% extends '../navigationBar/base.html' %} {% block content %}
+    <section class="wrapper-register-page-parent relative p-10 flex items-center justify-center overflow-y-hidden h-[1260px]">
 
         <div>
             <!-- background wrapper and background image -->
-            <div class="bg-image h-[100vh] absolute inset-0 -z-[10] flex w-full">
-                <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-[150%] object-cover relative" />
+            <div class="bg-image absolute inset-0 -z-[10] flex w-full">
+                <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-auto relative" />
                 <!-- overlay filter -->
-                <div class="overlay h-[150%] bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
+                <div class="overlay bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
             </div>
         </div>
         <div class="register-page-child flex w-full h-full">
             <!-- register page child container here -->
-            <section class="register-container-parent overflow-y-hidden w-full flex items-center justify-center">
-                <div class="register-container-child p-12 bg-white h-[150vh] rounded-xl">
+            <section class="register-container-parent w-full flex items-center justify-center">
+                <div class="register-container-child p-12 bg-white rounded-xl">
                     <!-- welcome messages here -->
                     <h1 class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest">
                         Register
                     </h1>
-                    <form action="" method="post" class="flex flex-col gap-y-5">
+                    <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-y-5" >
                         {% csrf_token %}
                         <!-- choose user type -->
                         <div class="user-type-choose">
                             <ul class="flex justify-center items-center gap-x-3 text-">
+                                <input type="hidden" id="UserRequestedGroup" name="UserRequestedGroup" value="">
                                 <li class="active-user">
-                                    <a href="javascript:void(0)" onclick="selectUserType('user', event)" name="guest" value="guest">User</a>
+                                    <a href="javascript:void(0)" onclick="selectUserType('user', event)" name="user" value="user">User</a>
                                 </li>
                                 |
                                 <li><a href="javascript:void(0)" onclick="selectUserType('chef', event)"  name="chef" value="chef">Chef</a></li>
@@ -125,55 +128,60 @@
                             <input id="image-input" class="" type="file" name="profileImg" accept="image/png, image/jpeg" multiple>
                         </div>
                         <!-- for other input text fields -->
-                        <div class="name flex flex-col gap-y-1">
-                            <label for="first_name">First Name</label>
-                            <input type="text" id="name" name= "first_name" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter your Name" />
-                        </div>
-                        <div class="name flex flex-col gap-y-1">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" id="name" name= "last_name" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter your Name" />
-                        </div>
+                        
+                            <div class="name flex flex-col gap-y-1">
+                                <label for="first_name">First Name</label>
+                                <input type="text" id="name" name= "first_name" class="border py-[0.4rem] rounded-md pl-2"
+                                    placeholder="Enter your Name" required/>
+                            </div>
+                            <div class="name flex flex-col gap-y-1">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" id="name" name= "last_name" class="border py-[0.4rem] rounded-md pl-2"
+                                    placeholder="Enter your Name" required/>
+                            </div>
+                        
+                        
+                            <div class="address flex flex-col gap-y-1">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" class="border py-[0.4rem] rounded-md pl-2"
+                                    placeholder="Enter your Address" required/>
+                            </div>
+    
+                            <div class="contact_number flex flex-col gap-y-1">
+                                <label for="contact_number">Phone Number</label>
+                                <input type="text" id="contact" name="contact_number" class="border py-[0.4rem] rounded-md pl-2"
+                                    placeholder="Enter your Phone Number" required/>
+                            </div>
+                       
                         
                         <div class="username flex flex-col gap-y-1">
                             <label for="username">Username</label>
                             <input type="text" id="username" name="username" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter username" />
+                                placeholder="Enter username" required/>
                         </div>
 
                         <!--  -->
-                        <div class="address flex flex-col gap-y-1">
-                            <label for="address">Address</label>
-                            <input type="text" id="address" name="address" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter your Address" />
-                        </div>
-
-                        <div class="contact_number flex flex-col gap-y-1">
-                            <label for="contact_number">Phone Number</label>
-                            <input type="text" id="contact" name="contact_number" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter your Phone Number" />
-                        </div>
+                        
 
                         <!--  -->
                         <div class="email flex flex-col gap-y-1">
                             <label for="email">Email</label>
                             <input type="text" id="email" name="email" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter email" />
+                                placeholder="Enter email" required />
                         </div>
 
                         <!--  -->
                         <div class="password flex flex-col gap-y-1">
                             <label for="password">Password</label>
                             <input type="password" id="password" name="password1" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Enter password" />
+                                placeholder="Enter password" required />
                         </div>
 
                         <!--  -->
                         <div class="re-enterpass flex flex-col gap-y-1">
                             <label for="re-enterpass">Password</label>
                             <input type="password" id="re-enterpass" name="password2" class="border py-[0.4rem] rounded-md pl-2"
-                                placeholder="Re-enter password..." />
+                                placeholder="Re-enter password..." required/>
                         </div>
 
                         <!-- Display the documentImageField based on the selection -->
@@ -183,7 +191,7 @@
                                 file:mr-4 file:py-2 file:px-4 file:rounded-md
                                 file:border-0 file:text-sm file:font-semibold
                                 file:bg-pink-100 file:text-pink-600
-                                hover:file:bg-pink-100" type="file" name="documentImg" id="id_document_image" accept="image/png, image/jpeg, image/svg " multiple>
+                                hover:file:bg-pink-100" type="file" name="documentImage" id="id_document_image" accept="image/png, image/jpeg, image/svg " multiple>
                         </div>
 
                         <!-- signin button -->
@@ -195,9 +203,6 @@
                                 Sign Up
                             </button>
                         </div>
-
-                        <!--  -->
-                        <div>
                             <div>
                                 Already have an account?
                                 <a href="#" class="text-[#F89500] hover:underline">Sign in</a>

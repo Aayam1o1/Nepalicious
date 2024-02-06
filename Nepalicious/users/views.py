@@ -47,22 +47,28 @@ def loginUser(request):
 # REGISTER
 def registerUser(request):
     form = CreateUserForm()
+
+    # Get the requested group
+    if "UserRequestedGroup" in request.POST:
+        userRequestedGroup = request.POST.get('UserRequestedGroup')
+
     if request.method == 'POST':
         form = CreateUserForm(request.POST, request.FILES)
+        
         if form.is_valid():
             #Getting Username
             username = form.cleaned_data.get('username')
             
             #Getting profilePicture
-            profilePicture = request.FILES.get('profileImg', None)
-            
+            profilePicture = request.FILES.get('profileImg')
+            print("This is: ",profilePicture)
             #transcation holds the process until the process is completed
             #and only lets the process complete when all the conditions are met
             #if condition are not met it undo all the changes made
             with transaction.atomic():
                 user = form.save()
                 # saving details of the user
-                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('phone_number'),requestedGroup = request.POST.get('requestedGroup'))
+                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'),requestedGroup = userRequestedGroup)
                 userDetails.save()
                 
                  #Creating an instance and saving it to the database is necessary
@@ -82,10 +88,9 @@ def registerUser(request):
                     # If no picture is uploaded, use the default picture
                     profilePictureInstance = UserProfilePicture(user=user)
                     profilePictureInstance.save()
-
                 if request.FILES:
-                
-                    images=request.FILES.getlist('documentImg')
+                    print("Xa rw?")
+                    images=request.FILES.getlist('documentImage')
 
                     for img in images:
                         documentImg = userDocument(user=user, documentImage=img)
@@ -96,7 +101,7 @@ def registerUser(request):
                     group, create = Group.objects.get_or_create(name = 'user')
                     user.groups.add(group)
                     messages.success(request,"Account Created for " + username)
-                
+                print("Choosen Group is: ", userRequestedGroup)
                 return redirect('login')
             
     context={
