@@ -31,6 +31,14 @@
         .active-user {
             color: #F89500;
           }
+    
+            .wrapper-register-page-parent{
+                background-image: url("../../static/images/loginRegister/background.jpg");
+                background-repeat: no-repeat;
+                background-size: cover;
+                
+            }
+       
     </style>
     
     
@@ -86,20 +94,20 @@
 
 <body>
     {% extends '../navigationBar/base.html' %} {% block content %}
-    <section class="wrapper-register-page-parent relative p-10 flex items-center justify-center overflow-y-hidden h-[1260px]">
+    <section class="wrapper-register-page-parent relative flex items-center justify-center overflow-y-hidden py-10 ">
 
-        <div>
+        {% comment %} <div> {% endcomment %}
             <!-- background wrapper and background image -->
-            <div class="bg-image absolute inset-0 -z-[10] flex w-full">
-                <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-auto relative" />
+            {% comment %} <div class="bg-image absolute inset-0 -z-[10] flex w-full"> {% endcomment %}
+                {% comment %} <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-auto relative" /> {% endcomment %}
                 <!-- overlay filter -->
-                <div class="overlay bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
+                {% comment %} <div class="overlay bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div class="register-page-child flex w-full h-full">
             <!-- register page child container here -->
             <section class="register-container-parent w-full flex items-center justify-center">
-                <div class="register-container-child p-12 bg-white rounded-xl">
+                <div class="register-container-child p-12 bg-white rounded-xl h-[1243px]">
                     <!-- welcome messages here -->
                     <h1 class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest">
                         Register
