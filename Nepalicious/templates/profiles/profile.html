@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body class="bg-gray-300">
+    {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
+    <div class="flex">
+        <!-- Profile pic and name -->
+        <div class="">
+            <div class="border border-[#B6B6B6] rounded-full h-[10rem] w-[10rem] ml-[6rem] mt-10"
+                id="profileImageField">
+                <img id="image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
+                    class="h-[100%] w-[100%] object-cover rounded-full" />
+            </div>
+            <div class="mt-5 text-xl ml-[5rem]">
+                <p class="justify-self-center text-l pl-2">{{ user.first_name }} {{ user.last_name }}</p>
+                front end in radar ui
+            </div>
+        </div>
+
+        <!-- other details -->
+        <div>
+            <div class="p-2 pl-16 grid gap-6 md:grid-cols-2 ">
+                <div>
+                    <label for="first_name" class="block mb-2 text-xl font-semibold text-gray-900 ">First
+                        name</label>
+                    <input name="first_name" value="{{request.user.first_name}}" type="first_name"
+                        class="focus:outline-none  text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your First Name">
+                </div>
+                <div>
+                    <label for="last_name" class="block mb-2 text-xl font-semibold text-gray-900 ">Last name</label>
+                    <input name="last_name" value="{{request.user.last_name}}" type="last_name"
+                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your last Name">
+                </div>
+            </div>
+
+            <div class="p-2 pt-6 pl-16 grid gap-6 md:grid-cols-2 ">
+                <div class="pt-3">
+                    <label for="email" class="block mb-2 text-xl font-semibold text-gray-900 ">Email</label>
+                    <input name="email" type="email" value="{{request.user.email}}"
+                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your Email">
+                </div>
+                <div class="pt-3">
+                    <label for="contact" class="block mb-2 text-xl font-semibold text-gray-900 ">Contact
+                        Number</label>
+                    <input name="contact" type="contact_number" value="{{request.user.usersdetail.phone_number}}"
+                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Contact Number">
+                </div>
+            </div>
+
+            <div class="p-4 pl-16">
+                <label for="address" class="block mb-2 text-xl font-semibold text-gray-900 ">Username</label>
+                <input name="address" disabled type="address" value="{{request.user}}"
+                    class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                    placeholder="Your Username">
+            </div>
+            <div>
+
+                <input type="hidden" name="user" value="{{request.user}}">
+            </div>
+
+        </div>
+    </div>
+    <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl bg-[#F85858]">
+        <img src="../../../static/images/profileDashboards/edit.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+        <a href="{% url 'editprofile'%}">
+            <p class="text-l ml-5">Edit Profile</p>
+        </a>
+    </div>
+    {%endblock %}
+</body>
+
+</html>

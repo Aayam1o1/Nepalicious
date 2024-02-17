@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Dashboard</title>
+</head>
+<body class="bg-gray-300">
+    {% extends '../profiles/navigationSidebar/profilebase.html' %}
+    {% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="">
+            <div class="p-2 pl-16 grid gap-6 md:grid-cols-2 ">
+                <div>
+                    <label for="first_name" class="block mb-2 text-xl font-semibold text-gray-900 ">First name</label>
+                    <input name="first_name" value="{{request.user.first_name}}" type="first_name" class="focus:outline-none  text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your First Name" >
+                </div>
+                <div>
+                    <label for="last_name" class="block mb-2 text-xl font-semibold text-gray-900 ">Last name</label>
+                    <input name="last_name" value="{{request.user.last_name}}" type="first_name" class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your last Name" >
+                </div>
+            </div>
+
+            <div class="p-2 pt-6 pl-16 grid gap-6 md:grid-cols-2 ">
+                <div class="pt-3">
+                    <label for="address" class="block mb-2 text-xl font-semibold text-gray-900 ">Address</label>
+                    <input name="address" type="address" value="{{request.user.usersdetail.address}}" class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Your Email" >
+                </div>
+                
+                <div class="pt-3">
+                    <label for="phone_number" class="block mb-2 text-xl font-semibold text-gray-900 ">Contact Number</label>
+                    <input name="phone_number" type="phone_number" value="{{request.user.usersdetail.phone_number}}" class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                        placeholder="Contact Number" >
+                </div>
+            </div>
+            <div class="p-2 pt-6 pl-16 ">
+                <label for="email" class="block mb-2 text-xl font-semibold text-gray-900 ">Email</label>
+                <input name="email" type="email" value="{{request.user.email}}" class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
+                    placeholder="Your Email" >
+            </div>
+            
+            <div>
+
+                <input type="hidden" name="user" value="{{request.user}}">
+            </div>
+                
+            <div class="p-4 mb-2 pl-16 w-56">
+                <button type=submit name="update" class="bg-[#FFC061] rounded-[3px] w-full py-2 text-white rounded-xl">Update</button>
+            </div>                       
+        </div>  
+    </form> <!-- FORM End -->
+          
+    {% endblock %}
+</body>
+</html>

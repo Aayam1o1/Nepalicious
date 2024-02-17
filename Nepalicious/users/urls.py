@@ -11,8 +11,8 @@ urlpatterns = [
     path('index', views.index, name='index'),
     path('adminHome', views.adminDashboard, name='adminHome'),
     path('userRequests/<int:userID>/', views.userRequests, name='userRequests'),
-    
-    
+    path('editprofile', views.editprofile, name='editprofile'),
+    path('profile', views.profile, name='profile'),
     
 ]
 

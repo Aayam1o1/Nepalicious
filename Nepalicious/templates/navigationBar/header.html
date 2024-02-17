@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
 </head> 
 
 <body> 
@@ -51,7 +50,7 @@
               class="origin-top-right absolute left-[0.1111px]  mt-2 w-[6rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
               <div class="py-1">
                 {% if request.user.is_authenticated %}
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
 
                 {% else %}
 
@@ -68,6 +67,11 @@
                 <a href="{% url 'register' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Register</a>
 
                 {% endif %}
+
+                {% if request.user.is_authenticated and request.user.group == "vendor" %}
+                <a href="{% url 'recipe' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">sure</a>
+                {% endif %}
+              
               </div>
             </div>
           </div>
@@ -77,9 +81,9 @@
       <div class="row-header-2">
         <nav class="navigation-bar-menu">
           <ul class="flex justify-center items-center gap-x-10 text-xl mt-2 ml-[4rem]">
-            <li><a href="#">Home</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
             |
-            <li><a href="#">Recipes</a></li>
+            <li><a href="{% url 'recipe' %}">Recipes</a></li>
             |
             <li><a href="#">Restaurants</a></li>
             |

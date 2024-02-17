@@ -35,6 +35,12 @@ def loginUser(request):
             if user.username == "admin":
                 return redirect('adminHome')
             else:
+                try:
+                    user_profile = usersDetail.objects.get(user=user)
+                    user_type = user_profile.requestedGroup
+                    messages.success(request, f"Logged in as {username}. User type: {user_type}")
+                except usersDetail.DoesNotExist:
+                    messages.warning(request, f"User profile not found for {username}")
                 return redirect('index')
 
         else:
@@ -218,3 +224,61 @@ def userRequests(request, userID):
     }
     
     return render(request, 'admin/userRequests.html', context)
+
+# Profile
+@login_required(login_url='login')
+def profile(request):
+    #getting profile image for displating
+    profile_image_url = None
+    try:
+        profile_image_url = request.user.userprofilepicture.profileImage.url
+    except UserProfilePicture.DoesNotExist:
+        pass
+
+    context = {
+        
+        'profile_image_url': profile_image_url, 
+    }
+    return render(request, 'profiles/profile.html')
+
+
+#edit profile page
+@login_required(login_url='login')
+def editprofile(request):
+    #getting profile image for displating
+    profile_image_url = None
+    try:
+        profile_image_url = request.user.userprofilepicture.profileImage.url
+    except UserProfilePicture.DoesNotExist:
+        pass
+    
+    if request.method == 'POST':
+        if "user" in request.POST:
+                username = request.POST.get('user')
+                user = User.objects.get(username=username)
+                
+        if "update" in request.POST:
+            # UPDATING USER MODEL
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            #saving the updated data
+            user.save()
+            
+            # UPDATING userdetail MODEL
+            user.usersdetail = user.usersdetail
+            user.usersdetail.phone_number = request.POST.get('phone_number')
+            user.usersdetail.address = request.POST.get('address')
+            
+            #saving the updated data
+            user.usersdetail.save()
+            msg = "Profile Updated"
+            messages.success(request, 'Profile Updated')           
+               
+
+    context = {
+        
+        'profile_image_url': profile_image_url, 
+    }
+    return render(request, 'profiles/editprofile.html', context)
+
