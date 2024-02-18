@@ -41,10 +41,15 @@
           </span>
           <!-- profile -->
           <div class="relative inline-block text-left">
+            {% if request.user.is_authenticated %}
+            <span id="profileToggle" class="cursor-pointer profile">
+              <img class="h-[2.4rem] w-[2.4rem] ml-4 mt-1 rounded-full object-cover" src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
+            </span>
+            {% else %}
             <span id="profileToggle" class="cursor-pointer profile">
               <img class="h-[2.4rem] ml-4 mt-1" src="../../static/images/headerFooter/profile.svg" alt="profile">
             </span>
-
+            {% endif %}
 
             <div id="profileDropdown"
               class="origin-top-right absolute left-[0.1111px]  mt-2 w-[6rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">

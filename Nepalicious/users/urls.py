@@ -13,6 +13,6 @@ urlpatterns = [
     path('userRequests/<int:userID>/', views.userRequests, name='userRequests'),
     path('editprofile', views.editprofile, name='editprofile'),
     path('profile', views.profile, name='profile'),
-    
+    path('changePassword', views.changePassword, name='changePassword')
 ]
 

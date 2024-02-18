@@ -58,9 +58,15 @@
           </span>
           <!-- profile -->
           <div class="relative inline-block text-left">
+            {% if request.user.is_authenticated %}
+            <span id="profileToggle" class="cursor-pointer profile">
+              <img class="h-[2.4rem] w-[2.4rem] ml-4 mt-1 rounded-full object-cover" src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
+            </span>
+            {% else %}
             <span id="profileToggle" class="cursor-pointer profile">
               <img class="h-[2.4rem] ml-4 mt-1" src="../../static/images/headerFooter/profile.svg" alt="profile">
             </span>
+            {% endif %}
 
 
             <div id="profileDropdown"
@@ -134,7 +140,7 @@
           </div>
             <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/password.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
-              <a href="#"><p class="text-l ml-5">Change Password</p> </a>
+              <a href="{% url 'changePassword' %}"><p class="text-l ml-5">Change Password</p> </a>
             </div>
 
             {% comment %} if statement for chef vendor and restaruant {% endcomment %}

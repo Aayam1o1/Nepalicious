@@ -275,10 +275,32 @@ def editprofile(request):
             msg = "Profile Updated"
             messages.success(request, 'Profile Updated')           
                
+        #  for uploading new profile picture
+        if "saveImage" in request.POST:
+            # Saving user New profile
+            user_profile = UserProfilePicture.objects.get(user=user)
+            user_profile.profileImage  = request.FILES['img']
+            user_profile.save()
+            messages.success(request, 'Profile Picture Updated')
+        
+        # for setting default profile
+        if "deleteImage" in request.POST:
+            user_profile = UserProfilePicture.objects.get(user=user)
+            user_profile.delete()
+            # Saving user default profile
+            user_default_profile_picture, created = UserProfilePicture.objects.get_or_create(user=user)
 
+            if not created:
+                user_default_profile_picture.profileImage = defaultProfilePicture()
+                user_default_profile_picture.save()
+          
+            messages.success(request, 'Profile Picture updated.')         
+                
     context = {
         
         'profile_image_url': profile_image_url, 
     }
     return render(request, 'profiles/editprofile.html', context)
 
+def changePassword(request):
+    return render(request, 'profiles/changepassword.html')
