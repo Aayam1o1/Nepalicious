@@ -84,17 +84,7 @@
             selectUserType("user", { currentTarget: listItems[0] });
             listItems[0].classList.add("active-user"); // Set the active class for the default user type
             listItems[0].style.color = "#F89500"; // Set color for the default user type
-        });
-        
-
-        function togglePasswordVisibility(inputId) {
-            var passwordInput = document.getElementById(inputId);
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-            } else {
-                passwordInput.type = "password";
-            }
-        }
+        });  
     </script>
     
     
@@ -177,17 +167,13 @@
                                 placeholder="Enter username" required/>
                         </div>
 
-                        <!--  -->
-                        
-
-                        <!--  -->
                         <div class="email flex flex-col gap-y-1">
                             <label for="email">Email</label>
                             <input type="text" id="email" name="email" class="border py-[0.4rem] rounded-md pl-2"
                                 placeholder="Enter email" required />
                         </div>
 
-                        <!--  -->
+                        <!-- password -->
                         <div class="password flex flex-col gap-y-1 relative">
                             <label for="password">Password</label>
                             <input type="password" id="password" name="password1" class="border py-[0.4rem] rounded-md pl-2"
@@ -204,7 +190,7 @@
                                 </span>
                         </div>
 
-                        <!--  -->
+                        <!-- repassword -->
                         <div class="re-enterpass flex flex-col gap-y-1 relative">
                             <label for="re-enterpass">Password</label>
                             <input type="password" id="re-enterpass" name="password2" class="border py-[0.4rem] rounded-md pl-2"

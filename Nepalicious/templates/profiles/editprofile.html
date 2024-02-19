@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chef Dashboard</title>
-
+    <!-- for changing profile picture  -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const imageInput = document.getElementById('image-input');
@@ -41,24 +41,26 @@
                 <img id="edit-image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
                     class="h-[100%] w-[100%] object-cover rounded-full" />
             </div>
+        <!-- change profile -->
             <div class="flex justify-center ">
                 <label for="image-input"
-                    class="bg-[#1F2937] cursor-pointer text-white rounded-md relative inline-flex items-center px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
+                    class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex items-center px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
                     <span>Change profile</span>
                     <input id="image-input" name="img" type="file" accept="image/png, image/jpeg" multiple
                         class="absolute block opacity-0 w-full h-full cursor-pointer" />
                 </label>
             </div>
+        <!-- save and remove button -->
             <input type="hidden" name="user" value="{{request.user}}">
             <div class="w-[380px] flex gap gap-10">
                 <div class="pt-4">
-                    <button name="saveImage" class="bg-[#1F2937] rounded-[3px] p-2 pl-5 pr-5 text-white">Save</button>
+                    <button name="saveImage" class="bg-[#FFC061] rounded-xl p-2 pl-5 pr-5 text-white">Save</button>
                 </div>
 
                 <!-- Remove button -->
                 <div class="pt-4">
                     <button name="deleteImage"
-                        class="text-[#1F2937] rounded-[3px] focus:outline-none border border-gray-400 p-2 pl-5 pr-5 ">Remove</button>
+                        class="text-white rounded-xl bg-red-800 focus:outline-none border border-gray-400 p-2 pl-5 pr-5 ">Remove</button>
                 </div>
             </div>
         </div>

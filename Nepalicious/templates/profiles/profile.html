@@ -8,6 +8,7 @@
 </head>
 
 <body class="bg-gray-300">
+    <!-- getting header -->
     {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
     <div class="flex">
         <!-- Profile pic and name -->
@@ -70,6 +71,7 @@
 
         </div>
     </div>
+    <!-- edit profile button -->
     <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl bg-[#F85858]">
         <img src="../../../static/images/profileDashboards/edit.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
         <a href="{% url 'editprofile'%}">

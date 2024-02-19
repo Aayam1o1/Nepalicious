@@ -127,7 +127,7 @@ def is_superuser(user):
 
 
 
-
+#for displaying users in admin dashboard
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
 def adminDashboard(request):
@@ -168,7 +168,7 @@ def adminDashboard(request):
     
     return render(request, 'admin/adminDashboard.html', context)
 
-
+# admin side user request handling
 def userRequests(request, userID):
     
     if request.method == 'POST':
@@ -302,5 +302,36 @@ def editprofile(request):
     }
     return render(request, 'profiles/editprofile.html', context)
 
+# for change password
 def changePassword(request):
+    if request.method == 'POST':
+        if "user" in request.POST:
+                username = request.POST.get('user')
+                user = User.objects.get(username=username)
+
+
+        if "changePassword" in request.POST:
+            current_password = request.POST.get('currentPassword')
+            new_password = request.POST.get('newpassword1')
+            confirm_new_password = request.POST.get('newpassword2')
+
+
+            if not request.user.check_password(current_password):
+                messages.error(request, 'Current password is incorrect.')
+
+
+            else:
+                # If password doesnt match display error messaage
+                if new_password != confirm_new_password:
+                    messages.error(request, 'New password and confirm password do not match.')
+
+
+                else:
+                    # Change the password
+                    request.user.set_password(new_password)
+                    request.user.save()
+                    messages.success(request, 'Password Changed')
+                    
+                    # Updating the session to prevent logout
+                    update_session_auth_hash(request, request.user)
     return render(request, 'profiles/changepassword.html')
