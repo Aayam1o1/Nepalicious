@@ -7,3 +7,5 @@ function togglePasswordVisibility(inputId) {
         passwordInput.type = "password";
     }
 }
+
+

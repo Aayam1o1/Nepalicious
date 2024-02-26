@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% extends '../navigationBar/base.html' %}
+    {% block content %}
+
+    <!-- <div class="bg-gray-200 h-[7rem] w-full">
+        <img class="w-full h-full" src="../../static/images/marketplace/banner.jpg" alt="">    
+    </div> -->
+    <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
+        <div class="w-[20%] pl-[3rem] mt-3" id="container2">
+            <div class="flex-col justify-around items-center w-[15rem]  ">
+                <div id="category" class="py-3">
+                    <div>
+                        <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
+                    </div>
+                    <div class="w-90% ml-[1rem] text-[#B6B6B6]">
+                        <tr>
+                            <td>
+                                <p class="hover:text-[#FFC061] pt-1">Spices and foods</p>
+                            <td>
+                        <tr>
+                        <tr>
+                            <td>
+                                <p class="hover:text-[#FFC061] pt-1">Pans and Pots</p>
+                            <td>
+                        <tr>
+                        <tr>
+                            <td>
+                                <p class="hover:text-[#FFC061] pt-1">Knifes</p>
+                            <td>
+                        <tr>
+                        <tr>
+                            <td>
+                                <p class="hover:text-[#FFC061] pt-1 ">Electric Appliance</p>
+                            <td>
+                        <tr>
+                        <tr>
+                            <td>
+                                <p class="hover:text-[#FFC061] pt-1">Cleaning appliance</p>
+                            <td>
+                        <tr>
+                    </div>
+                    <div>
+                        <h1 class="text-xl ml-[1rem] mt-6">Price</h1>
+                        <p>Scale</p>
+                    </div>
+                    <div>
+                        <h1 class="text-xl ml-[1rem] mt-6">Rating</h1>
+                        <p>Scale</p>
+                    </div>
+                </div>
+            </div>
+            <div class="pb-[2rem] flex justify-between mt-4 mr-10" id="rating-product price-product">
+                <button id="reset" class="bg-[#61A0FF] text-white p-2 rounded-xl h-10 w-[40rem]">Reset</button>
+                <button id="apply" class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
+            </div>
+        </div>
+
+
+        <div class="w-[100%] grid grid-cols-4 gap-3">
+            
+                <div class="w-[18rem] p-4">
+                    <div class=" w-full mb-5 bg-red-100">
+                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                    </div>
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
+                        <p class="mt-2 text-sm">Brand Name</p>
+                        <p class="mt-2 text-sm">Stock(200)</p>
+                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
+                        <div class="">
+                            <!-- Pass the plant ID to the addtocart() function -->
+                            <button onclick="addtocart('{{ plant.id }}')"
+                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
+                                to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[18rem] p-4">
+                    <div class=" w-full mb-5 bg-red-100">
+                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                    </div>
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
+                        <p class="mt-2 text-sm">Brand Name</p>
+                        <p class="mt-2 text-sm">Stock(200)</p>
+                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
+                        <div class="">
+                            <!-- Pass the plant ID to the addtocart() function -->
+                            <button onclick="addtocart('{{ plant.id }}')"
+                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
+                                to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[18rem] p-4">
+                    <div class=" w-full mb-5 bg-red-100">
+                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                    </div>
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
+                        <p class="mt-2 text-sm">Brand Name</p>
+                        <p class="mt-2 text-sm">Stock(200)</p>
+                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
+                        <div class="">
+                            <!-- Pass the plant ID to the addtocart() function -->
+                            <button onclick="addtocart('{{ plant.id }}')"
+                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
+                                to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[18rem] p-4">
+                    <div class=" w-full mb-5 bg-red-100">
+                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                    </div>
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
+                        <p class="mt-2 text-sm">Brand Name</p>
+                        <p class="mt-2 text-sm">Stock(200)</p>
+                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
+                        <div class="">
+                            <!-- Pass the plant ID to the addtocart() function -->
+                            <button onclick="addtocart('{{ plant.id }}')"
+                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
+                                to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[18rem] p-4">
+                    <div class=" w-full mb-5 bg-red-100">
+                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                    </div>
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
+                        <p class="mt-2 text-sm">Brand Name</p>
+                        <p class="mt-2 text-sm">Stock(200)</p>
+                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
+                        <div class="">
+                            <!-- Pass the plant ID to the addtocart() function -->
+                            <button onclick="addtocart('{{ plant.id }}')"
+                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
+                                to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all elements with the class 'rating-stars'
+            const starsContainers = document.querySelectorAll('.rating-stars');
+        
+            // Iterate through each stars container
+            starsContainers.forEach(starsContainer => {
+                // Create 5 stars for each container
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.classList.add(
+                        'cursor-pointer',
+                        'text-2xl',
+                        'mr-1',
+                        'pr-1',
+                        'hover:text-yellow-500',
+                        'transition',
+                        'transform',
+                        'duration-200',
+                        'ease-in-out'
+                    );
+                    star.innerHTML = '★';
+        
+                    // Attach click event to each star
+                    star.addEventListener('click', function () {
+                        const rating = i;
+                        updateRating(starsContainer, rating);
+                    });
+        
+                    starsContainer.appendChild(star);
+                }
+            });
+        
+            // Function to update rating for a specific container
+            function updateRating(container, rating) {
+                // Update UI (you can also send the rating to the server)
+                highlightStars(container, rating);
+            }
+        
+            // Function to highlight stars up to the given rating for a specific container
+            function highlightStars(container, rating) {
+                const stars = container.children;
+        
+                for (let i = 0; i < stars.length; i++) {
+                    if (i < rating) {
+                        stars[i].classList.add('text-yellow-500');
+                    } else {
+                        stars[i].classList.remove('text-yellow-500');
+                    }
+                }
+            }
+        });
+        
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>
