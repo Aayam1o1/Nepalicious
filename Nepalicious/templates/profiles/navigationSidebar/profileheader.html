@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -92,7 +93,7 @@
 
                 {% endif %}
 
-                {% if request.user.is_authenticated and request.user.group == "vendor" %}
+                {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
                 <a href="{% url 'recipe' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">sure</a>
                 {% endif %}
               
@@ -144,13 +145,24 @@
               <a href="{% url 'changePassword' %}"><p class="text-l ml-5">Change Password</p> </a>
             </div>
 
-            {% comment %} if statement for chef vendor and restaruant {% endcomment %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'addRecipe' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/recipe.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Add Product</p>
+            </div>
+            </a>
+            {% endif %}
+
+            {% if request.user.is_authenticated and  request.user|has_group:"chef" %}
             <a href="{% url 'addRecipe' %}"> 
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/recipe.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
               <p class="text-l ml-5">Add Recipe</p>
             </div>
             </a>
+            {% endif %}
+
             <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/edit.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
               <a href="#"><p class="text-l ml-5">Edit Recipe</p> </a>

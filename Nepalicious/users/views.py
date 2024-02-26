@@ -77,6 +77,11 @@ def registerUser(request):
                 userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'),requestedGroup = userRequestedGroup)
                 userDetails.save()
                 
+                if not userRequestedGroup or userRequestedGroup== "User":
+                    group, create = Group.objects.get_or_create(name = 'user')
+                    user.groups.add(group)
+                
+                
                  #Creating an instance and saving it to the database is necessary
                 # to persist the user's profile picture information. In the first case, we save the user's uploaded picture,
                 # and in the second case, we save a default picture or an empty picture, 
@@ -95,13 +100,15 @@ def registerUser(request):
                     profilePictureInstance = UserProfilePicture(user=user)
                     profilePictureInstance.save()
                 if request.FILES:
-                    print("Xa rw?")
-                    images=request.FILES.getlist('documentImage')
+                    if not userRequestedGroup or userRequestedGroup == "User":
+                        pass
+                    else:
+                        images=request.FILES.getlist('documentImage')
 
-                    for img in images:
-                        documentImg = userDocument(user=user, documentImage=img)
-                        documentImg.save()
-                    messages.success(request,"Account Created for " + username + " Please wait before we verify.")
+                        for img in images:
+                            documentImg = userDocument(user=user, documentImage=img)
+                            documentImg.save()
+                        messages.success(request,"Account Created for " + username + " Please wait before we verify.")
                     
                 else:
                     group, create = Group.objects.get_or_create(name = 'user')
@@ -132,6 +139,26 @@ def is_superuser(user):
 @user_passes_test(is_superuser)
 def adminDashboard(request):
     
+    if request.method == 'POST':
+        print("CLICKED")
+        if "deleteUser" in request.POST:
+            username = request.POST.get('username')
+            user = User.objects.get(User, username=username)
+            
+            print(username)
+            print(user, "USER IT is")
+            
+            # DELETE THE USER 
+            user.delete()
+            
+            messages.error(request, 'User Deleted')
+            
+            return redirect('adminHome')
+
+    
+    
+    
+    
     # IF  APPROVED
     if request.method == 'POST' and 'approve' in request.POST:
         if 'group' in request.POST:
@@ -149,7 +176,11 @@ def adminDashboard(request):
     
     
     
-    requestedUserType = usersDetail.objects.all()
+    requestedUserType = usersDetail.objects.all() 
+    
+    allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', 'restaurant'])
+    
+    
     
     totalChef = User.objects.filter(groups__name='chef').exclude(is_superuser=True).count()
     totalRestaurant = User.objects.filter(groups__name='restaurant').exclude(is_superuser=True).count()
@@ -162,7 +193,8 @@ def adminDashboard(request):
         'totalChef' : totalChef,
         'totalRestaurant' : totalRestaurant,
         'totalVendor' : totalVendor,
-        'requestedRestaurant' : requestedRestaurant
+        'requestedRestaurant' : requestedRestaurant,
+        'allApprovedUsers': allApprovedUsers,
         
     }
     

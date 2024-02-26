@@ -30,6 +30,12 @@
 
         </div>
         <br><br>
+
+        {% if  allApprovedUsers %}
+        
+        {% endif %}
+
+
         <form action="" method="post" class="ml-auto">
             {% csrf_token %}
             <input type="hidden" name="user" value="{{ userData.username }}">
