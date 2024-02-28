@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product</title>
 
-  
-    
-    
+
+
+
 </head>
 
 <body class="bg-gray-100">
@@ -21,6 +21,20 @@
             <div class="shadow-sm bg-white p-2 flex justify-between rounded-xl">
                 <div class="p-4">
                     <h1 class="text-3xl font-semibold">Add Product</h1>
+
+                    <!-- for dispalying errors -->
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Error!</strong> Please correct the following errors:
+                        <ul>
+                            {% for error in form.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}   
+
+
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
                     <button type="button" class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
@@ -44,22 +58,30 @@
                     <div class="flex justify-between">
                         <div class="p-5">
                             <h1 class="text-2xl mb-5 font-bold">General Infromation</h1>
+                            
                             <Label class="text-xl">Product Name</Label><br>
-                            <input type="text" placeholder="Product Name" name="productName"
-                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"><br>
+                            <!-- <input type="text" placeholder="Product Name" name="productName"
+                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100">-->
+                            {{ form.productName }}<br>
+
+
                             <Label class="text-xl">Product Brand</Label><br>
-                            <input type="text" placeholder="Product Brand" name="producBrand"
-                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"><br>
+                            <!-- <input type="text" placeholder="Product Brand" name="producBrand"
+                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
+                                {{ form.productBrand }}<br>
+
+
                             <Label class="text-xl">Product Description</Label><br>
-                            <textarea class="border-2 border-gray-400 rounded-xl p-1 mt-2 w-[25rem] bg-gray-100"
-                                name="productDescription" rows="5" cols="20"></textarea>
+                            <!-- <textarea class="border-2 border-gray-400 rounded-xl p-1 mt-2 w-[25rem] bg-gray-100"
+                                name="productDescription" rows="5" cols="20"></textarea> -->
+                                {{ form.productDescription }}
                         </div>
                     </div>
                 </div>
 
                 <div>
                     <!-- add image of product -->
-                    <div class="shadow-sm bg-white rounded-xl h-[64.5vh]">
+                    <div class="shadow-sm bg-white rounded-xl h-[64vh]">
                         <h1 class="text-2xl mb-5 font-bold p-4">Add Product Photo</h1>
                         <div class="grid grid-cols-3 gap-3  mt-[3rem]">
                             <div class="w-[11rem] h-[11rem] rounded-xl">
@@ -97,8 +119,9 @@
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Price</h1>
                                 <Label class="text-xl">Product Price</Label><br>
-                                <input type="text" placeholder="Product Price" name="productPrice"
-                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"><br>
+                                <!-- <input type="text" placeholder="Product Price" name="productPrice"
+                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
+                                    {{ form.productPrice }}<br>
                             </div>
                         </div>
                     </div>
@@ -112,106 +135,49 @@
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Stock</h1>
                                 <Label class="text-xl">Product Stock</Label><br>
-                                <input type="text" placeholder="Product Stock" name="productStock"
-                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"><br>
+                                <!-- <input type="text" placeholder="Product Stock" name="productStock"
+                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
+                                    {{ form.productStock }}<br>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- add categories of product -->
-                <div class="shadow-sm bg-white rounded-xl w-[45.2%] p-4 h-auto mt-4">
+                <div class="shadow-sm bg-white rounded-xl w-[45.2%] p-4 h-auto pl-[2rem]">
                     <h2 class="text-2xl font-bold mb-4">Categories</h2>
-
+                    
                     <div class="relative inline-block text-gray-700">
 
-                        <label for="categories" class="text-xl">Product Category</label><br>
-
-                        <!-- radio button dropdown -->
-                        <button id="categoryDropdownToggle" type="button"
-                            class="border-2 border-solid rounded-xl p-1 h-10 w-[20rem] mt-2 text-left bg-gray-100 border-2 border-gray-400 overflow-hidden">
-                            Select Category
-                        </button>
-                        <div id="categoryDropdownContent"
-                            class="hidden absolute z-10 bg-white border border-gray-300 mt-2 py-2 px-4 rounded w-full">
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="category" value="option1" class="form-radio mr-2">
-                                option1
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="category" value="option1" class="form-radio mr-2">
-                                option1 
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="category" value="option3" class="form-radio mr-2">
-                                option3
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="category" value="option4" class="form-radio mr-2">
-                                option4                            
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="category" value="option5" class="form-radio mr-2">
-                                option5                           
-                             </label>
-                        </div>
+                        <label for="categories" class="text-xl ">Product Category</label><br><br>
+                        {{ form.productCategory }}
+                        
                     </div>
                     
 
-                    <!-- for product tags -->
-                    <div class="relative inline-block text-gray-700 mt-[1rem]">
-                        <label for="tags" class="text-xl">Product tags</label><br>
-                        <!-- radio button dropdown -->
-                        <button id="tagDropdownToggle" type="button"
-                            class="border-2 border-solid rounded-xl p-1 h-10 w-[20rem] mt-2 text-left bg-gray-100 border-2 border-gray-400 overflow-hidden">
-                            Select tags
-                        </button>
-                        <div id="tagDropdownContent"
-                            class="hidden absolute z-10 bg-white border border-gray-300 mt-2 py-2 px-4 rounded w-full">
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="tag" value="tag1" class="form-radio mr-2">
-                                tag1
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="tag" value="tag2" class="form-radio mr-2">
-                                tag2
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="tag" value="tag3" class="form-radio mr-2">
-                                tag3
-                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="tag" value="tag4" class="form-radio mr-2">
-                                tag4                            </label>
-                            <label class="block cursor-pointer">
-                                <input type="checkbox" name="tag" value="tag5" class="form-radio mr-2">
-                                tag5                            </label>
-                        </div>
-                    </div>
 
-            
-                </div>  
+                    <br>
+                </div>
 
-                
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         var categoryDropdownToggle = document.getElementById('categoryDropdownToggle');
                         var categoryDropdownContent = document.getElementById('categoryDropdownContent');
                         var tagDropdownToggle = document.getElementById('tagDropdownToggle');
                         var tagDropdownContent = document.getElementById('tagDropdownContent');
-                
+
                         var checkboxes = document.querySelectorAll('input[name="category"]');
                         var tagCheckboxes = document.querySelectorAll('input[name="tag"]'); // Change name to "tag"
-                
+
                         categoryDropdownToggle.addEventListener('click', function () {
                             categoryDropdownContent.classList.toggle('hidden');
                         });
-                
+
                         tagDropdownToggle.addEventListener('click', function () {
                             tagDropdownContent.classList.toggle('hidden');
                         });
-                
+
                         // Add event listener to update the selected category
                         checkboxes.forEach(function (checkbox) {
                             checkbox.addEventListener('change', function () {
@@ -219,12 +185,12 @@
                                 var selectedCategories = Array.from(checkboxes)
                                     .filter(checkbox => checkbox.checked)
                                     .map(checkbox => checkbox.value);
-                
+
                                 // Update button text with selected categories
                                 categoryDropdownToggle.textContent = selectedCategories.join(', ');
                             });
                         });
-                
+
                         // Add event listener to update the selected tags
                         tagCheckboxes.forEach(function (checkbox) {
                             checkbox.addEventListener('change', function () {
@@ -232,22 +198,22 @@
                                 var selectedTags = Array.from(tagCheckboxes)
                                     .filter(checkbox => checkbox.checked)
                                     .map(checkbox => checkbox.value);
-                
+
                                 // Update button text with selected tags
                                 tagDropdownToggle.textContent = selectedTags.join(', ');
                             });
                         });
-                
+
                         // Close dropdowns when clicking outside
                         document.addEventListener('click', function (event) {
                             var isClickInsideCategory = categoryDropdownToggle.contains(event.target) ||
-                                                        categoryDropdownContent.contains(event.target);
+                                categoryDropdownContent.contains(event.target);
                             if (!isClickInsideCategory) {
                                 categoryDropdownContent.classList.add('hidden');
                             }
-                
+
                             var isClickInsideTag = tagDropdownToggle.contains(event.target) ||
-                                                   tagDropdownContent.contains(event.target);
+                                tagDropdownContent.contains(event.target);
                             if (!isClickInsideTag) {
                                 tagDropdownContent.classList.add('hidden');
                             }
@@ -258,9 +224,9 @@
             </div>
         </form>
     </div>
-    
+
     {% endblock %}
-    
+
 </body>
 
 </html>

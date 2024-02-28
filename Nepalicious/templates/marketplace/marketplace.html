@@ -66,17 +66,17 @@
 
 
         <div class="w-[100%] grid grid-cols-4 gap-3">
-            
+            {% for product in productList %}
                 <div class="w-[18rem] p-4">
                     <div class=" w-full mb-5 bg-red-100">
-                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
+                        <img src="{{ product.productImage.url }}" alt=""
                             class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
                     </div>
                     <div class="">
-                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
-                        <p class="mt-2 text-sm">Brand Name</p>
-                        <p class="mt-2 text-sm">Stock(200)</p>
-                        <p class="mt-2 text-sm">Rs 1000</p>
+                        <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
+                        <p class="mt-2 text-sm">{{ product.productBrand }}</p>
+                        <p class="mt-2 text-sm">Stock ({{ product.productStock }})</p>
+                        <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
                         <p class="rating-stars" class="">
                             <!-- Stars will be dynamically added here -->
 
@@ -91,102 +91,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-[18rem] p-4">
-                    <div class=" w-full mb-5 bg-red-100">
-                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
-                    </div>
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
-                        <p class="mt-2 text-sm">Brand Name</p>
-                        <p class="mt-2 text-sm">Stock(200)</p>
-                        <p class="mt-2 text-sm">Rs 1000</p>
-                        <p class="rating-stars" class="">
-                            <!-- Stars will be dynamically added here -->
-
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
-                        <div class="">
-                            <!-- Pass the plant ID to the addtocart() function -->
-                            <button onclick="addtocart('{{ plant.id }}')"
-                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
-                                to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-[18rem] p-4">
-                    <div class=" w-full mb-5 bg-red-100">
-                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
-                    </div>
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
-                        <p class="mt-2 text-sm">Brand Name</p>
-                        <p class="mt-2 text-sm">Stock(200)</p>
-                        <p class="mt-2 text-sm">Rs 1000</p>
-                        <p class="rating-stars" class="">
-                            <!-- Stars will be dynamically added here -->
-
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
-                        <div class="">
-                            <!-- Pass the plant ID to the addtocart() function -->
-                            <button onclick="addtocart('{{ plant.id }}')"
-                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
-                                to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-[18rem] p-4">
-                    <div class=" w-full mb-5 bg-red-100">
-                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
-                    </div>
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
-                        <p class="mt-2 text-sm">Brand Name</p>
-                        <p class="mt-2 text-sm">Stock(200)</p>
-                        <p class="mt-2 text-sm">Rs 1000</p>
-                        <p class="rating-stars" class="">
-                            <!-- Stars will be dynamically added here -->
-
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
-                        <div class="">
-                            <!-- Pass the plant ID to the addtocart() function -->
-                            <button onclick="addtocart('{{ plant.id }}')"
-                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
-                                to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-[18rem] p-4">
-                    <div class=" w-full mb-5 bg-red-100">
-                        <img src="../../static/images/marketplace/kettle.jpg" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
-                    </div>
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">Product Name</h1>
-                        <p class="mt-2 text-sm">Brand Name</p>
-                        <p class="mt-2 text-sm">Stock(200)</p>
-                        <p class="mt-2 text-sm">Rs 1000</p>
-                        <p class="rating-stars" class="">
-                            <!-- Stars will be dynamically added here -->
-
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-                        <p class="mt-2 text-sm text-gray-300">{{ plant.description|truncatewords:20 }}</p>
-                        <div class="">
-                            <!-- Pass the plant ID to the addtocart() function -->
-                            <button onclick="addtocart('{{ plant.id }}')"
-                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
-                                to Cart</button>
-                        </div>
-                    </div>
-                </div>
+            {% endfor %}  
             
         </div>
     </div>
