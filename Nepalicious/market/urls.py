@@ -7,4 +7,5 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     # For marketplace
     path('marketplace', views.marketplace, name='marketplace'),
+    path('addProduct', views.addProduct, name='addProduct'),
 ]

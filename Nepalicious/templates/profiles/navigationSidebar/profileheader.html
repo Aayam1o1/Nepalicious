@@ -10,6 +10,22 @@
   
 </head> 
 {% comment %} for profile dropdown js {% endcomment %}
+
+<!-- <style>
+  .changed-details {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent; /* for Firefox */
+}
+
+.changed-details::-webkit-scrollbar {
+    width: 8px; /* adjust the width as needed */
+}
+
+.changed-details::-webkit-scrollbar-thumb {
+    background-color: transparent;
+} -->
+
+<!-- </style> -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('profileToggle').addEventListener('click', function () {
@@ -27,7 +43,7 @@
       });
     });
   </script>
-<body> 
+<body class="h-full"> 
   <!-- import header -->
   <div class="bg-white w-full pb-3 mb-1">
     <!-- import header here -->
@@ -120,9 +136,9 @@
   </div>
 
   {% comment %} sidebar start {% endcomment %}
-  <div class="flex h-screen">
-    <div class="sidebar h-full ">
-      <div class="wrapper w-[17rem] mt-4 h-full pt-5 shadow-md bg-white">
+  <div class="flex h-screen ">
+    <div class="sidebar h-full">
+      <div class="wrapper w-[17rem] mt-4 h-full pt-5 rounded-xl bg-white">
         <div>
           <div class="h-[8rem] mt-[1rem]">
             <div class="border border-[#B6B6B6] rounded-full h-[5rem] w-[5rem] ml-[6rem]"
@@ -146,9 +162,9 @@
             </div>
 
             {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
-            <a href="{% url 'addRecipe' %}"> 
+            <a href="{% url 'addProduct' %}"> 
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
-              <img src="../../../static/images/profileDashboards/recipe.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
               <p class="text-l ml-5">Add Product</p>
             </div>
             </a>
@@ -162,15 +178,15 @@
             </div>
             </a>
             {% endif %}
-
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
             <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/edit.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
-              <a href="#"><p class="text-l ml-5">Edit Recipe</p> </a>
+              <a href="#"><p class="text-l ml-5">Your Products</p> </a>
             </div>
-            
+            {% endif %}
           </div>
         </div>
       </div>
     </div>
-    <div class="changed-details ml-4 w-full mt-4 h-full shadow-md bg-white">
+    <div class="changed-details ml-4 w-full h-screen mt-4 rounded-xl bg-white overflow-y-scroll">
      
