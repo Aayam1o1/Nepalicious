@@ -40,6 +40,7 @@
             <img class="h-[2.8rem]" src="../../static/images/headerFooter/cart.svg" alt="">
           </span>
           <!-- profile -->
+          {% comment %} loop for authincated and unathenticated users {% endcomment %}
           <div class="relative inline-block text-left">
             {% if request.user.is_authenticated %}
             <span id="profileToggle" class="cursor-pointer profile">
@@ -98,7 +99,7 @@
       </div>
     </header>
   </div>
-
+{% comment %} toggle script {% endcomment %}
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('profileToggle').addEventListener('click', function () {

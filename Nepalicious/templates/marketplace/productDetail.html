@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .comment-user {
+            font-family: 'Libre Franklin', sans-serif;
+            /* Add additional styles as needed */
+        }
+    </style>
+</head>
+
+<body>
+    {% extends '../navigationBar/base.html' %}
+    {% block content %}
+    <div class="container my-[5rem]">
+        <div class="product-description flex h-[57vh] w-full justify-around">
+            <!-- img -->
+            <div class="h-full w-[50%] bg-blue-100 ml-[7rem] rounded-xl">
+                <img src="../../static/images/marketplace/kettle.jpg" class="h-full w-full object-fit rounded-xl"
+                    alt="">
+            </div>
+            <!-- product Details -->
+            <div class="w-[50%] mr-10 pl-[4rem]">
+                <div class="px-4">
+                    <h1 class="text-4xl text-[#F89500] font-semibold">Product Name - Brand</h1>
+                    <div class="flex mt-3">
+                        <div>
+                            <p class="text-xl mt-1 mr-4 text-[#BE485D]">Rs 1000</p>
+                        </div>
+                        <div>
+                            <p class="rating-stars" class="">
+                                <!-- Stars will be dynamically added here -->
+                            </p>
+                        </div>
+                        <div class="mt-1 ml-4">
+                            <p class="italic">17 reviews</p>
+                        </div>
+                    </div>
+                    <hr class="mt-7 border-1">
+
+                    <!-- description -->
+                    <div class="mt-5 w-[30rem]">
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum est minus sit vitae nesciunt
+                            modi qui nostrum optio pariatur voluptas saepe, voluptatem quibusdam facere? Deserunt iste
+                            sunt eaque possimus excepturi! Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                            Esse dolor illum, commodi culpa laudantium incidunt itaque quasi, quidem quaerat natus
+                            laboriosam maxime quo voluptas odit aut, accusamus iusto. Iure, porro.</p>
+                    </div>
+
+                    <!-- button -->
+                    <div class="mt-5">
+                        <button type="button" class=" rounded-l w-[10rem] h-10 bg-[#FFC061]">
+                            <span class="text-white">Add To Cart</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container-2 mt-[5rem] w-full">
+
+            <!-- for commment -->
+            <div class="commnet-container flex h-[60vh] justify-around">
+                <div class="w-[60%] ml-[7rem]">
+                    <div>
+                        <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
+                    </div>
+                    <div class="my-[3rem]">
+                        <button type="button" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5">
+                            <span class="text-white">Give Feedback</span>
+                        </button>
+                    </div>
+                    <div class="bg-blue-50  w-[80%] p-4 ml-4 rounded-xl">
+                        <!-- comment section -->
+                        <div class="comment-user flex">
+                            <div>
+                                <span>
+                                    <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                        src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
+                                </span>
+                            </div>
+                            <div class="mt-[1rem] ml-4 text-l font-meduium" >
+                                Username
+                            </div>
+                        </div>
+                        <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe et quae quo beatae libero
+                            nemo deleniti voluptas voluptates quia? Quo deserunt iste natus quasi, dolore minima
+                            eligendi nihil itaque eum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, dignissimos sequi voluptates omnis dicta totam aut nemo, odio cupiditate labore vel quo error. Culpa beatae quae natus iste? Iure, accusantium.
+                        </div>
+                    </div>
+                </div>
+                <!-- recommend other products -->
+                <div class="bg-blue-100 w-[40%]">
+                    other products
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all elements with the class 'rating-stars'
+            const starsContainers = document.querySelectorAll('.rating-stars');
+
+            // Iterate through each stars container
+            starsContainers.forEach(starsContainer => {
+                // Create 5 stars for each container
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.classList.add(
+                        'cursor-pointer',
+                        'text-2xl',
+                        'mr-1',
+                        'pr-1',
+                        'hover:text-yellow-500',
+                        'transition',
+                        'transform',
+                        'duration-200',
+                        'ease-in-out'
+                    );
+                    star.innerHTML = '★';
+
+                    // Attach click event to each star
+                    star.addEventListener('click', function () {
+                        const rating = i;
+                        updateRating(starsContainer, rating);
+                    });
+
+                    starsContainer.appendChild(star);
+                }
+            });
+
+            // Function to update rating for a specific container
+            function updateRating(container, rating) {
+                // Update UI (you can also send the rating to the server)
+                highlightStars(container, rating);
+            }
+
+            // Function to highlight stars up to the given rating for a specific container
+            function highlightStars(container, rating) {
+                const stars = container.children;
+
+                for (let i = 0; i < stars.length; i++) {
+                    if (i < rating) {
+                        stars[i].classList.add('text-yellow-500');
+                    } else {
+                        stars[i].classList.remove('text-yellow-500');
+                    }
+                }
+            }
+        });
+
+    </script>
+    {% endblock %}
+</body>
+
+</html>

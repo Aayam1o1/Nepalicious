@@ -15,6 +15,7 @@
     {% extends '../profiles/navigationSidebar/profilebase.html' %}
     {% block content %}
     <div class="container bg-gray-100 ">
+        {% comment %} formstart {% endcomment %}
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- buttons -->
@@ -93,7 +94,6 @@
                         
                     </div> <!--HERE IMAGE WILL BE DISPLAYED-->
 
-                
                         <!-- <div class="grid grid-cols-3 gap-3  mt-[3rem]">
                             <div class="w-[11rem] h-[11rem] rounded-xl">
                                 <img src="../../static/images/marketplace/pestlemortar.avif"

@@ -58,3 +58,14 @@ def addProduct(request):
     }
             
     return render(request, 'marketplace/addProduct.html', context)
+
+def productDetail(request):
+    
+    productList = addProducts.objects.all()
+    
+    context = {
+        'productList': productList,
+        
+    }
+    
+    return render(request, 'marketplace/productDetail.html', context)

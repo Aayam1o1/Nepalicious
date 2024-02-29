@@ -16,6 +16,8 @@
     <!-- <div class="bg-gray-200 h-[7rem] w-full">
         <img class="w-full h-full" src="../../static/images/marketplace/banner.jpg" alt="">    
     </div> -->
+
+    <!-- filter -->
     <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
         <div class="w-[20%] pl-[3rem] mt-3" id="container2">
             <div class="flex-col justify-around items-center w-[15rem]  ">
@@ -66,16 +68,10 @@
             </div>
         </div>
 
-
+        <!-- display products -->
         <div class="w-[100%] grid grid-cols-4 gap-3">
             {% for product in productList %}
                 <div class="w-[18rem] p-4">    
-                    <!-- <div class=" w-full mb-5 bg-red-100 "  id="image-slider">
-                        {% for image in product.images.all %}
-                        <img src="{{ image.image.url }}" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " />
-                        {% endfor %}
-                    </div> -->
 
                     <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
@@ -92,10 +88,8 @@
                         
                     </div>
                       
-                
 
-                 
-
+                    <!-- display other data -->
                     <div class="">
                         <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
                         <p class="mt-2 text-sm">{{ product.productBrand }}</p>
@@ -120,7 +114,7 @@
             
         </div>
     </div>
-  
+    <!-- for stars script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Select all elements with the class 'rating-stars'
