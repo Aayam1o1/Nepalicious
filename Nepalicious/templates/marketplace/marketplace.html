@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
 </head>
 
 <body>
@@ -67,11 +69,33 @@
 
         <div class="w-[100%] grid grid-cols-4 gap-3">
             {% for product in productList %}
-                <div class="w-[18rem] p-4">
-                    <div class=" w-full mb-5 bg-red-100">
-                        <img src="{{ product.productImage.url }}" alt=""
-                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover" />
+                <div class="w-[18rem] p-4">    
+                    <!-- <div class=" w-full mb-5 bg-red-100 "  id="image-slider">
+                        {% for image in product.images.all %}
+                        <img src="{{ image.image.url }}" alt=""
+                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " />
+                        {% endfor %}
+                    </div> -->
+
+                    <!-- displaying product picture -->
+                    <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+                        
+                        <div class="relative h-56 overflow-hidden rounded-lg">
+                            {% for image in product.images.all %}
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <img src="{{ image.image.url }}" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " />
+                               </div>
+                            {% endfor %}
+                        </div>
+                        
                     </div>
+                      
+                
+
+                 
+
                     <div class="">
                         <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
                         <p class="mt-2 text-sm">{{ product.productBrand }}</p>
@@ -91,10 +115,12 @@
                         </div>
                     </div>
                 </div>
+                
             {% endfor %}  
             
         </div>
     </div>
+  
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Select all elements with the class 'rating-stars'

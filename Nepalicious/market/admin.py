@@ -4,4 +4,5 @@ from django.contrib import admin
 from market.models import *
 
 # Register your models here.
-admin.site.register(addProducts)
+admin.site.register(addProducts),
+admin.site.register(productImage)

@@ -1,17 +1,7 @@
-from django.forms import ModelForm, ChoiceField, Select
+from django.forms import ModelForm, ChoiceField, Select, MultipleChoiceField
 from django.contrib.auth.forms import User
 from django import forms
 from .models import *
-
-
-# class addProductForm(ModelForm):
-#     class Meta:
-#         model = addProducts
-#         fields = '__all__'
-#         widgets ={
-#             'productName': forms.TextInput(attrs={'placeholder': 'Product Name', 'class': 'border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100 '}),
-
-#              }
 
 
 
@@ -47,12 +37,12 @@ class addProductForm(ModelForm):
         required=True
     )
     
-    productImage = forms.ImageField(
-        label='Product Image',
-        required=False,
-        widget=forms.FileInput(attrs={'class': 'w-[11rem] h-[11rem] rounded-xl', 'type': 'file', 'name': 'productImage'})
-    )
+    # productImage = forms.ImageField(
+    #     label='Product Image',
+    #     required=False,
+    #     widget=forms.FileInput(attrs={'class': 'w-[11rem] h-[11rem] rounded-xl', 'type': 'file', 'name': 'productImage'})
+    # )
     
     class Meta:
         model = addProducts
-        fields = ['productName', 'productBrand', 'productPrice', 'productDescription', 'productStock', 'productCategory', 'productImage']
+        fields = ['productName', 'productBrand', 'productPrice', 'productDescription', 'productStock', 'productCategory']

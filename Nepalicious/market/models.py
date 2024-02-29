@@ -21,11 +21,15 @@ class addProducts(models.Model):
     productDescription = models.TextField()
     productCategory = models.CharField(max_length=100, choices=productCategoryChoice)
 
-    productImage = models.ImageField(upload_to = "images/marketplace/productImage/")    
     productPrice = models.DecimalField(max_digits=10, decimal_places=2)
     productStock = models.IntegerField()
-    productImage = models.ImageField(upload_to = "images/marketplace/productImage/", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.productName
+    
+    
+class productImage(models.Model):
+    addProducts = models.ForeignKey(addProducts, related_name ='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/marketplace/productImage/')
+    

@@ -6,8 +6,10 @@ from django.contrib import messages
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.all()
+    
     context = {
-        'productList': productList
+        'productList': productList,
+        
     }
     
     return render(request, 'marketplace/marketplace.html', context)
@@ -28,9 +30,16 @@ def addProduct(request):
             
             # Set the selected category for the product
             instance.productCategory = selected_category_name
+            
 
             instance.save()
             
+            # Step 2: Image handle
+            # Handle product images
+            product_image = request.FILES.getlist('productImage')
+            for image in product_image:
+                productImage.objects.create(addProducts=instance, image=image)
+                
             messages.success(request, "Sucessfully added product")
             
             # Redirect to a page or route after successfully adding a product
@@ -38,8 +47,14 @@ def addProduct(request):
         else:
             print("please")
             print(form.errors)
-            
+        
     else:
         form = addProductForm()
+        
+        
+    context = {
+        
+        'form' : form,
+    }
             
-    return render(request, 'marketplace/addProduct.html', {'form': form})
+    return render(request, 'marketplace/addProduct.html', context)
