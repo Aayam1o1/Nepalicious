@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
@@ -59,13 +59,24 @@ def addProduct(request):
             
     return render(request, 'marketplace/addProduct.html', context)
 
-def productDetail(request):
+def productDetail(request, product_id):
     
     productList = addProducts.objects.all()
     
+    # to get the details of the product
+    productDetail = get_object_or_404(addProducts, id=product_id)
+    
+    
+    #to get the image of the product
+    productdetailForImage = get_object_or_404(addProducts, id=product_id)
+
+    product_image = productImage.objects.filter(addProducts = productdetailForImage)
+    
     context = {
         'productList': productList,
-        
+        'productdetailForImage' : productdetailForImage,
+        'product_image' : product_image,
+        'productDetail': productDetail,
     }
     
     return render(request, 'marketplace/productDetail.html', context)

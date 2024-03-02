@@ -8,5 +8,5 @@ urlpatterns = [
     # For marketplace
     path('marketplace', views.marketplace, name='marketplace'),
     path('addProduct', views.addProduct, name='addProduct'),
-    path('productDetail', views.productDetail, name='productDetail'),
+    path('productDetail/<int:product_id>', views.productDetail, name='productDetail'),
 ]

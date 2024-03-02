@@ -80,8 +80,8 @@
                         <div class="relative h-56 overflow-hidden rounded-lg">
                             {% for image in product.images.all %}
                                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <img src="{{ image.image.url }}" alt=""
-                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " />
+                                    <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
                                </div>
                             {% endfor %}
                         </div>

@@ -10,26 +10,52 @@
             font-family: 'Libre Franklin', sans-serif;
             /* Add additional styles as needed */
         }
+
+        #gallery {
+            scroll-snap-type: x mandatory;
+        }
+
+        #gallery>div {
+            scroll-snap-align: start;
+        }
+
+        #gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
 </head>
 
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
     <div class="container my-[5rem]">
-        <div class="product-description flex h-[57vh] w-full justify-around">
-            <!-- img -->
-            <div class="h-full w-[50%] bg-blue-100 ml-[7rem] rounded-xl">
-                <img src="../../static/images/marketplace/kettle.jpg" class="h-full w-full object-fit rounded-xl"
-                    alt="">
+
+        <div class="product-description flex h-[60vh] w-full justify-around">
+        
+            <!-- displaying product picture -->
+            <div id="gallery" class="relative w-[50%] ml-[8rem] bg-red-100 overflow-hidden" data-carousel="slide">
+                <!-- Carousel wrapper -->
+                <div class="relative h-full w-[50%] overflow-hidden rounded-lg"></div>
+                    {% for image in product_image %}
+                    <div class="hidden duration-700 ease-in-out w-full" data-carousel-item>
+                        <img src="{{ image.image.url }}" alt="product"
+                            class="rounded-md md:aspect-auto w-full rounded-lg object-fit " />
+                    </div>
+                    {% endfor %}
             </div>
+
+            
             <!-- product Details -->
-            <div class="w-[50%] mr-10 pl-[4rem]">
+            <div class="w-[50%] mr-10 pl-[3rem]">
                 <div class="px-4">
-                    <h1 class="text-4xl text-[#F89500] font-semibold">Product Name - Brand</h1>
+                    <h1 class="text-4xl text-[#F89500] font-semibold">{{ productDetail.productName }} - {{ productDetail.productBrand }}</h1>
                     <div class="flex mt-3">
                         <div>
-                            <p class="text-xl mt-1 mr-4 text-[#BE485D]">Rs 1000</p>
+                            <p class="text-xl mt-1 mr-4 text-[#BE485D]">Rs {{ productDetail.productPrice }}</p>
                         </div>
                         <div>
                             <p class="rating-stars" class="">
@@ -40,15 +66,14 @@
                             <p class="italic">17 reviews</p>
                         </div>
                     </div>
-                    <hr class="mt-7 border-1">
+                    <div>
+                        <p class="mt-3 text-l text-[#BE485D]">Stock ({{ productDetail.productStock }})</p>
+                    </div>
+                    <hr class="mt-4 border-1">
 
                     <!-- description -->
                     <div class="mt-5 w-[30rem]">
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum est minus sit vitae nesciunt
-                            modi qui nostrum optio pariatur voluptas saepe, voluptatem quibusdam facere? Deserunt iste
-                            sunt eaque possimus excepturi! Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Esse dolor illum, commodi culpa laudantium incidunt itaque quasi, quidem quaerat natus
-                            laboriosam maxime quo voluptas odit aut, accusamus iusto. Iure, porro.</p>
+                        <p>{{ productDetail.productDescription }}</p>
                     </div>
 
                     <!-- button -->
@@ -60,6 +85,7 @@
                 </div>
 
             </div>
+        
         </div>
 
 
@@ -85,14 +111,17 @@
                                         src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
                                 </span>
                             </div>
-                            <div class="mt-[1rem] ml-4 text-l font-meduium" >
+                            <div class="mt-[1rem] ml-4 text-l font-meduium">
                                 Username
                             </div>
                         </div>
                         <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe et quae quo beatae libero
                             nemo deleniti voluptas voluptates quia? Quo deserunt iste natus quasi, dolore minima
-                            eligendi nihil itaque eum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, dignissimos sequi voluptates omnis dicta totam aut nemo, odio cupiditate labore vel quo error. Culpa beatae quae natus iste? Iure, accusantium.
+                            eligendi nihil itaque eum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione,
+                            dignissimos sequi voluptates omnis dicta totam aut nemo, odio cupiditate labore vel quo
+                            error.
+                            Culpa beatae quae natus iste? Iure, accusantium.
                         </div>
                     </div>
                 </div>
