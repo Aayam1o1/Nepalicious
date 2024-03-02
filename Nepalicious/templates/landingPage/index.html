@@ -19,11 +19,13 @@
                 <br>
                 <h1 class="text-5xl font-bold">Your Inner Chef</h1>
                 
-                <p class="mt-5 ml-2 ">Discover different recipes. Help you to find the easiest way to cook</p>
+                <p class="mt-5 ml-2 ">Discover different <span class="text-[#F89500]"> recipes</span>. Help you to find the easiest way to cook</p>
                 <div class="mt-[2rem]">
-                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
+                    <a href="{% url 'recipe' %}">
+                        <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
                         Explore recipes
-                    </button>
+                        </button>
+                    </a>
                 </div>
             </div>
             <div class="ml-[6rem] mb-[4rem]">
@@ -42,15 +44,17 @@
         <div class="mt-8 ml-[9rem] flex justify-around items-center w-[80%] ">
             <div class="w-[20rem] text-center ">
                 <img src="../../static/images/homepage/chefkiss.svg" alt="" class="ml-[1rem] mb-[3rem]">
-                <p class="">Unbeatable quality We source directly from top-rated growers, so we can sell the finest quality plants at the very best prices.</p>
+                <p class="">Unbeatable quality We source directly from top-rated chefs, so we can provide the finest quality recipes.</p>
             </div>
             <div class="w-[20rem] text-center ml-[2rem]">
                 <img src="../../static/images/homepage/rice.svg" alt="" class="ml-[1rem]">
-                <p class="">Delivery to your door We’ll bring your plants to your door, anywhere in GB. If you’re not 100% happy, tell us within 30 days and we’ll sort it. </p>
+                <p class="">Discover local restaurants. Dine in local restaurants around you, to discover authenticate Nepalese taste.</p>
             </div>
             <div class="w-[20rem] text-center ml-[2rem]">
                 <img src="../../static/images/homepage/marketcart.svg" alt="" class="ml-[1rem] mb-7">
-                <p class="">All the help you need We’ll send you a free plant-parenting course and our plant doctors are always on call.</p>
+                <p class="">Consolidate all equipment in a single location. Gather all spices, equipments and explore recipes.
+                    
+                    </p>
             </div>
         </div>
     </div>
@@ -62,16 +66,16 @@
             </div>
 
             <div class="flex flex-col justify-content-center ml-[4.5rem] mb-[6rem]">
-                <h1 class="text-5xl font-bold">Dine  at local</h1>
+                <h1 class="text-5xl font-bold">Dine at local</h1>
                 <br>
                 <h1 class="text-5xl font-bold">restaurants: Enjoy</h1>
                 <br>
                 <h1 class="text-5xl font-bold"> Nepalese Cuisines</h1>
                 
-                <p class="mt-5 ml-3 ">Discover different recipes. Help you to find the easiest way to cook</p>
-                <div class="mt-[2rem] ml-2">
-                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
-                        Explore recipes
+                <p class="mt-8 w-[30rem]">Discover different <span class="text-[#F89500]">restaurants</span>. Help you find the local restaurant for authentic Nepalese taste.</p>
+                <div class="mt-[2rem]">
+                    <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
+                        Explore restaurant
                     </button>
                 </div>
             </div>
@@ -79,20 +83,22 @@
        
     </div>
 
-    <div class="wrapper3 mb-[8rem] h-[70vh]">
+    <div class="wrapper3 mb-[8rem] h-[70vh] mt-10">
         <div class="grid grid-cols-2 items-center m-2">
             <div class="flex flex-col justify-content-center mt-5 ml-[15rem] mb-10">
-                <h1 class="text-5xl font-bold">Cooking Made Fun</h1>
+                <h1 class="text-5xl font-bold">Get Local Products</h1>
                 <br>
-                <h1 class="text-5xl font-bold">and Easy: Unleash</h1>
+                <h1 class="text-5xl font-bold">and equipments:</h1>
                 <br>
-                <h1 class="text-5xl font-bold">Your Inner Chef</h1>
+                <h1 class="text-5xl font-bold">Ease Access</h1>
                 
-                <p class="mt-5 ">Discover different recipes. Help you to find the easiest way to cook</p>
-                <div class="mt-[2rem] ml-2">
-                    <button class="bg-[#FFC061] text-white h-[3rem] w-[10rem] rounded-xl">
-                        Explore recipes
-                    </button>
+                <p class="mt-7 ">Discover different <span class="text-[#F89500]">products</span>. Help you find the best products and recipes for ease cooking.</p>
+                <div class="mt-[3rem]">
+                    <a href="{% url 'marketplace' %}">
+                            <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
+                            Explore marketplace
+                        </button>
+                    </a>
                 </div>
             </div>
             <div class="ml-[5rem] mb-[4rem]">
