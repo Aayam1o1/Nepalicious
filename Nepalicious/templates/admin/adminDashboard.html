@@ -1,106 +1,152 @@
-{% extends '../admin/navigationBarAdmin/adminbase.html' %} {% load static %} 
+{% extends '../admin/navigationBarAdmin/adminbase.html' %} {% load static %}
 {% block content %}
 
-<div class="container mx-auto p-4">
-  <h1 class="ml-5 text-3xl font-bold">Users</h1>
-  <section class="mx-auto w-full max-w-7xl px-4 ">
-    <div class="mt-6 flex flex-col">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-          <div class="overflow-hidden border border-gray-200 md:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    class="px-4 py-3.5 text-left text-sm font-normal text-gray-700"
-                  >
-                    <span>S.N</span>
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-4 py-3.5 text-left text-sm font-normal text-gray-700"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-4 py-3.5 text-left text-sm font-normal text-gray-700"
-                  >
-                    Username
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-12 py-3.5 text-left text-sm font-normal text-gray-700"
-                  >
-                    User Type
-                  </th>
-
-  
-
-                  <th scope="col" class="relative px-4 py-3.5">
-                    <span class="sr-only">view details</span>
-                  </th>
-
-                  <th scope="col" class="relative px-4 py-3.5">
-                    <span class="sr-only">delete user</span>
-                  </th>
-
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                {% for user_detail in allApprovedUsers %}
-                <tr>
-                  <td class="whitespace-nowrap px-4 py-4">1</td>
-                  <td class="whitespace-nowrap px-4 py-4">
-                    {{user_detail.email}}
-                  </td>
-
-                  <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
-                    {{user_detail}}
-                  </td>
-
-                  <td class="whitespace-nowrap px-12 py-4">
-                    <div class="text-sm text-gray-900">
-                      {{user_detail.groups.first.name}}
-                    </div>
-                  </td>
-
-                  <td
-                    class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium"
-                  >
-                    <a
-                      href="{% url 'userRequests' userID=user_detail.id %}"
-                      class="text-gray-700"
-                    >
-                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20 14V7C20 5.34315 18.6569 4 17 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H13.5M20 14L13.5 20M20 14H15.5C14.3954 14 13.5 14.8954 13.5 16V20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M8 8H16" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M8 12H12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-                    </a>
-                  </td>
-
-                  <td
-                    class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium"
-                  >
-                  <form method="post" action="">
-                    {% csrf_token %}
-                    <input type="hidden" name="username" value="{{user_detail.user}}">
-                    <button type="submit" name="deleteUser"
-                      class="text-gray-700"
-                    >
-                      <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 6L17.1991 18.0129C17.129 19.065 17.0939 19.5911 16.8667 19.99C16.6666 20.3412 16.3648 20.6235 16.0011 20.7998C15.588 21 15.0607 21 14.0062 21H9.99377C8.93927 21 8.41202 21 7.99889 20.7998C7.63517 20.6235 7.33339 20.3412 7.13332 19.99C6.90607 19.5911 6.871 19.065 6.80086 18.0129L6 6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M14 10V17M10 10V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-                    </button>
-                  </form>
-                  </td>
 
 
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
+<div class="container mx-auto">
+  <div class="grid grid-cols-3 ml-[3rem] mb-10">
+    <div class="bg-white h-[6rem] w-[20rem] lg:mr-3 mt-10 bg-white grid grid-cols-2 rounded-l">
+      <div class="h-full">
+        <img src="../../../static/images/adminImages/chef.svg" class="h-full ml-6" alt="">
+      </div>
+      <div class="text-xl font-medium mt-4 mr-3">
+        <p class="mb-1">Chefs</p>
+        <p>3</p>
       </div>
     </div>
-  </section>
+    <div class="bg-white h-[6rem] w-[20rem] lg:mr-3 mt-10 bg-white grid grid-cols-2 rounded-l">
+      <div class="h-full">
+        <img src="../../../static/images/adminImages/vendor2.svg" class="h-full ml-6 " alt="">
+      </div>
+      <div class="text-xl font-medium mt-4 mr-3">
+        <p class="mb-1">Vendors</p>
+        <p>3</p>
+      </div>
+    </div>
+    <div class="bg-white h-[6rem] w-[20rem] lg:mr-3 mt-10 bg-white grid grid-cols-2 rounded-l">
+      <div class="h-[80%]">
+        <img src="../../../static/images/adminImages/restaurant.svg" class="h-full ml-8 mt-2" alt="">
+      </div>
+      <div class="text-xl font-medium mt-4 mr-3">
+        <p class="mb-1">Restaurants</p>
+        <p>3</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-100">
+    <br>
+  </div>
+
+  <!-- tbale section -->
+  <h1 class="ml-5 text-3xl font-bold">Users</h1>
+  <div class="mt-5">
+
+    <table class="w-full table" id="myTable">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+            S.N
+          </th>
+          <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+            Email
+          </th>
+          <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+            Username
+          </th>
+          <th scope="col" class="px-12 py-3.5 text-left text-sm font-normal text-gray-700">
+            User Type
+          </th>
+
+
+
+          <th scope="col" class="relative px-4 py-3.5">
+            <span class="sr-only">view details</span>
+          </th>
+
+          <th scope="col" class="relative px-4 py-3.5">
+            <span class="sr-only">delete user</span>
+          </th>
+
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white">
+        {% for user_detail in allApprovedUsers %}
+        <tr>
+          <td class="whitespace-nowrap px-4 py-4">{{user_detail.id}}</td>
+          <td class="whitespace-nowrap px-4 py-4">
+            {{user_detail.email}}
+          </td>
+
+          <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
+            {{user_detail}}
+          </td>
+
+          <td class="whitespace-nowrap px-12 py-4">
+            <div class="text-sm text-gray-900">
+              {{user_detail.groups.first.name}}
+            </div>
+          </td>
+
+          <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
+            <a href="{% url 'userRequests' userID=user_detail.id %}" class="text-gray-700">
+              <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="M20 14V7C20 5.34315 18.6569 4 17 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H13.5M20 14L13.5 20M20 14H15.5C14.3954 14 13.5 14.8954 13.5 16V20"
+                    stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M8 8H16" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  </path>
+                  <path d="M8 12H12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  </path>
+                </g>
+              </svg>
+            </a>
+          </td>
+
+          <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
+            <form method="post" action="">
+              {% csrf_token %}
+              <input type="hidden" name="username" value="{{user_detail.user}}">
+              <button type="submit" name="deleteUser" class="text-gray-700">
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M18 6L17.1991 18.0129C17.129 19.065 17.0939 19.5911 16.8667 19.99C16.6666 20.3412 16.3648 20.6235 16.0011 20.7998C15.588 21 15.0607 21 14.0062 21H9.99377C8.93927 21 8.41202 21 7.99889 20.7998C7.63517 20.6235 7.33339 20.3412 7.13332 19.99C6.90607 19.5911 6.871 19.065 6.80086 18.0129L6 6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M14 10V17M10 10V17"
+                      stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </g>
+                </svg>
+              </button>
+            </form>
+          </td>
+
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
 </div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables
+    $('#myTable').DataTable();
+  });
+</script>
 
 {% endblock %}

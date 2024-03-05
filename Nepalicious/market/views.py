@@ -59,6 +59,8 @@ def addProduct(request):
             
     return render(request, 'marketplace/addProduct.html', context)
 
+
+# for product descriptiion.
 def productDetail(request, product_id):
     
     productList = addProducts.objects.all()

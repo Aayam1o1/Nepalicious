@@ -1,50 +1,85 @@
 <!-- user_request_template.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Request </title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-</head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+{% extends '../admin/navigationBarAdmin/adminbase.html' %} {% load static %}
 
+{% block content %}
 
-    <div class="container mx-auto p-4">
-
-
-        <div class="bg-white p-4 rounded-md shadow-md">
-            <p class="text-lg font-semibold">{{ userData.get_full_name }}</p>
-            <p class="text-gray-600">{{ userData.email }}</p>
-            <p class="text-gray-600">{{ userData.username }}</p>
-            <p class="text-gray-600">{{ userData.userDetails.requestedGroup }}</p>
-
-            
-
-            {% for img in document %}
-            <a href="{{ img.image.url }}" target="_blank">
-                <img src="{{ img.image.url }}" alt="Document Photo" class="mt-4 w-64 h-auto">
-            </a>
-            {% endfor %}
+<div class="bg-white p-4 rounded-md">
+    <div class="flex justify-between ml-[10rem] h-full ">
+        <div class="h-[14rem] w-[14rem] rounded-full">
+            <img class="h-full w-full rounded-full object-cover"
+                src="../../static/images/defaultUserProfilePictures/defaultProfile.jpg " alt="">
+        </div>
+        <div class="text-xl text-gray-600 mr-[10rem]">
+            <div class="flex mb-2 gap-[7rem]">
+                <p class="font-semibold pb-2">First Name: </p>
+                <span>{{ userData.first_name }}</span>
+            </div>
+            <div class="flex mb-2 gap-[7rem]">
+                <p class="font-semibold pb-2">Last Name: </p>
+                <span>{{ userData.last_name }}</span>
+            </div>
+            <div class="flex mb-2 gap-[10rem]">
+                <p class="font-semibold pb-2">Email: </p>
+                <span>{{ userData.email }}</span>
+            </div>
+            <div class="flex mb-2 gap-[3.5rem]">
+                <p class="font-semibold pb-2">Contact Number: </p>
+                <span>{{ userData.usersdetail.phone_number }}</span>
+            </div>
+            <div class="flex mb-2 gap-[8.5rem]">
+                <p class="font-semibold pb-2">Address: </p>
+                <span>{{ userData.usersdetail.address }}</span>
+            </div>
 
 
         </div>
-        <br><br>
-
-        {% if  allApprovedUsers %}
-        
-        {% endif %}
-
-
-        <form action="" method="post" class="ml-auto">
-            {% csrf_token %}
-            <input type="hidden" name="user" value="{{ userData.username }}">
-            <!-- <input type="hidden" name="group" value="{{ userData.username }}"> -->
-            <button type="submit" name="approve" class="bg-green-500 text-white px-4 py-2 rounded-md mr-2">Approve</button>
-            <button type="submit" name="reject" class="bg-red-500 text-white px-4 py-2 rounded-md">Reject</button>
-        </form>
-
+    </div>
+    {% if documentImages %}
+    <div class="flex justify-center mt-[3rem] mb-10">
+        <h1 class="text-4xl">
+            User Documents
+        </h1>
     </div>
 
-</body>
-</html>
+
+    <div class="grid grid-cols-3 gap-3 w-full h-[20rem] bg-red-100">
+        {% for img in documentImages %}
+        <div class="w-full h-[20rem]">
+            <a href="{{ img.documentImage.url }}" target="_blank">
+                <img src="{{ img.documentImage.url }}" alt="Document Photo" class=" w-full h-[20rem] object-fit">
+            </a>
+        </div>
+        {% endfor %}
+        <br>
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+<div class="mt-10 flex justify-center items-center">
+    {% if allApprovedUsers %}
+        {% if userData not in allApprovedUsers %}
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div>
+                    <input type="hidden" name="user" value="{{ userData.username }}">
+                    <input type="hidden" name="requestedGroup" value="{{ userData.usersdetail.requestedGroup }}">
+                    <br>
+                </div>
+                <div class="flex gap-10">
+                    <div>    
+                        <button type="submit" name="approve" class="bg-green-500 text-white px-4 w-[10rem] py-2 rounded-md mr-2">Approve</button>
+                    </div>
+                    <div>
+                        <button type="submit" name="reject" class="bg-red-500 text-white w-[10rem] px-4 py-2 rounded-md">Reject</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}
+

@@ -153,28 +153,7 @@ def adminDashboard(request):
             
             messages.error(request, 'User Deleted')
             
-            return redirect('adminHome')
-
-    
-    
-    
-    
-    # IF  APPROVED
-    if request.method == 'POST' and 'approve' in request.POST:
-        if 'group' in request.POST:
-            username = request.POST.get('user')
-            user = User.objects.get(username=username)
-            userGroup = request.POST.get('group')
-            group, created = Group.objects.get_or_create(name=userGroup)
-            user.groups.add(group)
-                
-        else:
-            pass
-    
-    # allUser = User.objects.filter(groups__name__in=['chef', 'restaurant', 'vendor', 'user'])
-    # totalUsers = User.objects.filter(groups__name__in=['chef', 'restaurant', 'vendor','user']).count()
-    
-    
+            return redirect('adminHome') 
     
     requestedUserType = usersDetail.objects.all() 
     
@@ -202,7 +181,8 @@ def adminDashboard(request):
 
 # admin side user request handling
 def userRequests(request, userID):
-    
+    allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', '', 'restaurant'])
+
     if request.method == 'POST':
         if "approve" in request.POST:
             if "user" in request.POST:
@@ -210,10 +190,11 @@ def userRequests(request, userID):
                 user = User.objects.get(username=username)
 
                 UserEmail = user.email
+                requestedGroup = request.POST.get("requestedGroup").lower()
                 
                 # CODE FOR allocating DIFF USER group
                 # FOR VENDOR group
-                group, created = Group.objects.get_or_create(name='vendor')
+                group, created = Group.objects.get_or_create(name=requestedGroup)
                 user.groups.add(group)
 
                 # Sending mail after user is approved
@@ -231,7 +212,7 @@ def userRequests(request, userID):
                 username = request.POST.get("user")
                 user = User.objects.get(username=username)
                 UserEmail = user.email 
-                # Sending mail after user is approved
+                # Sending mail after user is rejected
                 send_mail(
                     "Account Rejected",
                     "Your account has been rejected on Nepalicious.",
@@ -244,6 +225,8 @@ def userRequests(request, userID):
     print("USER ID IS: ", userID)
     
     userData = get_object_or_404(User, id=userID)
+    documentImages = userDocument.objects.filter(user=userID)
+    
     
     document = userDocument.objects.filter(user=userData)
     
@@ -253,6 +236,8 @@ def userRequests(request, userID):
         'requestedUserType': requestedUserType,
         'document': document,
         'userData': userData,
+        'documentImages' : documentImages,
+        'allApprovedUsers': allApprovedUsers,
     }
     
     return render(request, 'admin/userRequests.html', context)
@@ -367,3 +352,14 @@ def changePassword(request):
                     # Updating the session to prevent logout
                     update_session_auth_hash(request, request.user)
     return render(request, 'profiles/changepassword.html')
+
+
+def pendingRequests(request):
+    
+    requestedUsers = User.objects.filter(groups__isnull=True).exclude(is_superuser=True)
+        
+    context = {
+        'requestedUsers': requestedUsers,
+    } 
+    
+    return render(request, 'admin/pendingRequests.html', context)

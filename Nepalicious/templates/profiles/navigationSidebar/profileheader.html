@@ -9,23 +9,21 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   
 </head> 
-{% comment %} for profile dropdown js {% endcomment %}
+<style>
+  {% comment %} for scroll hiding {% endcomment %}
 
-<!-- <style>
-  .changed-details {
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent; /* for Firefox */
-}
+  .custom-scrollbar {
+      overflow-y: scroll;
+    
+      &::-webkit-scrollbar {
+          width: 8px;
+      }
 
-.changed-details::-webkit-scrollbar {
-    width: 8px; /* adjust the width as needed */
-}
-
-.changed-details::-webkit-scrollbar-thumb {
-    background-color: transparent;
-} -->
-
-<!-- </style> -->
+      &::-webkit-scrollbar-thumb {
+          background-color: transparent;
+      }
+  }
+</style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('profileToggle').addEventListener('click', function () {
@@ -188,5 +186,5 @@
         </div>
       </div>
     </div>
-    <div class="changed-details ml-4 w-full h-screen mt-4 rounded-xl bg-white overflow-y-scroll">
+    <div class="changed-details ml-4 w-full h-screen mt-4 rounded-xl bg-white custom-scrollbar">
      
