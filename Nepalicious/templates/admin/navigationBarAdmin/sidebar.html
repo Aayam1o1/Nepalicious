@@ -25,7 +25,28 @@
             background-color: transparent;
         }
     }
+
+    
 </style>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<!-- Tailwind CSS -->
+<link rel="stylesheet" href="https://cdn.tailwindcss.com">
+
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+
+<!-- DataTables Tailwind CSS Theme -->
+<script src="https://cdn.datatables.net/2.0.1/js/dataTables.tailwindcss.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables
+    $('#myTable').DataTable();
+  });
+</script>
+
 </head>
 
 <body class="bg-gray-100">
