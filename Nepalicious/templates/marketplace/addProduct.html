@@ -38,9 +38,27 @@
 
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
-                    <button type="button" class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
+                    <button type="button" onclick="discardChanges()" class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
                         <span class="text-red-600">Discard Changes</span>
                     </button>
+
+                    {% comment %} script for discard {% endcomment %}
+                    <script>
+                        function discardChanges() {
+                            // Get the form element and reset it
+                            var form = document.querySelector('form');
+                            form.reset();
+                    
+                            // Remove uploaded images
+                            var imageContainer = document.getElementById('image-container');
+                            imageContainer.innerHTML = '';
+                    
+                            // Reset the image heading
+                            var imageHeading = document.getElementById('product-img-heading');
+                            imageHeading.style.display = 'block';
+                        }
+                    </script>
+
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
                         <span class="text-white">Add Product</span>
                     </button>
@@ -87,30 +105,16 @@
 
                         <div class="pt-5 pl-24 md:pr-[40px]"></div>
 
-                    <!-- Container for displaying uploaded Room images -->
+                    <!-- Container for displaying uploaded product images -->
                     
                     <h1 class="text-center px-5" id="product-img-heading">images Will be uploded here Add Upto 3 images</h1>
                     
                     <div id="image-container" class="grid grid-cols-3 gap-3 ml-3">
-                    </div> <!--HERE IMAGE WILL BE DISPLAYED-->
-
-                        <!-- <div class="grid grid-cols-3 gap-3  mt-[3rem]">
-                            <div class="w-[11rem] h-[11rem] rounded-xl">
-                                <img src="../../static/images/marketplace/pestlemortar.avif"
-                                    class="w-full h-full rounded-xl obejct-cover" alt="">
-                            </div>
-                            <div class="w-[11rem] h-[11rem] rounded-xl">
-                                <img src="../../static/images/marketplace/kettle.jpg"
-                                    class="w-full h-full rounded-xl object-cover" alt="">
-                            </div>
-                            <div class="w-[11rem] h-[11rem] rounded-xl">
-                                <img src="../../static/images/marketplace/pestlemortar.avif"
-                                    class="w-full h-full rounded-xl object-cover" alt="">
-                            </div>
-                        </div> -->
-
+                    </div> 
+                    <!--HERE IMAGE WILL BE DISPLAYED-->
+                    
                         <div class="flex justify-center mt-[5rem]">
-                            <label required for="room-image-input"
+                            <label required for="product-image-input"
                                 class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex justify-center w-[15rem] px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
                                 <span>Add image</span>
                                 <input id="product-image" name="productImage" type="file" accept="image/png, image/jpeg" multiple
@@ -257,9 +261,6 @@
     </div>
 
     {% endblock %}
-
-
-    <
     
 
 </body>
