@@ -4,11 +4,251 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
 </head>
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
-    recipe page
+    <div class="wrapper1 mt-[4rem] ml-[5rem] h-[70vh]">
+        <div class="grid grid-cols-2 items-center m-2">
+            <div class="ml-[10em] mb-[4rem]">
+                <img class="h-[25rem] w-[45rem]" src="../../static/images/recipe/biryani.svg" alt="">
+            </div>
+
+            <div class="flex flex-col justify-content-center ml-[4.5rem] mb-[5rem] ">
+                <h1 class="text-5xl font-bold">Chicken Biryani</h1>
+                
+                <p class="mt-8 ml-1 w-[20rem]">Indulge in the rich symphony of fragrant basmati rice, tender chicken, and an array of aromatic spices in this divine chicken biryani.</p>
+                <div class="mt-[2rem]">
+                    <p class="text-[#F89500] ml-1 hover:underline ease transition">Check it out ></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-heading">
+    
+        <div class="flex justify-center gap-[3rem] pb-5">
+
+            <div>
+                <input type="text" name="" id="" placeholder="Name" class="w-[13rem] text-gray-900 border-2 bg-gray-50 text-sm rounded border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5">
+
+            </div>
+
+            <div>
+                <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[13rem] p-2.5 ">
+                    <option selected>Filter 1</option>
+                    <option value="US">Option 1</option>
+                    <option value="CA">Option 2</option>
+                    <option value="FR">Option 3</option>
+                    <option value="DE">Option 4</option>
+                </select>
+
+            </div>
+
+
+            <div>
+                <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[13rem] p-2.5 ">
+                    <option selected>Filter 1</option>
+                    <option value="US">Option 1</option>
+                    <option value="CA">Option 2</option>
+                    <option value="FR">Option 3</option>
+                    <option value="DE">Option 4</option>
+                </select>
+
+            </div>
+
+
+            <div>
+                <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[13rem] p-2.5 ">
+                    <option selected>Filter 1</option>
+                    <option value="US">Option 1</option>
+                    <option value="CA">Option 2</option>
+                    <option value="FR">Option 3</option>
+                    <option value="DE">Option 4</option>
+                </select>
+
+            </div>
+            
+            <div class="h-6 w-6 mt-1">
+                <img class="h-full w-full object-fit mr-[10rem]" src="data:image/png;base64,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" alt="">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Newari Cuisine -->
+    <div class="ml-[10rem] mt-10">
+        <div class="text-4xl ml-4 my-2 font-semibold">
+            <h1>Newari Cuisine</h1>
+        </div>
+        <div class="w-[100%] grid grid-cols-4 gap-3">
+            {% for recipe in recipeList %}
+                <div class="w-[18rem] p-4">    
+                     <!-- displaying recipe picture -->
+                     <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+                        
+                        <div class="relative h-56 overflow-hidden rounded-lg">
+                            {% for image in recipe.images.all %}
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <a href=""><img src="{{ image.image.url }}" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                               </div>
+                            {% endfor %}
+                        </div>
+                        
+                    </div>
+
+                    <!-- display other data -->
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">{{ recipe.recipeName }}</h1>
+                        <p class="mt-2 text-sm">{{ recipe.recipeName }}</p>
+                        <p class="mt-2 text-sm">{{ recipe.cuisineType}}</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        
+                    </div>
+                </div>  
+                {% endfor %}          
+        </div>
+    </div>
+
+
+    <!-- super delicious will be filterd accoridn to the ratings -->
+
+    <div class="ml-[10rem] mt-10">
+        <div class="text-4xl ml-4 my-2 font-semibold">
+            <h1>Super Delicious</h1>
+        </div>
+        <div class="w-[100%] grid grid-cols-4 gap-3">
+            
+                <div class="w-[18rem] p-4">    
+                    <!-- displaying product picture -->
+                    <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+                        <div class="relative h-56 overflow-hidden rounded-lg border-2">         
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <a href=""><img src="../../static/images/recipe/rice.svg" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                               </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                    <!-- display other data -->
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Recipe Name</h1>
+                        <p class="mt-2 text-sm">Chef name</p>
+                        <p class="mt-2 text-sm">Cuisine Type</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        
+                    </div>
+                </div>            
+        </div>
+    </div>
+
+    <div class="ml-[10rem] mt-10">
+        <div class="text-4xl ml-4 my-2 font-semibold">
+            <h1>Latest Recipe</h1>
+        </div>
+        <div class="w-[100%] grid grid-cols-5 gap-3">
+            
+                <div class="w-[18rem] p-4">    
+                    <!-- displaying product picture -->
+                    <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+                        <div class="relative h-[10rem] w-[13rem] overflow-hidden rounded-lg border-2">         
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <a href=""><img src="../../static/images/recipe/rice.svg" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover " /></a>
+                               </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                    <!-- display other data -->
+                    <div class="">
+                        <h1 class="text-lg font-medium mt-4">Recipe Name</h1>
+                        <p class="mt-2 text-sm">Chef name</p>
+                        <p class="mt-2 text-sm">Cuisine Type</p>
+                        <p class="rating-stars" class="">
+                            <!-- Stars will be dynamically added here -->
+
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        
+                    </div>
+                </div>            
+        </div>
+    </div>
+    <!-- for stars script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all elements with the class 'rating-stars'
+            const starsContainers = document.querySelectorAll('.rating-stars');
+        
+            // Iterate through each stars container
+            starsContainers.forEach(starsContainer => {
+                // Create 5 stars for each container
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.classList.add(
+                        'cursor-pointer',
+                        'text-2xl',
+                        'mr-1',
+                        'pr-1',
+                        'hover:text-yellow-500',
+                        'transition',
+                        'transform',
+                        'duration-200',
+                        'ease-in-out'
+                    );
+                    star.innerHTML = '★';
+        
+                    // Attach click event to each star
+                    star.addEventListener('click', function () {
+                        const rating = i;
+                        updateRating(starsContainer, rating);
+                    });
+        
+                    starsContainer.appendChild(star);
+                }
+            });
+        
+            // Function to update rating for a specific container
+            function updateRating(container, rating) {
+                // Update UI (you can also send the rating to the server)
+                highlightStars(container, rating);
+            }
+        
+            // Function to highlight stars up to the given rating for a specific container
+            function highlightStars(container, rating) {
+                const stars = container.children;
+        
+                for (let i = 0; i < stars.length; i++) {
+                    if (i < rating) {
+                        stars[i].classList.add('text-yellow-500');
+                    } else {
+                        stars[i].classList.remove('text-yellow-500');
+                    }
+                }
+            }
+        });
+        
+    </script>
+
     {% endblock %}
 </body>
 </html>

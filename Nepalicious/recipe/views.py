@@ -7,9 +7,15 @@ from django.contrib import messages
 # Create your views here.
 
 def recipe(request):
-    return render(request, 'recipe/recipe.html')
+    recipe_list = addRecipe.objects.all()
+    
+    context = {
+        'recipeList': recipe_list
+    }
+    return render(request, 'recipe/recipe.html', context)
 
-def addRecipe(request):
+
+def add_Recipe(request):
     if request.method == 'POST':
         form = addRecipeForm(request.POST, request.FILES)
         if form.is_valid():
