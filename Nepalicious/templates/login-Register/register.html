@@ -133,9 +133,13 @@
             </div>
         </div> {% endcomment %}
         <div class="register-page-child flex w-full h-full">
+            <div
+            class="overlay h-[150%] absolute inset-0 bg-[rgba(0,0,0,0.3)]"
+          ></div>
             <!-- register page child container here -->
             <section class="register-container-parent w-full flex items-center justify-center">
-                <div class="register-container-child p-12 bg-white rounded-xl h-[1243px]">
+
+                <div class="register-container-child p-12 bg-white rounded-xl h-[1243px] relative z-40">
                     <!-- welcome messages here -->
                     <h1 class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest">
                         Register
