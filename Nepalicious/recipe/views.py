@@ -4,7 +4,7 @@ from .forms import *
 from django.contrib import messages
 
 
-# Create your views here.
+# Crpath('removeRecipe', views.remove_Recipe, name='removeRecipe'),h('removeRecipe', views.remove_Recipe, name='removeRecipe'),e your views here.
 
 def recipe(request):
     recipe_list = addRecipe.objects.all()
@@ -63,3 +63,56 @@ def add_Recipe(request):
     }
         
     return render(request, 'recipe/addRecipe.html', context)
+
+
+# for recipe descriptiion.
+def recipeDetail(request, recipe_id):
+    
+    recipetList = addRecipe.objects.all()
+    
+    # to get the details of the product
+    recipeDetail = get_object_or_404(addRecipe, id=recipe_id)
+    
+    
+    # for steps
+    recipeStepsString = recipeDetail.recipeSteps
+    
+   # Split by commas and then combine steps that were split incorrectly
+    recipeSteps = []
+    current_step = ""
+    for step in recipeStepsString.split(','):
+        current_step += step.strip()
+        if current_step.endswith('.'):
+            recipeSteps.append(current_step)
+            current_step = ""
+        else:
+            current_step += ', '
+
+    # Remove empty strings
+    recipeSteps = [step for step in recipeSteps if step]
+     
+    # for ingredients
+    
+    # STEP 4: Add Rules for your room
+    recipeIngredientString = recipeDetail.recipeIngredient
+            
+    # Split the rules string into individual rules and append them to the list
+    recipeIngredient = recipeIngredientString.split(", ")
+    
+    
+    #to get the image of the recipe
+    recipedetailForImage = get_object_or_404(addRecipe, id=recipe_id)
+
+    recipe_image = recipeImage.objects.filter(addRecipe = recipedetailForImage)
+    
+    context = {
+        'recipetList': recipetList,
+        'recipedetailForImage' : recipedetailForImage,
+        'recipe_image' : recipe_image,
+        'recipeDetail': recipeDetail,
+        'recipeSteps': recipeSteps,
+        'recipeIngredient': recipeIngredient,
+        
+    }
+    
+    return render(request, 'recipe/recipeDetail.html', context)

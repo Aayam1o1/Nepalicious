@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Description</title>
+</head>
+
+<body>
+    {% extends '../navigationBar/base.html' %}
+    {% block content %}
+    <!--  for recipe name and other details -->
+    <div class="container-1 w-[80%] m-auto">
+        <div class="flex justify-between mt-[4rem]">
+            <div class=" ">
+                <h1 class="text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
+                <div class="flex justify-between text-xl mb-2 w-[20rem] font-medium">
+                    <div>
+                        <h2>By {{ recipeDetail.user.username }}</h2>
+                    </div>
+                    <div>
+                        Stars
+                    </div>
+                </div>
+                <h2 class="text-xl font-medium ">{{ recipeDetail.cuisineType }}</h2>
+            </div>
+            <div>
+                <div class="h-[4rem] w-[4rem]">
+                    <img class="" src="../../static/images/recipe/bookmark.svg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- for Recipe Images -->
+    <div class=" pt-5 w-[80%] mx-auto">
+        <div class="flex justify-between">
+            {% if recipe_image.exists %}
+            <div class="">
+                <div class="w-[830px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
+                    <img src="{{ recipe_image.first.image.url }}" class="w-full h-full object-cover" alt="">
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6 ">
+                <div class="w-[340px] rounded-xl">
+                    <img src="{{ recipe_image.1.image.url }}" class="w-full h-full object-fit" alt="">
+                </div>
+
+                <div class="w-[340px] rounded-xl border-t-[black] border-t">
+                    {% if recipe_image.count >= 3 %}
+                    <img src="{{ recipe_image.2.image.url }}" class="w-full h-full object-fit " alt="">
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <!-- For Descripton, steps and ingredients -->
+    <div class="flex justify-between w-[80%] m-auto mt-10">
+        <div class=" w-[70%]">
+            <div class="text-3xl font-semibold">
+                <h1>Description</h1>
+            </div>
+            <div class="text-l mt-3 w-[62%]">
+                <p> {{ recipeDetail.recipeDescription}}</p>
+            </div>
+
+            <div class="mt-10">
+                <h1 class="text-3xl font-semibold">Steps</h1>
+            </div>
+            <div class="mt-4 w-[62%]">
+                <p class="text-l font-small italic">
+                    {% for step in recipeSteps %}
+                    {% if '.' in step %}
+                    <p style="margin-bottom: 10px;" class="italic">{{ step|linebreaksbr|safe }}</p>
+                    {% else %}
+                    <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
+                    {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+
+        </div>
+
+       
+        <div class=" w-[28%]">
+             <!-- for Ingreidents -->
+            <div class="">
+                <h1 class="text-3xl font-semibold">Ingredients</h1>
+            </div>
+            <div class="mt-4 w-full">
+                <p class="text-l font-small italic">
+                    {% for ingredient in recipeIngredient %}
+                    {% if '.' in ingredient %}
+                    <p style="margin-bottom: 10px;" class="italic">{{ ingredient|linebreaksbr|safe }}</p>
+                    {% else %}
+                    <p style="margin-left: 20px; margin-bottom: 10px;">{{ ingredient|linebreaksbr }}</p>
+                    {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+
+            <div class="mt-10">
+                <h1 class="text-3xl font-semibold">Similar Recipe</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- comment -->
+    <div class="container-2 mt-[5rem] w-full">
+
+        <!-- for commment -->
+        <div class="commnet-container flex h-[60vh] justify-around">
+            <div class="w-[60%] ml-[7rem]">
+                <div>
+                    <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
+                </div>
+                <div class="my-[3rem]">
+                    <button type="button" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5">
+                        <span class="text-white">Give Feedback</span>
+                    </button>
+                </div>
+                <div class="bg-blue-50  w-[80%] p-4 ml-4 rounded-xl">
+                    <!-- comment section -->
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
+                            </span>
+                        </div>
+                        <div class="mt-[1rem] ml-4 text-l font-meduium">
+                            Username
+                        </div>
+                    </div>
+                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe et quae quo beatae libero
+                        nemo deleniti voluptas voluptates quia? Quo deserunt iste natus quasi, dolore minima
+                        eligendi nihil itaque eum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione,
+                        dignissimos sequi voluptates omnis dicta totam aut nemo, odio cupiditate labore vel quo
+                        error.
+                        Culpa beatae quae natus iste? Iure, accusantium.
+                    </div>
+                </div>
+            </div>
+            <!-- recommend other products -->
+            <div class="bg-blue-100 w-[40%]">
+                other products
+            </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</body>
+
+</html>

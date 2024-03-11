@@ -12,8 +12,8 @@
     {% block content %}
     <div class="wrapper1 mt-[4rem] ml-[5rem] h-[70vh]">
         <div class="grid grid-cols-2 items-center m-2">
-            <div class="ml-[10em] mb-[4rem]">
-                <img class="h-[25rem] w-[45rem]" src="../../static/images/recipe/biryani.svg" alt="">
+            <div class="mb-[4rem] h-[25rem] w-[70rem]  pr-[17rem]">
+                <img class="h-full w-[70rem] object-fit" src="../../static/images/recipe/biryani.svg" alt="">
             </div>
 
             <div class="flex flex-col justify-content-center ml-[4.5rem] mb-[5rem] ">
@@ -94,7 +94,7 @@
                         <div class="relative h-56 overflow-hidden rounded-lg">
                             {% for image in recipe.images.all %}
                                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <a href=""><img src="{{ image.image.url }}" alt=""
+                                    <a href="{% url 'recipeDetail' recipe.id %}"><img src="{{ image.image.url }}" alt=""
                                     class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
                                </div>
                             {% endfor %}
@@ -105,7 +105,7 @@
                     <!-- display other data -->
                     <div class="">
                         <h1 class="text-lg font-medium mt-4">{{ recipe.recipeName }}</h1>
-                        <p class="mt-2 text-sm">{{ recipe.recipeName }}</p>
+                        <p class="mt-2 text-sm">{{ recipe.user.username }}</p>
                         <p class="mt-2 text-sm">{{ recipe.cuisineType}}</p>
                         <p class="rating-stars" class="">
                             <!-- Stars will be dynamically added here -->
