@@ -6,4 +6,5 @@ from recipe.models import *
 
 # Register your models here.
 admin.site.register(addRecipe),
-admin.site.register(recipeImage)
+admin.site.register(recipeImage),
+admin.site.register(recipeFeedback)

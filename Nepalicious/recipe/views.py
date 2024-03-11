@@ -105,6 +105,25 @@ def recipeDetail(request, recipe_id):
 
     recipe_image = recipeImage.objects.filter(addRecipe = recipedetailForImage)
     
+    # for feedback
+    if request.method == 'POST':
+        feedback_form = FeedbackForm(request.POST)
+
+        if feedback_form.is_valid():
+            # Create a new feedback object and associate it with the current recipe and user
+            new_feedback = feedback_form.save(commit=False)
+            new_feedback.recipe = recipeDetail
+            new_feedback.user = request.user
+            new_feedback.save()
+
+            # Redirect to the same recipe detail page after submitting feedback
+            return redirect('recipeDetail', recipe_id=recipe_id)
+    else:
+        feedback_form = FeedbackForm()
+    
+    # Retrieve comments related to the specific recipe
+    feedback_comments = recipeFeedback.objects.filter(recipe=recipeDetail)
+    
     context = {
         'recipetList': recipetList,
         'recipedetailForImage' : recipedetailForImage,
@@ -112,7 +131,9 @@ def recipeDetail(request, recipe_id):
         'recipeDetail': recipeDetail,
         'recipeSteps': recipeSteps,
         'recipeIngredient': recipeIngredient,
-        
+        'feedback_form': feedback_form,
+        'feedback_comments': feedback_comments,
+
     }
     
     return render(request, 'recipe/recipeDetail.html', context)

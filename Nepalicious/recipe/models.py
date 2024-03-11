@@ -31,3 +31,9 @@ class recipeImage(models.Model):
     addRecipe = models.ForeignKey(addRecipe, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/recipe/recipeImage/')
     
+    
+class recipeFeedback(models.Model):
+    recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feedback = models.TextField(blank=True)
+    
