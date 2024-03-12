@@ -8,6 +8,19 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
+    <style>
+        .custom-scrollbar {
+            overflow-y: scroll;
+        }
+    
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+    
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: transparent;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,16 +50,16 @@
     </div>
 
     <!-- for Recipe Images -->
-    <div class=" pt-5 w-[80%] mx-auto">
+    <div class=" pt-5 w-[80%] m-auto">
         <div class="flex justify-between">
             {% if recipe_image.exists %}
             <div class="">
-                <div class="w-[830px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
+                <div class="w-[950px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
                     <img src="{{ recipe_image.first.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6 ">
+            <div class="flex flex-col gap-6 mr-5">
                 <div class="w-[340px] rounded-xl">
                     <img src="{{ recipe_image.1.image.url }}" class="w-full h-full object-fit" alt="">
                 </div>
@@ -118,7 +131,7 @@
     <div class="container-2 mt-[5rem] w-full">
 
         <!-- for commment -->
-        <div class="commnet-container flex h-[60vh] justify-around">
+        <div class="commnet-container flex justify-around">
             <div class="w-[60%] ml-[7rem]">
                 <div>
                     <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
@@ -185,26 +198,31 @@
 
 
             <!-- comment section -->
-            {% for comment in feedback_comments %}
-            <div class="bg-blue-50  w-[80%] p-4 ml-4 rounded-xl">
-                <div class="comment-user flex">
-                    <div>
-                        <span>
-                            {% if comment.user.userprofilepicture %}
-                            <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                            {% endif %}
-                        </span>
+            <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[80%] h-[320px]">
+                {% for comment in feedback_comments %}
+                <div class="bg-blue-50  w-full p-4 ml-4">
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                {% if comment.user.userprofilepicture %}
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="mt-[1rem] ml-4 text-l font-medium">
+                            {{ comment.user.username }}
+                        </div>
                     </div>
-                    <div class="mt-[1rem] ml-4 text-l font-meduium">
-                        {{ comment.user.username }}
+                    <div class="comment-user ml-5 mt-4 text-l w-[90%] font-light leading-6">
+                        {{ comment.feedback }}
                     </div>
+                    
                 </div>
-                <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                    {{ comment.feedback }}
-                </div>
+                <hr>
+                {% endfor %}
             </div>
-            {% endfor %}
+
         </div>
         <!-- recommend other products -->
         <div class="bg-blue-100 w-[40%]">
