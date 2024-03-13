@@ -37,13 +37,13 @@
         <div class="product-description flex h-[25rem] ml-10 w-full justify-around">
         
             <!-- displaying product picture -->
-            <div id="gallery" class="relative w-[50%] ml-[10rem] bg-red-100 overflow-hidden" data-carousel="slide">
+            <div id="gallery" class="relative w-[50%] ml-[10rem] overflow-hidden" data-carousel="slide">
                 <!-- Carousel wrapper -->
                 <div class="relative h-full w-[50%] overflow-hidden rounded-lg"></div>
                     {% for image in product_image %}
                     <div class="hidden duration-700 ease-in-out w-full" data-carousel-item>
                         <img src="{{ image.image.url }}" alt="product"
-                            class="rounded-md md:aspect-auto w-full rounded-lg object-fit " />
+                            class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover " />
                     </div>
                     {% endfor %}
             </div>

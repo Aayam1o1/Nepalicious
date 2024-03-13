@@ -9,4 +9,7 @@ urlpatterns = [
     path('marketplace', views.marketplace, name='marketplace'),
     path('addProduct', views.addProduct, name='addProduct'),
     path('productDetail/<int:product_id>', views.productDetail, name='productDetail'),
+    path('cart', views.cart_view, name='cart'),
+    path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+
 ]

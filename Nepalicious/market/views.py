@@ -11,7 +11,6 @@ def marketplace(request):
         'productList': productList,
         
     }
-    
     return render(request, 'marketplace/marketplace.html', context)
 
 # for adding products for markteplace
@@ -82,3 +81,34 @@ def productDetail(request, product_id):
     }
     
     return render(request, 'marketplace/productDetail.html', context)
+
+
+# for add to cart button
+def add_to_cart(request, product_id):
+    product = get_object_or_404(addProducts, id=product_id)
+
+    # Get or create the user's cart
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+    # Add the selected product to the cart
+    user_cart.products.add(product)
+
+    messages.success(request, "Product added to the cart successfully.")
+    return redirect('marketplace')
+
+# for cart operations
+def cart_view(request):
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
+    products_in_cart = user_cart.products.all()
+    
+    context = {
+        'products_in_cart': products_in_cart,
+    }
+
+    
+    for product_in_cart in products_in_cart:
+        print(f"Product Name: {product_in_cart.productName}")
+        print(f"Product Brand: {product_in_cart.productBrand}")
+        print(f"Product Price: {product_in_cart.productPrice}")
+        print(f"Product Images: {[image.image.url for image in product_in_cart.images.all()]}")
+    return render(request, 'marketplace/cart.html', context)

@@ -103,9 +103,12 @@
                     
                         <div class="">
                             <!-- Pass the plant ID to the addtocart() function -->
-                            <button onclick="addtocart('{{ plant.id }}')"
-                                class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">Add
-                                to Cart</button>
+                            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                                    Add to Cart
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

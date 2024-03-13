@@ -33,3 +33,9 @@ class productImage(models.Model):
     addProducts = models.ForeignKey(addProducts, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/marketplace/productImage/')
     
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    products = models.ManyToManyField('addProducts')
+
+    def __str__(self):
+        return f"Cart for {self.user.username}"

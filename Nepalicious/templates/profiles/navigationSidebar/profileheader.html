@@ -69,9 +69,11 @@
 
         <!-- cart and profile -->
         <div class="cart-and-profile flex items-center gap-x-3 mt-3">
-          <span class="cart">
-            <img class="h-[2.8rem]" src="../../static/images/headerFooter/cart.svg" alt="">
-          </span>
+          <a href="{% url 'cart' %}">
+            <span class="cart">
+              <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+            </span>
+          </a>
           <!-- profile -->
           <div class="relative inline-block text-left">
             {% if request.user.is_authenticated %}
