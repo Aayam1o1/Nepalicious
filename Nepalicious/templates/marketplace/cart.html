@@ -9,105 +9,139 @@
 
 <body>
     {% extends '../navigationBar/base.html' %} {% block content %}
-    
-    <div class="w-[75%] mx-auto max-w-7xl px-2 lg:px-0 0">
-        <div class="mx-auto max-w-2xl py-8 lg:max-w-7xl mt-10">
-            <h1 class="text-3xl text-[#F89500] font-bold tracking-tight sm:text-4xl">
-               Shopping Cart
-            </h1>
-            <form class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
-                <section aria-labelledby="cart-heading" class="rounded-lg bg-white lg:col-span-8">
-                    <h2 id="cart-heading" class="sr-only">
-                        Items in your shopping cart
-                    </h2>
-                    {% for product_in_cart in products_in_cart %}
-                    <ul role="list" class="divide-y divide-gray-200">
-                        <div class="">
-                            <li class="flex ">
-                                <div class="flex-shrink-0">
-                                    <a href="{% url 'productDetail' product_in_cart.id %}">
-                                        <img src="{{ product_in_cart.images.first.image.url }}"
-                                        alt="{{ product_in_cart.productName }}"
-                                        class="sm:h-38 sm:w-38 h-[10rem] w-[10rem] rounded-md object-contain object-center" />
-                                    </a>
-                                </div>
-                                <div class="ml-4 flex flex-1 flex-col justify-between sm:ml-6 mt-9">
-                                    <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                                        <div>
-                                            <div class="flex justify-between">
-                                                <h3 class="text-xl">
-                                                    {{ product_in_cart.productName }}
-                                                </h3>
-                                            </div>
-                                            <div class="mt-1 flex text-sm">
-                                                <p class="text-sm text-gray-500">{{ product_in_cart.productBrand }}</p>
-                                            </div>
-                                            <div class="mt-1 flex items-end">
-                                                <p class="text-l font-medium text-gray-500">
-                                                    Rs {{ product_in_cart.productPrice }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            
-                            <div class="mb-4 flex">
-                                <div class="w-[10rem] ml-2 flex">                                    
-                                    <input type="number" class="mx-1 h-7 w-[4rem] rounded-md border-2 text-center" value="1" />
-                                </div>
-                                <div class="ml-6 flex text-sm">
-                                    <button type="button" class="flex items-center space-x-1 px-2 py-1 pl-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                        </svg>
-                                        <span class="text-xs font-medium text-red-500">Remove</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </ul>
-                    <hr>
-                    {% endfor %}
-                </section>
-                <section aria-labelledby="summary-heading" class="rounded-md bg-white lg:col-span-4 lg:mt-0 lg:p-0">
-                    <h2 id="summary-heading"
-                        class="border-b border-gray-200 px-4 text-lg font-medium text-gray-900 sm:p-4">
-                        Price Details
-                    </h2>
-                    <div>
-                        <dl class="space-y-1 px-2 py-4">
-                            <div class="flex items-center justify-between">
-                                <dt class="text-sm text-gray-800">Price (3 item)</dt>
-                                <dd class="text-sm font-medium text-gray-900">₹ 52,398</dd>
-                            </div>
-                            <div class="flex items-center justify-between border-y border-dashed py-4">
-                                <dt class="text-base font-medium text-gray-900">
-                                    Total Amount
-                                </dt>
-                                <dd class="text-base font-medium text-gray-900">₹ 48,967</dd>
-                            </div>
-                        </dl>
-                        <div class="flex justify-center space-x-4">
-                            <button type="button"
-                                class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#61A0FF] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-                                Back to shop
-                            </button>
-                            <button type="button"
-                                class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-                                Checkout
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </form>
-        </div>
+
+    <div class="w-[85%] mx-auto mt-10">
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+            Shopping Cart
+        </h1>
     </div>
 
+    <div class="flex w-[90%] mx-auto">
+        <section class="mx-auto w-[80%] px-4 py-4">
+
+            <div class="mt-6 flex flex-col">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                            <span>Product</span>
+                                        </th>
+                                        <th scope="col"
+                                            class="px-12 py-3.5 text-left text-sm font-normal text-gray-700">
+                                            Brand
+                                        </th>
+                                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                            Price
+                                        </th>
+                                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                            Quantity
+                                        </th>
+                                        <th scope="col" class="relative px-4 py-3.5">
+                                            <span class="sr-only">Edit</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                {% for product_in_cart in products_in_cart %}
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    <tr>
+                                        <td class="whitespace-nowrap px-4 py-4">
+                                            <div class="flex items-center">
+                                                <div class="flex">
+                                                    <a href="{% url 'productDetail' product_in_cart.id %}">
+                                                        <img src="{{ product_in_cart.images.first.image.url }}"
+                                                            alt="{{ product_in_cart.productName }}"
+                                                            class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
+                                                    </a>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        {{ product_in_cart.productName }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="whitespace-nowrap px-12 py-4">
+                                            <div class="text-sm text-gray-900 ">{{ product_in_cart.productBrand }}</div>
+
+                                        </td>
+                                        <td class="whitespace-nowrap px-4 py-4">
+                                            Rs {{ product_in_cart.productPrice }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
+                                            <div class="min-w-24 flex">
+                                                <button type="button" class="h-7 w-7">
+                                                    -
+                                                </button>
+                                                <input type="text" class="mx-1 h-7 w-9 rounded-md border text-center"
+                                                    value="1" />
+                                                <button type="button" class="flex h-7 w-7 items-center justify-center">
+                                                    +
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
+                                            <button type="button" class="flex items-center space-x-1 px-2 py-1 pl-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="text-red-500">
+                                                    <path d="M3 6h18"></path>
+                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                </svg>
+                                                <span class="text-xs font-medium text-red-500">Remove</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+
+
+        <section aria-labelledby="summary-heading" class="rounded-md bg-white lg:col-span-4 lg:mt-0 lg:p-0">
+            <h2 id="summary-heading" class="border-b border-gray-200 px-4 text-lg font-medium text-gray-900 sm:p-4">
+                Price Details
+            </h2>
+            <div>
+                <dl class="space-y-1 px-2 py-4">
+                    <div class="flex items-center justify-between">
+                        <dt class="text-sm text-gray-800">Price (3 item)</dt>
+                        <dd class="text-sm font-medium text-gray-900">₹ 52,398</dd>
+                    </div>
+                    <div class="flex items-center justify-between border-y border-dashed py-4">
+                        <dt class="text-base font-medium text-gray-900">
+                            Total Amount
+                        </dt>
+                        <dd class="text-base font-medium text-gray-900">₹ 48,967</dd>
+                    </div>
+                </dl>
+                <div class="flex justify-center space-x-4">
+                    <button type="button"
+                        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#61A0FF] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                        Back to shop
+                    </button>
+                    <button type="button"
+                        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
     {% endblock %}
 </body>
 
