@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.db.models import Sum, F
+
 
 # Create your views here.
 def marketplace(request):
@@ -90,25 +92,114 @@ def add_to_cart(request, product_id):
     # Get or create the user's cart
     user_cart, created = Cart.objects.get_or_create(user=request.user)
 
-    # Add the selected product to the cart
-    user_cart.products.add(product)
+    # Check if the product is already in the cart
+    cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product)
+
+    # If the item is already in the cart, increase the quantity
+    if not item_created:
+        cart_item.quantity += 1
+        cart_item.save()
+    else:
+        # Set the initial quantity to 1 for a newly added item
+        cart_item.quantity = 1
+        cart_item.save()
+
+    # Update the total amount in the cart
+    user_cart.total_amount = CartItem.objects.filter(cart=user_cart).aggregate(total=Sum(F('product__productPrice') * F('quantity')))['total']
+    user_cart.save()
 
     messages.success(request, "Product added to the cart successfully.")
     return redirect('marketplace')
 
-# for cart operations
+
+
 def cart_view(request):
+    if request.method == 'POST':
+        # Get or create the user's cart
+        user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+        # Iterate through products in the cart and update quantities
+        for cart_item in CartItem.objects.filter(cart=user_cart):
+            new_quantity = int(request.POST.get(f"quantityInput-{cart_item.product.id}", 1))
+
+            # Ensure the new quantity is within the limits (1 to product stock)
+            new_quantity = max(1, min(new_quantity, cart_item.product.productStock))
+
+            # Update the quantity in the cart item
+            cart_item.quantity = new_quantity
+            cart_item.save()
+
+        messages.success(request, "Cart updated successfully.")
+
     user_cart, created = Cart.objects.get_or_create(user=request.user)
-    products_in_cart = user_cart.products.all()
-    
+    cart_items = user_cart.cartitem_set.all()  # Retrieve all cart items for the user's cart
+
     context = {
-        'products_in_cart': products_in_cart,
+        'cart_items': cart_items,
+        'user_cart': user_cart
     }
 
-    
-    for product_in_cart in products_in_cart:
-        print(f"Product Name: {product_in_cart.productName}")
-        print(f"Product Brand: {product_in_cart.productBrand}")
-        print(f"Product Price: {product_in_cart.productPrice}")
-        print(f"Product Images: {[image.image.url for image in product_in_cart.images.all()]}")
     return render(request, 'marketplace/cart.html', context)
+
+# for update cart button
+def update_cart(request):
+    if request.method == 'POST':
+        # Print request.POST data
+        print(f"POST data: {request.POST}")
+
+        # Get or create the user's cart
+        user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+        
+        print(user_cart)
+
+        # Initialize the total amount
+        total_amount = 0
+        
+        if "delete" in request.POST:
+            pId = request.POST.get('delete')
+            item_to_delete = CartItem.objects.filter(product_id=pId).first()
+            print(item_to_delete)
+            if item_to_delete:
+                item_price = item_to_delete.product.productPrice
+                print("item_price", item_price)
+                # Delete the item from the cart
+                item_to_delete.delete()
+
+                # Recalculate the total amount
+                user_cart.total_amount -= item_price * item_to_delete.quantity
+                if user_cart.total_amount < 0:
+                    user_cart.total_amount = 0
+                
+                # Save the cart
+                user_cart.save()
+
+                
+                # user_cart.save()
+            
+            
+
+        # Iterate through products in the cart and update quantities
+        for cart_item in user_cart.cartitem_set.all():
+            print("cart items: ", cart_item.quantity)
+            # Modify the cart_item_id to use the product ID
+            cartID = str(cart_item.product.id)
+            new_quantity = request.POST.get('quantityInput-'+ cartID)
+            print('quantityInput-'+ cartID)
+            
+            if new_quantity == None:
+                oldQuantity = cart_item.quantity
+                # Update the quantity in the cart item
+                cart_item.quantity = oldQuantity
+                cart_item.save()
+            else:
+                cart_item.quantity = new_quantity
+                cart_item.save()
+                
+            user_cart.update_total_amount()
+                
+                
+    return redirect('cart')
+
+
+

@@ -36,6 +36,21 @@ class productImage(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.ManyToManyField('addProducts')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return f"Cart for {self.user.username}"
+    
+    def update_total_amount(self):
+        # Calculate total amount based on the quantity of each item in the cart
+        total = sum(item.product.productPrice * item.quantity for item in self.cartitem_set.all())
+        self.total_amount = total
+        self.save()
+    
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey('addProducts', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)  # Add a quantity field
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.productName} in Cart for {self.cart.user.username}"

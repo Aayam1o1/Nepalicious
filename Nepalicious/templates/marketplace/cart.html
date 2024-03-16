@@ -5,20 +5,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cart</title>
+    <script>
+
+        function updateQuantity(productId, change, maxStock) {
+            const quantityInput = document.getElementById(`quantityInput-${productId}`);
+            console.log(productId);
+            console.log(`Updating quantity for product ${productId}. Current value: ${quantityInput.value}`);
+            
+            let newQuantity = parseInt(quantityInput.value) + change;
+
+            // Ensure the new quantity is within the limits (1 to product stock)
+            newQuantity = Math.max(1, Math.min(newQuantity, maxStock));
+
+            quantityInput.value = newQuantity;
+            console.log(`New quantity for product ${productId}: ${newQuantity}`);
+
+            // Add additional logs to debug
+            console.log(`Change: ${change}`); 
+            console.log(`Max Stock: ${maxStock}`);
+            
+        }
+    </script>
 </head>
 
 <body>
     {% extends '../navigationBar/base.html' %} {% block content %}
 
     <div class="w-[85%] mx-auto mt-10">
-        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
-            Shopping Cart
-        </h1>
+        <div class="flex justify-between w-[82%]">
+            <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+                Shopping Cart
+            </h1>
+
+          
+                <button type="submit"
+                form="update-cart-quantity-form"
+        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+        Update
+            </button>
+
+        </div>
     </div>
 
     <div class="flex w-[90%] mx-auto">
         <section class="mx-auto w-[80%] px-4 py-4">
-
             <div class="mt-6 flex flex-col">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -34,7 +64,7 @@
                                             Brand
                                         </th>
                                         <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                                            Price
+                                            Price (per 1)
                                         </th>
                                         <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                                             Quantity
@@ -45,71 +75,88 @@
                                     </tr>
                                 </thead>
 
-                                {% for product_in_cart in products_in_cart %}
+                    <form method="post" action="{% url 'update_cart' %}" id="update-cart-quantity-form">
+                                    {% csrf_token %}
+                                    <!-- Your table content here -->
+                    
+
+                                {% for cart_item in cart_items %}
                                 <tbody class="divide-y divide-gray-200 bg-white">
                                     <tr>
                                         <td class="whitespace-nowrap px-4 py-4">
                                             <div class="flex items-center">
                                                 <div class="flex">
-                                                    <a href="{% url 'productDetail' product_in_cart.id %}">
-                                                        <img src="{{ product_in_cart.images.first.image.url }}"
-                                                            alt="{{ product_in_cart.productName }}"
+                                                    <a href="{% url 'productDetail' cart_item.product.id %}">
+                                                        <img src="{{ cart_item.product.images.first.image.url }}"
+                                                            alt="{{ cart_item.product.productName }}"
                                                             class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
                                                     </a>
                                                 </div>
                                                 <div class="ml-4">
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        {{ product_in_cart.productName }}
+                                                        {{ cart_item.product.productName }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="whitespace-nowrap px-12 py-4">
-                                            <div class="text-sm text-gray-900 ">{{ product_in_cart.productBrand }}</div>
-
+                                            <div class="text-sm text-gray-900">
+                                                {{ cart_item.product.productBrand }}
+                                            </div>
                                         </td>
                                         <td class="whitespace-nowrap px-4 py-4">
-                                            Rs {{ product_in_cart.productPrice }}
+                                            Rs {{ cart_item.product.productPrice }}
                                         </td>
                                         <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
                                             <div class="min-w-24 flex">
-                                                <button type="button" class="h-7 w-7">
+                                                <button type="button" class="h-7 w-7"
+                                                    onclick="updateQuantity('{{ cart_item.product.id }}', -1, {{ cart_item.product.productStock }})">
                                                     -
                                                 </button>
-                                                <input type="text" class="mx-1 h-7 w-9 rounded-md border text-center"
-                                                    value="1" />
-                                                <button type="button" class="flex h-7 w-7 items-center justify-center">
-                                                    +
-                                                </button>
+                                                
+                                                <input type="text" name="quantityInput-{{ cart_item.product.id }}"
+                                                    id="quantityInput-{{ cart_item.product.id }}"
+                                                    class="mx-1 h-7 w-9 rounded-md border text-center"
+                                                    value="{{ cart_item.quantity }}" readonly />
+                                                <button type="button" class="flex h-7 w-7 items-center justify-center"
+                                                    onclick="updateQuantity('{{ cart_item.product.id }}', 1, {{ cart_item.product.productStock }})">
+                                                +
+                                            </button>
                                             </div>
                                         </td>
+
+                                        <!-- script for quantity add and minus -->                                        
+
+
                                         <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
-                                            <button type="button" class="flex items-center space-x-1 px-2 py-1 pl-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="text-red-500">
-                                                    <path d="M3 6h18"></path>
-                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                                </svg>
-                                                <span class="text-xs font-medium text-red-500">Remove</span>
-                                            </button>
+                                                
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-red-500">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                        </svg>
+                                        <button type="submit" value="{{cart_item.product.id }}" name="delete"
+                                            class="text-xs font-medium text-red-500">REMOVE</button>
+                                                    
+                                                                                 
                                         </td>
                                     </tr>
-                                    
+
                                     {% endfor %}
+
+                                </form>
+
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    
                 </div>
             </div>
-
         </section>
-
-
-
 
         <section aria-labelledby="summary-heading" class="rounded-md bg-white lg:col-span-4 lg:mt-0 lg:p-0">
             <h2 id="summary-heading" class="border-b border-gray-200 px-4 text-lg font-medium text-gray-900 sm:p-4">
@@ -118,19 +165,23 @@
             <div>
                 <dl class="space-y-1 px-2 py-4">
                     <div class="flex items-center justify-between">
-                        <dt class="text-sm text-gray-800">Price (3 item)</dt>
-                        <dd class="text-sm font-medium text-gray-900">₹ 52,398</dd>
+                        <dt class="text-sm text-gray-800">Total Items in Cart</dt>
+                        <dd class="text-sm font-medium text-gray-900">
+
+                            {% with total_items=cart_items|length %}
+                            {{ total_items }}
+                            {% endwith %}</dd>  
                     </div>
                     <div class="flex items-center justify-between border-y border-dashed py-4">
-                        <dt class="text-base font-medium text-gray-900">
-                            Total Amount
-                        </dt>
-                        <dd class="text-base font-medium text-gray-900">₹ 48,967</dd>
+                        <dt class="text-base font-medium text-gray-900">Total Amount</dt>
+                        <dd class="text-base font-medium text-gray-900">Rs {{ user_cart.total_amount|floatformat:2 }}
+                        </dd>
                     </div>
                 </dl>
                 <div class="flex justify-center space-x-4">
                     <button type="button"
-                        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#61A0FF] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#61A0FF] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                        onclick="window.location.href='{% url 'marketplace' %}'">
                         Back to shop
                     </button>
                     <button type="button"
@@ -140,7 +191,6 @@
                 </div>
             </div>
         </section>
-
     </div>
     {% endblock %}
 </body>
