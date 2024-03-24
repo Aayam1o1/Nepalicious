@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'users',
     'widget_tweaks',
     'recipe',
-    'market'
+    'market',
+    'restaurant'
 ]
 
 MIDDLEWARE = [

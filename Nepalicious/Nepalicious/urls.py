@@ -27,7 +27,7 @@ urlpatterns = [
     path('', include("users.urls")),
     path('', include("recipe.urls")),
     path('', include("market.urls")),
-    
+    path('', include("restaurant.urls")),
 ]
 
 # for viewing image through url
