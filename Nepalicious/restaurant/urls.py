@@ -6,5 +6,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     # For restaurant
     path('restaurant', views.restaurant, name='restaurant'),
+    path('addRestaurant', views.addRestaurant, name='addRestaurant'),
 
 ]

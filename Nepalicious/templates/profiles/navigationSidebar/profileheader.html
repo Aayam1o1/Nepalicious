@@ -143,7 +143,7 @@
             <img id="image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
             class="h-[100%] w-[100%] object-cover rounded-full" />
           </div>
-          <div class="ml-[5.5rem] mt-4">
+          <div class=" mt-4 flex justify-center">
             <p class="justify-self-center text-l pl-2">{{request.user}}</p> 
           </div>
         </div>
@@ -163,6 +163,14 @@
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
               <p class="text-l ml-5">Add Product</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"restaurant" %}
+            <a href="{% url 'addRestaurant' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Add Restaruant</p>
             </div>
             </a>
             {% endif %}
