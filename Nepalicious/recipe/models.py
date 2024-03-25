@@ -37,3 +37,7 @@ class recipeFeedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feedback = models.TextField(blank=True)
     
+class savedRecipe(models.Model):
+    recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)

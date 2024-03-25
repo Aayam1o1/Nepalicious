@@ -59,11 +59,32 @@
                 </div>
                 <h2 class="text-xl font-medium ">{{ recipeDetail.cuisineType }}</h2>
             </div>
-            <div>
-                <div class="h-[4rem] w-[4rem]">
-                    <img class="" src="../../static/images/recipe/bookmark.svg" alt="">
+            
+            <!-- show if already saved -->
+            {% if saved_recipe %}
+            <form method="POST" action="{% url 'deleteSavedRecipe' saved_recipe.id %}" >
+                {% csrf_token %}
+                <div>
+                    <button type="submit">
+                        <div class="h-[4rem] w-[4rem]">
+                            <img class="" src="../../static/images/recipe/bookmarkfilled.svg" alt="Saved">
+                        </div>
+                    </button>
                 </div>
-            </div>
+            </form>
+            {% else %}
+            <!-- show if not saved -->
+            <form method="POST" action="{% url 'savedRecipe' recipeDetail.id %}">
+                {% csrf_token %}
+                <div>
+                    <button type="submit">
+                        <div class="h-[4rem] w-[4rem]">
+                            <img class="" src="../../static/images/recipe/bookmark.svg" alt="">
+                        </div>
+                    </button>
+                </div>
+            </form>
+            {%endif%}
         </div>
     </div>
 

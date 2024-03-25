@@ -8,3 +8,4 @@ from recipe.models import *
 admin.site.register(addRecipe),
 admin.site.register(recipeImage),
 admin.site.register(recipeFeedback)
+admin.site.register(savedRecipe)

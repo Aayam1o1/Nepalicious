@@ -166,15 +166,11 @@
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Steps for the recipe</h1>
                                 <div class="pb-10 flex">
-                                    <input type="text" id="recipeInput"
-                                        class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100"
-                                        placeholder="Enter Steps adn press add">
-                                    <button type="button" onclick="addStep()"
-                                        class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
+                                    <input type="text" id="recipeInput" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100" placeholder="Enter Steps and press add">
+                                    <button type="button" onclick="addStep()" class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
                                 </div>
                                 <div id="recipeContainerWrapper" style="display: none;">
-                                    <div id="recipeContainer"
-                                        class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
+                                    <div id="recipeContainer" class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
                                         <h1 class="text-2xl font-semibold pb-5 ">Steps for the Recipe</h1>
                                         <!-- Steps will be dynamically added here -->
                                         <input type="hidden" id="hiddenStepInput" name="steps" value="" required>
@@ -185,40 +181,40 @@
                         <!--FOR steps-->
                         <script>
                             var stepCounter = 1; // Counter for numbering steps
-
+                        
                             function addStep() {
                                 var recipeInput = document.getElementById("recipeInput");
                                 var stepValue = recipeInput.value.trim();
-
+                        
                                 if (stepValue === "") {
                                     alert("Step cannot be empty");
                                     return;
                                 }
-
+                        
                                 var recipeContainerWrapper = document.getElementById("recipeContainerWrapper");
                                 recipeContainerWrapper.style.display = "block";
-
+                        
                                 var recipeContainer = document.getElementById("recipeContainer");
                                 var stepElement = document.createElement("div");
                                 stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
                                 recipeContainer.appendChild(stepElement);
-
+                        
                                 recipeInput.value = ""; // Clear input field after adding step
                                 updateHiddenStepsInput();
-
+                        
                                 stepCounter++; // Increment the step counter
                             }
-
+                        
                             function updateHiddenStepsInput() {
                                 var recipeContainer = document.getElementById("recipeContainer");
                                 var steps = recipeContainer.querySelectorAll("div");
                                 var hiddenStepInput = document.getElementById("hiddenStepInput");
                                 var stepsText = [];
-
+                        
                                 steps.forEach(function (step) {
                                     stepsText.push(step.textContent);
                                 });
-
+                        
                                 hiddenStepInput.value = stepsText.join(", ");
                             }
                         </script>

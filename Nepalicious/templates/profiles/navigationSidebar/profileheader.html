@@ -158,6 +158,10 @@
               <a href="{% url 'changePassword' %}"><p class="text-l ml-5">Change Password</p> </a>
             </div>
 
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/recipebook.png" class="ml-[1.4rem] h-[2rem]" alt="" />
+              <a href="{% url 'viewSavedRecipe' %}"><p class="text-l ml-5">Saved Recipe</p> </a>
+            </div>
             {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
             <a href="{% url 'addProduct' %}"> 
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">

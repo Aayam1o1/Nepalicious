@@ -34,7 +34,6 @@
         </div>
     </div>
 
-    <!-- <div id="folium_map_id" style="height: 400px;"></div> -->
 
     <form id="mapForm" method="POST" action="{% url 'addRestaurant' %}">
         {% csrf_token %}
@@ -57,38 +56,57 @@
         {{ maps|safe }}
     </div>
 
+    
     <script>
         $(document).ready(function () {
             var map = L.map('folium_map_id');
-        
+            console.log("Leaflet map initialized:", map); // Log the map object
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
-        
             // Function to handle map click event
             function onMapClick(e) {
-                console.log("Map clicked");
-                console.log(e);
-        
+                console.log("Map clicked", e.latlng);
+                console.log(e); 
                 var latitude = e.latlng.lat.toFixed(6);
                 var longitude = e.latlng.lng.toFixed(6);
                 console.log("latitude is " + latitude);
                 console.log("longitude is " + longitude);
-        
-                // Update hidden input fields with latitude and longitude
-                $('#latitude').val(latitude);
-                $('#longitude').val(longitude);
-        
-                // Display clicked location info
+            
+                // Update clicked location info
                 $('#clickedLocationInfo').text('Latitude: ' + latitude + ', Longitude: ' + longitude);
+                
+                // Remove any existing marker and add a new one at the clicked location
+                if (typeof marker !== 'undefined') {
+                    map.removeLayer(marker);
+                }
+                marker = L.marker([latitude, longitude]).addTo(map);
             }
-        
+            
             // Attach click event listener to the map
             map.on('click', onMapClick);
-        });
+            });
     </script>
-    
 
+    <!-- <script>
+
+        var map = L.map('folium_map_id');
+        console.log("Leaflet map initialized:", map); // Log the map object
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        map.on('click', (event) => {
+            L.marker([event.latlng.lat, event.latlng.lng]).addTo(map);
+
+            document.getElementById('clickedLocationInfo').innerHTML = 'Clicked location: Latitude ' + event.latlng.lat + ', Longitude ' + event.latlng.lng;
+
+        });
+
+    </script>
+     -->
 
 
 

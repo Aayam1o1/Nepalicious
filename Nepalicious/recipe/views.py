@@ -72,7 +72,8 @@ def recipeDetail(request, recipe_id):
     
     # to get the details of the product
     recipeDetail = get_object_or_404(addRecipe, id=recipe_id)
-    
+    saved_recipe = False
+
     
     # for steps
     recipeStepsString = recipeDetail.recipeSteps
@@ -121,6 +122,12 @@ def recipeDetail(request, recipe_id):
     else:
         feedback_form = FeedbackForm()
     
+    if request.user.is_authenticated:
+        saved_recipe = savedRecipe.objects.filter(user=request.user, recipe=recipeDetail).first()
+    else:
+        saved_recipe = False
+        
+    print("saved recipe id: ", saved_recipe)
     # Retrieve comments related to the specific recipe
     feedback_comments = recipeFeedback.objects.filter(recipe=recipeDetail)
     
@@ -133,7 +140,55 @@ def recipeDetail(request, recipe_id):
         'recipeIngredient': recipeIngredient,
         'feedback_form': feedback_form,
         'feedback_comments': feedback_comments,
+        'saved_recipe': saved_recipe,
+
 
     }
     
     return render(request, 'recipe/recipeDetail.html', context)
+
+def save_recipe(request, recipe_id):
+    if request.method == 'POST':
+        recipe = addRecipe.objects.get(pk=recipe_id)
+        print('Recipe: ', recipe)
+        
+        
+        # Check if the recipe is not already saved for the current user
+        if not savedRecipe.objects.filter(user=request.user, recipe=recipe).exists():
+            # If the recipe is not saved, create and save the savedRecipe object
+            saved_recipe = savedRecipe.objects.create(user=request.user, recipe=recipe)
+            print('Saved Recipe: ', saved_recipe)
+            print('Recipe saved successfully')
+            
+            # Add a success message
+            messages.add_message(request, messages.SUCCESS, 'Successfully saved')
+        else:
+            print('Recipe already saved')
+            # Add a warning message
+            messages.add_message(request, messages.WARNING, 'Recipe already saved')
+        
+        # Redirect to the same page
+        return redirect('recipeDetail', recipe_id=recipe_id)
+
+    
+    return render(request, 'profiles/savedRecipe.html')
+
+
+def viewSavedRecipe(request):
+    saved_recipes = savedRecipe.objects.filter(user=request.user)
+    
+    context = {
+        'saved_recipes': saved_recipes,
+    }
+    return render(request, 'profiles/savedRecipe.html', context)
+
+def deleteSavedRecipe(request, saved_recipe_id):
+    if request.method == 'POST':
+        saved_recipe = savedRecipe.objects.get(pk=saved_recipe_id)
+        print('saved recipe: ', saved_recipe)
+        
+        if saved_recipe.user == request.user:
+            saved_recipe.delete()
+            messages.success(request, 'The recipe was removed from bookmark')
+            return redirect('viewSavedRecipe')
+    return render(request, 'profiles/savedRecipe.html')
