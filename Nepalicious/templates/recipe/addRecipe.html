@@ -185,23 +185,31 @@
                             function addStep() {
                                 var recipeInput = document.getElementById("recipeInput");
                                 var stepValue = recipeInput.value.trim();
-                        
+                            
                                 if (stepValue === "") {
                                     alert("Step cannot be empty");
                                     return;
                                 }
-                        
+                            
+                                // Remove any full stops in the middle of the step
+                                stepValue = stepValue.replace(/\./g, '');
+                            
+                                // Add a full stop at the end of the step if it doesn't already have one
+                                if (!stepValue.endsWith('.')) {
+                                    stepValue += '.';
+                                }
+                            
                                 var recipeContainerWrapper = document.getElementById("recipeContainerWrapper");
                                 recipeContainerWrapper.style.display = "block";
-                        
+                            
                                 var recipeContainer = document.getElementById("recipeContainer");
                                 var stepElement = document.createElement("div");
                                 stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
                                 recipeContainer.appendChild(stepElement);
-                        
+                            
                                 recipeInput.value = ""; // Clear input field after adding step
                                 updateHiddenStepsInput();
-                        
+                            
                                 stepCounter++; // Increment the step counter
                             }
                         

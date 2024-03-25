@@ -99,13 +99,13 @@
             </div>
 
             <div class="flex flex-col gap-6 mr-3">
-                <div class="w-[340px] rounded-xl">
-                    <img src="{{ recipe_image.1.image.url }}" class="w-full h-full object-fit" alt="">
+                <div class="w-[340px] h-[240px] rounded-xl">
+                    <img src="{{ recipe_image.1.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
 
-                <div class="w-[340px] rounded-xl border-t-[black] border-t">
+                <div class="w-[340px] h-[240px]">
                     {% if recipe_image.count >= 3 %}
-                    <img src="{{ recipe_image.2.image.url }}" class="w-full h-full object-fit " alt="">
+                    <img src="{{ recipe_image.2.image.url }}" class="w-full h-full object-cover " alt="">
                     {% endif %}
                 </div>
 
