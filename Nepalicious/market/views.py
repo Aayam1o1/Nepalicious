@@ -75,14 +75,61 @@ def productDetail(request, product_id):
 
     product_image = productImage.objects.filter(addProducts = productdetailForImage)
     
+     # for feedback
+    # if request.method == 'POST':
+    #     feedback_form = FeedbackForm(request.POST)
+
+    #     if feedback_form.is_valid():
+    #         # Create a new feedback object and associate it with the current product and user
+    #         new_feedback = feedback_form.save(commit=False)
+    #         new_feedback.product = productDetail
+    #         new_feedback.user = request.user
+    #         new_feedback.save()
+
+    #         # Redirect to the same product detail page after submitting feedback
+    #         return redirect('productDetail', product_id=product_id)
+    # else:
+    #     feedback_form = FeedbackForm()
+    
+    
+    # Retrieve comments related to the specific product
+    feedback_comments = productFeedback.objects.filter(product=productDetail) 
     context = {
         'productList': productList,
         'productdetailForImage' : productdetailForImage,
         'product_image' : product_image,
         'productDetail': productDetail,
+        # 'feedback_form' : feedback_form,
+        'feedback_comments': feedback_comments,
     }
     
     return render(request, 'marketplace/productDetail.html', context)
+
+
+
+def submit_review_product(request, product_id):
+    # getting the url fort the same webpage
+    url  = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            # to check if review is already submitted
+            reviews = productFeedback.objects.get(user__id=request.user.id, product__id = product_id)
+            form = FeedbackForm(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you, Your review has been updated')
+            return redirect(url)
+        except:
+            form = FeedbackForm(request.POST)
+            if form.is_valid():
+                data = productFeedback()
+                data.rating = form.cleaned_data['rating']
+                data.feedback = form.cleaned_data['feedback']
+                data.product_id = product_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you, Your review has been submitted')
+                return redirect(url)
+
 
 
 # for add to cart button

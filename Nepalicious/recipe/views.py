@@ -147,6 +147,30 @@ def recipeDetail(request, recipe_id):
     
     return render(request, 'recipe/recipeDetail.html', context)
 
+#submt review
+def submit_review_recipe(request, recipe_id):
+    # getting the url fort the same webpage
+    url  = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            # to check if review is already submitted
+            reviews = recipeFeedback.objects.get(user__id=request.user.id, recipe__id = recipe_id)
+            form = FeedbackForm(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you, Your review has been updated')
+            return redirect(url)
+        except:
+            form = FeedbackForm(request.POST)
+            if form.is_valid():
+                data = recipeFeedback()
+                data.feedback = form.cleaned_data['feedback']
+                data.recipe_id = recipe_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you, Your review has been submitted')
+                return redirect(url)
+            
+
 def save_recipe(request, recipe_id):
     if request.method == 'POST':
         recipe = addRecipe.objects.get(pk=recipe_id)

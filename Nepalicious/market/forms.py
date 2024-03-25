@@ -46,3 +46,10 @@ class addProductForm(ModelForm):
     class Meta:
         model = addProducts
         fields = ['productName', 'productBrand', 'productPrice', 'productDescription', 'productStock', 'productCategory']
+        
+        
+class FeedbackForm(forms.ModelForm):
+   
+    class Meta:
+        model = productFeedback
+        fields = ['feedback', 'rating']

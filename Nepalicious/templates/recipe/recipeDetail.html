@@ -190,7 +190,7 @@
                 <div id="crud-modal" tabindex="-1" aria-hidden="true"
                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                     <div class="relative p-4 w-full max-w-md max-h-full">
-                        <form id="feedbackForm" method="post" action="{% url 'recipeDetail' recipeDetail.id %}">
+                        <form id="feedbackForm" method="post" action="{% url 'submit_review_recipe' recipeDetail.id %}">
                             {% csrf_token %}
                             <!-- Modal content -->
                             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -215,9 +215,7 @@
 
                                 <div class="grid gap-4 mb-4 grid-cols-2">
                                     <div class="col-span-2 p-4 md:p-5">
-
-                                        {{ feedback_form.as_p }}
-
+                                            <textarea name="feedback" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                                     </div>
                                 </div>
                                 <button type="submit"

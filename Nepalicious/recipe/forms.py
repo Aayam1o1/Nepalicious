@@ -30,11 +30,6 @@ class addRecipeForm(ModelForm):
         
         
 class FeedbackForm(forms.ModelForm):
-    feedback = forms.CharField(
-        label='',  # Set the label for the 'feedback' field to an empty string
-        widget=forms.Textarea(attrs={'placeholder': 'Your feedback...', 'class': 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500', 'rows': 4, 'cols': 60}),
-    )
-
     class Meta:
         model = recipeFeedback
         fields = ['feedback']

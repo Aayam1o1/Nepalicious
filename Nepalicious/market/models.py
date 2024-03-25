@@ -33,6 +33,15 @@ class productImage(models.Model):
     addProducts = models.ForeignKey(addProducts, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/marketplace/productImage/')
     
+    
+class productFeedback(models.Model):
+    product = models.ForeignKey(addProducts, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feedback = models.TextField(blank=True)
+    rating = models.FloatField()
+        
+    
+    
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.ManyToManyField('addProducts')
