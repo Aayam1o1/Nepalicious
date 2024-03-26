@@ -74,7 +74,7 @@ def registerUser(request):
             with transaction.atomic():
                 user = form.save()
                 # saving details of the user
-                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'),requestedGroup = userRequestedGroup)
+                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'), restaurant_name = request.POST.get('restaurant_name'), requestedGroup = userRequestedGroup)
                 userDetails.save()
                 
                 if not userRequestedGroup or userRequestedGroup== "User":
@@ -276,8 +276,8 @@ def editprofile(request):
                 
         if "update" in request.POST:
             # UPDATING USER MODEL
-            user.first_name = request.POST.get('first_name')
-            user.last_name = request.POST.get('last_name')
+            user.first_name = request.POST.get('first_name', '')
+            user.last_name = request.POST.get('last_name', '')
             user.email = request.POST.get('email')
             #saving the updated data
             user.save()
@@ -286,6 +286,7 @@ def editprofile(request):
             user.usersdetail = user.usersdetail
             user.usersdetail.phone_number = request.POST.get('phone_number')
             user.usersdetail.address = request.POST.get('address')
+            user.usersdetail.restaurant_name = request.POST.get('restaurant_name', '')
             
             #saving the updated data
             user.usersdetail.save()
