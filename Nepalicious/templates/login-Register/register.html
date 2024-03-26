@@ -124,14 +124,7 @@
     {% extends '../navigationBar/base.html' %} {% block content %}
     <section class="wrapper-register-page-parent relative flex items-center justify-center overflow-y-hidden py-10 ">
 
-        {% comment %} <div> {% endcomment %}
-            <!-- background wrapper and background image -->
-            {% comment %} <div class="bg-image absolute inset-0 -z-[10] flex w-full"> {% endcomment %}
-                {% comment %} <img src="../../static/images/loginRegister/background.jpg" alt="" class="w-[100%] h-auto relative" /> {% endcomment %}
-                <!-- overlay filter -->
-                {% comment %} <div class="overlay bg-[rgba(0,0,0,0.3)] absolute inset-0"></div>
-            </div>
-        </div> {% endcomment %}
+        
         <div class="register-page-child flex w-full h-full">
             <div
             class="overlay h-[150%] absolute inset-0 bg-[rgba(0,0,0,0.3)]"
@@ -182,7 +175,7 @@
                             </div>
 
                             <div class="name hidden flex-col gap-y-1" id="restaurant-name">
-                                <label for="last_name">restaurant Name</label>
+                                <label for="last_name">Restaurant Name</label>
                                 <input type="text"  name= "restaurant" class="border py-[0.4rem] rounded-md pl-2"
                                     placeholder="Enter your Name" id="restaurant-input-el"/>
                             </div>

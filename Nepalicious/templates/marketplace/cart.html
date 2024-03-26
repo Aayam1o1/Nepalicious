@@ -184,10 +184,24 @@
                         onclick="window.location.href='{% url 'marketplace' %}'">
                         Back to shop
                     </button>
-                    <button type="button"
+                    
+                    <form action="{% url 'initiate' %}" method="POST">
+                        {% csrf_token %}
+                    <input type="submit" value="Checkout"
                         class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-                        Checkout
-                    </button>
+                        <!-- Checkout
+                    </button> -->
+
+                    <input type="hidden" name="amount" id="amt" value="{{ user_cart.total_amount }}">
+
+                    <input type="hidden" name="purchase_order_id" id="pid" value="{{request.user}}">
+
+                    <input type="hidden" name="return_url" value="http://127.0.0.1:8000/cart">
+
+
+                    </form>
+
+                    
                 </div>
             </div>
         </section>

@@ -12,6 +12,10 @@ urlpatterns = [
     path('cart', views.cart_view, name='cart'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('update_cart/', views.update_cart, name='update_cart'),
-    path('submit_review_product/<int:product_id>/', views.submit_review_product, name='submit_review_product')
+    path('submit_review_product/<int:product_id>/', views.submit_review_product, name='submit_review_product'),
+    
+    # FOR PAYMENT
+    path('initiate', views.initkhalti, name='initiate'),
+    
 
 ]

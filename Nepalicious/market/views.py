@@ -3,7 +3,9 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from django.db.models import Sum, F
-
+import json
+import requests
+from django.http import HttpResponse
 
 # Create your views here.
 def marketplace(request):
@@ -74,23 +76,7 @@ def productDetail(request, product_id):
     productdetailForImage = get_object_or_404(addProducts, id=product_id)
 
     product_image = productImage.objects.filter(addProducts = productdetailForImage)
-    
-     # for feedback
-    # if request.method == 'POST':
-    #     feedback_form = FeedbackForm(request.POST)
-
-    #     if feedback_form.is_valid():
-    #         # Create a new feedback object and associate it with the current product and user
-    #         new_feedback = feedback_form.save(commit=False)
-    #         new_feedback.product = productDetail
-    #         new_feedback.user = request.user
-    #         new_feedback.save()
-
-    #         # Redirect to the same product detail page after submitting feedback
-    #         return redirect('productDetail', product_id=product_id)
-    # else:
-    #     feedback_form = FeedbackForm()
-    
+     
     
     # Retrieve comments related to the specific product
     feedback_comments = productFeedback.objects.filter(product=productDetail) 
@@ -247,6 +233,96 @@ def update_cart(request):
                 
                 
     return redirect('cart')
+
+
+
+def initkhalti(request):
+    user = request.user.username
+    userinfo = request.user
+    contact = userinfo.usersdetail.phone_number
+    email = userinfo.email
+
+    url = "https://a.khalti.com/api/v2/epayment/initiate/"
+    
+    return_url = request.POST.get('return_url')
+    purchase_order_id = request.POST.get('purchase_order_id')
+    amount = request.POST.get('amount')
+    print(amount)
+
+    payload = json.dumps({
+        "return_url": return_url,
+        "website_url": "http://127.0.0.1:8000",
+        "amount": amount,
+        "purchase_order_id": purchase_order_id,
+        "purchase_order_name": "test",
+        "customer_info": {
+            "name": user,
+            "email": email,
+            "phone": contact,
+        }
+    })
+    headers = {
+        'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede', 
+        'Content-Type': 'application/json',
+    }
+
+    try:
+        response = requests.request("POST", url, headers=headers, data=payload)
+        new_res = json.loads(response.text)
+
+        payment_url = new_res.get('payment_url')
+        if payment_url:
+            return redirect(payment_url)
+        else:
+            print("Payment URL not found in response:", new_res)
+            return HttpResponse("Payment URL not found in response")
+    except Exception as e:
+        print("Error occurred during payment initiation:", e)
+        return HttpResponse("An error occurred during payment initiation")
+     
+
+    
+
+def verifyKhalti(request):
+    url = "https://a.khalti.com/api/v2/epayment/lookup/"
+    if request.method == 'GET':
+        headers = {
+            'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede',
+            'Content-Type': 'application/json',
+        }
+        pidx = request.GET.get('pidx')
+        
+        payload = json.dumps({
+        'pidx': pidx
+        })
+        
+        res = requests.request('POST',url,headers=headers,data=payload)
+        
+        # return render(request, "Payment/verify.html")
+        new_res = json.loads(res.text)
+        print("new_res",new_res)
+        
+
+        if new_res['status'] == 'Completed':
+            
+            print("YA SAMMA PUGO HAIIIII")
+            
+            cart = get_object_or_404(Cart, user=request.user)
+            print(cart)
+            
+            
+            
+        
+        
+        else:
+            pass
+            # return redirect('error')
+
+
+    
+    
+# def error(request):
+#     return render(request, "Payment/error.html")
 
 
 
