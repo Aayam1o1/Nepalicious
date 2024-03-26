@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.contrib import messages
+
 from .models import *
 from .forms import *
 import folium
@@ -9,54 +11,50 @@ def restaurant(request):
     return render(request, 'restaurant/restaurant.html')
 
 def addRestaurant(request):
-    # if request.method == 'POST':
-    #     form = SearchForm(request.POST)
-    #     if form.is_valid():
-    #         restaurant_address = form.cleaned_data.get('restaurantaddress')
+    if request.method == 'POST':
+        form = addRestaurantForm(request.POST, request.FILES)
+        if form.is_valid():
+             # Save latitude and longitude
+            latitude = request.POST.get('latitude')
+            longitude = request.POST.get('longitude')
+            print('lat:', latitude)
+            print('long:', longitude)
+            
+            instance = form.save(commit=False)
+            instance.user = request.user
+            print('user', instance.user)
+            
+            # for saving restaurant type
+            selected_restaurant_type = form.cleaned_data['restaurantType']
+            instance.restaurantType = selected_restaurant_type
+            
+            print('selected restarunt type:: ', selected_restaurant_type)
+            instance.save()
 
-    #         print('restaurant', restaurant_address)
-    #         if restaurant_address:
-    #             search = Search.objects.create(user=request.user, restaurantaddress=restaurant_address)
-    #             location = geocoder.osm(restaurant_address)
-    #             search.latitude = location.lat
-    #             search.longitude = location.lng
-    #             search.user = request.user
-    #             search.save()
-    #             return redirect('addRestaurant')
-    #         else:
-    #             return HttpResponse("Restaurant address is required")
+            # for images
+            restaurant_image = request.FILES.getlist('restaurantImage')
+            for image in restaurant_image:
+                restaurantImage.objects.create(addRecipe=instance, image=image)
+                
+            print('selected restarunt image: ', restaurant_image)
+    
+            instance.save()
+            
+            
+            
+            location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude)
+            print(location)
+            
 
-    # else:
-    #     form =  SearchForm()
-
-    # restaurantaddress = Search.objects.all().last()
-    # #osm = open street maps
-    # if restaurantaddress:
-    #     location = geocoder.osm(restaurantaddress)
-    #     lat = location.lat
-    #     lng = location.lng
-    #     country = location.country
-
-
-    #     if lat == None or lng == None:
-    #         if restaurantaddress:
-    #             restaurantaddress.delete()
-    #         return HttpResponse("Youre address input is invalid")
-
-    # # Creating map object
-    #     maps = folium.Map(location=[27.7172, 85.3240], zoom_start=12)
-    #     # folium.Marker([27.7198, 85.3133], tooltip='Click for more', popup='Dallu').add_to(maps)
-
-    #     folium.Marker([lat, lng], tooltip='Click for details', popup=country).add_to(maps)
-    #     #getting html representation of map object
-    #     maps = maps._repr_html_()
-    # else:
-    #     maps = folium.Map(location=[27.7172, 85.3240], zoom_start=12)._repr_html_()
-
-    # context = {
-    #     'maps': maps,
-    #     'form': form,
-    # }
-
-
-    return render(request, 'restaurant/addRestaurant.html')
+            messages.success(request, "Sucessfully added Restaurant!!")    
+        else:
+            print(form.errors)
+            
+    else:
+        form = addRestaurantForm()
+    
+    
+    context = {
+        'form': form,
+    }    
+    return render(request, 'restaurant/addRestaurant.html', context)

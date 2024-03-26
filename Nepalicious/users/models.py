@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+
 class usersDetail(models.Model):
    """
    In Django, when you define a ForeignKey or OneToOneField in a model, the related 
