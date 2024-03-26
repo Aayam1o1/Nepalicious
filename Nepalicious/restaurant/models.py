@@ -23,7 +23,7 @@ class addRestaurant(models.Model):
     
 class restaurantImage(models.Model):
     addRecipe = models.ForeignKey(addRestaurant, related_name ='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/recipe/restaurantImage/')
+    image = models.ImageField(upload_to='restaurantImage/')
     
 class Location(models.Model):
     restaurant = models.ForeignKey(addRestaurant, on_delete=models.CASCADE)

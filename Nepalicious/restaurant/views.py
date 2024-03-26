@@ -8,9 +8,15 @@ import geocoder
 
 # Create your views here.
 def restaurant(request):
-    return render(request, 'restaurant/restaurant.html')
+    restaurant_list = addRestaurant.objects.all()
+    
+    context = {
+        'restaurantList': restaurant_list
+    }
+    
+    return render(request, 'restaurant/restaurant.html', context)
 
-def addRestaurant(request):
+def addRestaurantdetail(request):
     if request.method == 'POST':
         form = addRestaurantForm(request.POST, request.FILES)
         if form.is_valid():
