@@ -6,6 +6,7 @@ from django.db.models import Sum, F
 import json
 import requests
 from django.http import HttpResponse
+from django.db import transaction
 
 # Create your views here.
 def marketplace(request):
@@ -298,7 +299,6 @@ def verifyKhalti(request):
         
         res = requests.request('POST',url,headers=headers,data=payload)
         
-        # return render(request, "Payment/verify.html")
         new_res = json.loads(res.text)
         print("new_res",new_res)
         
@@ -309,10 +309,14 @@ def verifyKhalti(request):
             
             cart = get_object_or_404(Cart, user=request.user)
             print(cart)
+            with transaction.atomic():
+
             
+                return redirect('paymentSucessful')
+
+
+
             
-            
-        
         
         else:
             pass
@@ -320,7 +324,11 @@ def verifyKhalti(request):
 
 
     
-    
+def paymentSucessful(request):
+    return render(request, 'payment/paymentsuccessful.html')
+
+
+ 
 # def error(request):
 #     return render(request, "Payment/error.html")
 

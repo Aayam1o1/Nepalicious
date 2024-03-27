@@ -16,6 +16,6 @@ urlpatterns = [
     
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
-    
+    path('paymentSucessful', views.paymentSucessful, name='paymentSucessful')
 
 ]

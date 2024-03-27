@@ -63,3 +63,15 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.productName} in Cart for {self.cart.user.username}"
+    
+
+class order(models.Model):
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
+    seller = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name ='seller')
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    
+    
+    
