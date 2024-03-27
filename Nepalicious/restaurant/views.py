@@ -1,6 +1,5 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
-
 from .models import *
 from .forms import *
 import folium
@@ -40,7 +39,7 @@ def addRestaurantdetail(request):
             # for images
             restaurant_image = request.FILES.getlist('restaurantImage')
             for image in restaurant_image:
-                restaurantImage.objects.create(addRecipe=instance, image=image)
+                restaurantImage.objects.create(addRestaurant=instance, image=image)
                 
             print('selected restarunt image: ', restaurant_image)
     
@@ -52,7 +51,8 @@ def addRestaurantdetail(request):
             print(location)
             
 
-            messages.success(request, "Sucessfully added Restaurant!!")    
+            messages.success(request, "Sucessfully added Restaurant!!")   
+            return redirect('restaurant') 
         else:
             print(form.errors)
             
@@ -64,3 +64,78 @@ def addRestaurantdetail(request):
         'form': form,
     }    
     return render(request, 'restaurant/addRestaurant.html', context)
+
+
+def view_details(request, restaurant_id):
+    restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+    print('sure')
+    
+    return redirect('restaurant_detail', restaurant_id=restaurant_id)
+    
+def restaurant_detail(request, restaurant_id):
+    
+    # Retrieve the restaurant object
+    restaurant = addRestaurant.objects.get(pk=restaurant_id)
+    # Access the related images
+    restaurant_images = restaurant.images.all()
+    
+    #getting location for map    
+    restaurant_location = Location.objects.filter(restaurant=restaurant).first()
+    
+    feedback_comments = restaurantFeedback.objects.filter(restaurant=restaurant) 
+
+    if restaurant_location:
+        # Create a map centered at the restaurant's location
+        maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
+        
+         # Add a marker for the restaurant's location
+        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br>{restaurant.user.usersdetail.address}</div>"
+        folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
+                  tooltip='Click for details', 
+                  popup=marker_popup, max_width=400).add_to(maps)
+        
+        # Get the HTML representation of the map
+        maps = maps._repr_html_()
+        
+        coordinates = {
+        'latitude': restaurant_location.latitude,
+        'longitude': restaurant_location.longitude
+    }
+    else:
+        # If no location is available, provide a default map centered at a specific location
+        maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
+        
+        
+    context = {
+        'restaurant': restaurant,
+        'restaurant_images': restaurant_images,
+        'maps': maps,
+        'coordinates': coordinates,
+        'feedback_comments': feedback_comments
+    }
+
+    return render(request, 'restaurant/restaurantDetail.html', context)
+
+
+def submit_review_restaurant(request, restaurant_id):
+    # getting the url fort the same webpage
+    url  = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            # to check if review is already submitted
+            reviews = restaurantFeedback.objects.get(user__id=request.user.id, restaurant__id = restaurant_id)
+            form = FeedbackForm(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you, Your review has been updated')
+            return redirect(url)
+        except:
+            form = FeedbackForm(request.POST)
+            if form.is_valid():
+                data = restaurantFeedback()
+                data.rating = form.cleaned_data['rating']
+                data.feedback = form.cleaned_data['feedback']
+                data.restaurant_id = restaurant_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you, Your review has been submitted')
+                return redirect(url)

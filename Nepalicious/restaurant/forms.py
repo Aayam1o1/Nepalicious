@@ -18,4 +18,10 @@ class addRestaurantForm(forms.ModelForm):
     class Meta:
         model = addRestaurant
         fields = ['restaurantDescription', 'restaurantType']
+
        
+class FeedbackForm(forms.ModelForm):
+   
+    class Meta:
+        model = restaurantFeedback
+        fields = ['feedback', 'rating']

@@ -22,7 +22,7 @@ class addRestaurant(models.Model):
         return users_detail.restaurant_name if users_detail else 'No restaurant name'
     
 class restaurantImage(models.Model):
-    addRecipe = models.ForeignKey(addRestaurant, related_name ='images', on_delete=models.CASCADE)
+    addRestaurant = models.ForeignKey(addRestaurant, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='restaurantImage/')
     
 class Location(models.Model):
@@ -32,15 +32,11 @@ class Location(models.Model):
 
     def __str__(self):
         return f"Latitude: {self.latitude}, Longitude: {self.longitude}"
-
-class Search(models.Model):
+    
+    
+class restaurantFeedback(models.Model):
+    restaurant = models.ForeignKey(addRestaurant, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurantaddress = models.CharField(max_length=200, null = True)
-    latitudesearch = models.FloatField(null=True, blank=True)
-    longitudesearh = models.FloatField(null=True, blank=True)
-    date =  models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.restaurantaddress
-    
-    
+    feedback = models.TextField(blank=True)
+    rating = models.FloatField()
+        

@@ -227,17 +227,19 @@ def userRequests(request, userID):
     userData = get_object_or_404(User, id=userID)
     documentImages = userDocument.objects.filter(user=userID)
     
-    
+    # Fetch UserProfilePicture object for the userData
+    userProfilePicture = UserProfilePicture.objects.filter(user=userData).first()
     document = userDocument.objects.filter(user=userData)
     
     requestedUserType = usersDetail.objects.all()
-    
+    print('userProfilePicture : ', userProfilePicture)
     context = {
         'requestedUserType': requestedUserType,
         'document': document,
         'userData': userData,
         'documentImages' : documentImages,
         'allApprovedUsers': allApprovedUsers,
+        'userProfilePicture': userProfilePicture,
     }
     
     return render(request, 'admin/userRequests.html', context)

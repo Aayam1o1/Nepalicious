@@ -13,8 +13,8 @@
     {% extends '../navigationBar/base.html' %}
     {% block content %}
     <!-- FILTER -->
-    <div class="w-full h-[8rem] bg-gray-200 mt-5">
-
+    <div class="w-full h-[8rem] bg-gray-200 mt-5 overflow-hidden">
+        <img src="../../static/images/restaurant/banner2.jpg" class="w-full h-full object-cover" alt="">
     </div>
     <div class="my-[4rem]">
 
@@ -97,11 +97,15 @@
                     <h2 class="text-2xl text-[#FFC061]">{{ restaurant.user.usersdetail.restaurant_name }}</h2>
                     <h2 class="text-xl mt-1">{{ restaurant.user.usersdetail.address }} </h2>
                     <h2 class="mt-4"> stars</h2>
-                    <p class="mt-4 w-[15rem]">{{ restaurant.restaurantDescription|truncatechars:120 }}</p>
+                    <p class="mt-4 w-[17rem] text-sm">{{ restaurant.restaurantDescription|truncatechars:180 }}</p>
+                   
+                     <a href="{% url 'view_details' restaurant.id %}" >
 
-                    <button type="button" class="mt-8 rounded-l w-[15rem] h-10 bg-[#FFC061]">
-                        <span class="text-white">View Details</span>
-                    </button>
+                         <button type="submit" class="mt-8 rounded-l w-[15rem] h-10 bg-[#FFC061]">
+                             <span class="text-white">View Details</span>
+                            </button>
+                            
+                        </a>
 
                 </div>
             </div>

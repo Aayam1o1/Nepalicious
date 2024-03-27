@@ -171,12 +171,14 @@
             </a>
             {% endif %}
             {% if request.user.is_authenticated and  request.user|has_group:"restaurant" %}
-            <a href="{% url 'addRestaurant' %}"> 
-              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
-              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
-              <p class="text-l ml-5">Add Restaruant</p>
-            </div>
-            </a>
+              {% if not request.user.addrestaurant_set.exists %}
+              <a href="{% url 'addRestaurant' %}"> 
+                <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+                <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+                <p class="text-l ml-5">Add Restaruant</p>
+              </div>
+              </a>
+              {% endif %}
             {% endif %}
 
             {% if request.user.is_authenticated and  request.user|has_group:"chef" %}
