@@ -34,6 +34,8 @@ class productImage(models.Model):
     addProducts = models.ForeignKey(addProducts, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/marketplace/productImage/')
     
+    def __str__(self):
+        return f"{self.addProducts.productName} - {self.pk}"
     
 class productFeedback(models.Model):
     product = models.ForeignKey(addProducts, on_delete=models.CASCADE)
@@ -41,7 +43,8 @@ class productFeedback(models.Model):
     feedback = models.TextField(blank=True)
     rating = models.FloatField()
         
-    
+    def __str__(self):
+        return f"{self.product.productName} - {self.user.username}"
     
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

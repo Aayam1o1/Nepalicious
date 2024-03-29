@@ -31,16 +31,25 @@ class recipeImage(models.Model):
     addRecipe = models.ForeignKey(addRecipe, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/recipe/recipeImage/')
     
+    def __str__(self):
+        return f"{self.addRecipe.recipeName} - {self.pk}"
     
 class recipeFeedback(models.Model):
     recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feedback = models.TextField(blank=True)
     
+    
+    def __str__(self):
+        return f"{self.recipe.recipeName} - {self.user.username}"
+    
 class savedRecipe(models.Model):
     recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     saved_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.recipe.recipeName} - {self.user.username}"
     
 class LikeDislikeRecipe(models.Model):
     LIKE = 'like'

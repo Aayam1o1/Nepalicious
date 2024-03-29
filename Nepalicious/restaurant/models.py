@@ -25,13 +25,16 @@ class restaurantImage(models.Model):
     addRestaurant = models.ForeignKey(addRestaurant, related_name ='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='restaurantImage/')
     
+    def __str__(self):
+        return f"{self.addRestaurant.user.usersdetail.restaurant_name} - {self.pk}"
+    
 class Location(models.Model):
     restaurant = models.ForeignKey(addRestaurant, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
 
     def __str__(self):
-        return f"Latitude: {self.latitude}, Longitude: {self.longitude}"
+        return f"{self.restaurant.user.usersdetail.restaurant_name} - Latitude: {self.latitude}, Longitude: {self.longitude}"
     
     
 class restaurantFeedback(models.Model):
@@ -39,4 +42,6 @@ class restaurantFeedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feedback = models.TextField(blank=True)
     rating = models.FloatField()
-        
+
+    def __str__(self):
+        return f"{self.restaurant.user.usersdetail.restaurant_name} - {self.user.username}"
