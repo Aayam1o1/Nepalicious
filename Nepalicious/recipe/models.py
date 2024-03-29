@@ -41,3 +41,18 @@ class savedRecipe(models.Model):
     recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     saved_at = models.DateTimeField(auto_now_add=True)
+    
+class LikeDislikeRecipe(models.Model):
+    LIKE = 'like'
+    DISLIKE = 'dislike'
+    CHOICES = [
+        (LIKE, 'Like'),
+        (DISLIKE, 'Dislike'),
+    ]
+
+    recipe = models.ForeignKey(addRecipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.CharField(max_length=7, choices=CHOICES)
+
+    def __str__(self):
+        return f"{self.recipe.recipeName} - {self.choice} - {self.user.username}"

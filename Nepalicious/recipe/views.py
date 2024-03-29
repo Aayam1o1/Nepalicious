@@ -131,6 +131,14 @@ def recipeDetail(request, recipe_id):
     # Retrieve comments related to the specific recipe
     feedback_comments = recipeFeedback.objects.filter(recipe=recipeDetail)
     
+    
+    # Check if the recipe has been liked by the current user
+    liked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='like').exists()
+    
+    disliked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='dislike').exists()
+
+    total_likes = LikeDislikeRecipe.objects.filter(recipe=recipeDetail, choice='like').count()
+    
     context = {
         'recipetList': recipetList,
         'recipedetailForImage' : recipedetailForImage,
@@ -141,7 +149,9 @@ def recipeDetail(request, recipe_id):
         'feedback_form': feedback_form,
         'feedback_comments': feedback_comments,
         'saved_recipe': saved_recipe,
-
+        'liked_recipe': liked_recipe,
+        'disliked_recipe': disliked_recipe,
+        'total_likes': total_likes
 
     }
     
@@ -216,3 +226,92 @@ def deleteSavedRecipe(request, saved_recipe_id):
             messages.success(request, 'The recipe was removed from bookmark')
             return redirect('viewSavedRecipe')
     return render(request, 'profiles/savedRecipe.html')
+
+
+# for like recipe
+def like_recipe(request, recipe_id):
+    url  = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            recipe = addRecipe.objects.get(pk=recipe_id)
+            user = request.user
+            
+            # Check if the recipe is not already Liked for the current user
+            existing_like = LikeDislikeRecipe.objects.filter(user=user, recipe=recipe).first()
+            if not existing_like:
+                # If the user already liked or disliked the recipe, update the choice to 'like'
+                LikeDislikeRecipe.objects.create(user=user, recipe=recipe, choice='like')
+                messages.success(request, 'Successfully Liked')
+                
+            elif existing_like.choice == 'dislike':
+                    # If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
+                    existing_like.choice = 'like'
+                    existing_like.save()
+                    messages.success(request, 'Recipe Dislike changed to Like successfully')
+            
+            elif existing_like.choice == 'like':
+                existing_like.delete()
+                messages.success(request, 'Recipe like removed')
+
+            else:
+                if existing_like.choice != 'dislike':
+                    existing_like.choice = 'like'
+                    existing_like.save()
+                    messages.success(request, 'Recipe Like changed successfully')
+                
+                
+            
+            return redirect(url)
+        
+        except addRecipe.DoesNotExist:
+             # Handle the case where the recipe with the given ID does not exist
+            # Add an appropriate error message
+            messages.add_message(request, messages.ERROR, 'Recipe does not exist')
+         
+    return redirect(url)
+
+def dislike_recipe(request, recipe_id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            recipe = addRecipe.objects.get(pk=recipe_id)
+            user = request.user
+            
+            existing_like = LikeDislikeRecipe.objects.filter(user=user, recipe=recipe).first()
+
+            if existing_like:
+                if existing_like.choice == 'like':
+
+                    # If the recipe is liked, update the existing like to dislike
+                    existing_like.choice = 'dislike'
+                    existing_like.save()
+                    messages.success(request, 'Recipe Like changed to Dislike successfully')
+                    
+                elif existing_like.choice == 'dislike':
+                    # If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
+                    
+                    existing_like.delete()
+                    messages.success(request, 'Recipe Dislike changed to Like successfully')    
+
+
+            else:
+                #If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
+                LikeDislikeRecipe.objects.create(user=user, recipe=recipe, choice='dislike')
+                messages.success(request, 'Successfully Disliked')
+                
+            
+            
+            
+            # # Delete any existing saved entry for the recipe by the current user
+            # saved_recipe = savedRecipe.objects.filter(user=user, recipe=recipe).first()
+            # if saved_recipe:
+            #     saved_recipe.delete()
+            #     messages.success(request, 'Recipe unsaved due to Dislike')
+                
+            return redirect(url)
+        
+        except addRecipe.DoesNotExist:
+            # Handle the case where the recipe with the given ID does not exist
+            messages.error(request, 'Recipe does not exist')
+        
+    return redirect(url)

@@ -51,13 +51,11 @@
                 <h1 class="text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
                 <div class="flex justify-between text-xl mb-2 w-[20rem] font-medium">
                     <div>
-                        <h2>By {{ recipeDetail.user.username }}</h2>
-                    </div>
-                    <div>
-                        Stars
+                        <h2>By: {{ recipeDetail.user.username }}</h2>
                     </div>
                 </div>
-                <h2 class="text-xl font-medium ">{{ recipeDetail.cuisineType }}</h2>
+                <h2 class="text-xl font-medium mb-1">Total Likes: {{ total_likes }}</h2>
+                <h2 class="text-xl font-medium ">Cusisine Type: {{ recipeDetail.cuisineType }}</h2>
             </div>
             
             <!-- show if already saved -->
@@ -172,18 +170,48 @@
         <!-- for commment -->
         <div class="commnet-container flex justify-around">
             <div class="w-[60%] ml-[7rem]">
-                <div>
-                    <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
+                <div class="flex gap-[10rem]">
+
+                    <div>
+                        <h1 class="text-5xl font-medium ml-4">Already Made This??</h1>
+                    </div>
+                    
                 </div>
 
 
                 <!-- Give Feedback Button -->
                 <div class="my-[3rem]">
+                    <div class="flex gap-[25rem]">
 
-                    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
                         class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
                         <span class="text-white">Give Feedback</span>
-                    </button>
+                        </button>
+                    
+                        <div class="flex gap-4">
+                            <form action="{% url 'like_recipe' recipeDetail.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit">
+
+                                    <div>
+                                        <img src="{% if liked_recipe %}../../static/images/restaurant/like-filled.svg{% else %}../../static/images/restaurant/like.svg{% endif %}" alt="">    
+                                    </div>
+                                </button>
+                            </form>
+                           
+                            <form action="{% url 'dislike_recipe' recipeDetail.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit">
+
+                                <div>
+                                    <img src="{% if disliked_recipe %}../../static/images/restaurant/dislike-filled.svg{% else %}../../static/images/restaurant/dislike.svg{% endif %}" alt="">    
+                                    
+                                </div>
+                                </button>
+                            </form>
+        
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Main modal -->
