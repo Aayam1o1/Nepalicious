@@ -126,6 +126,9 @@ def add_to_cart(request, product_id):
     # Get or create the user's cart
     user_cart, created = Cart.objects.get_or_create(user=request.user)
 
+    new_address = request.user.usersdetail.address
+    new_number = request.user.usersdetail.phone_number   
+    
     # Check if the product is already in the cart
     cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product)
 
@@ -140,37 +143,44 @@ def add_to_cart(request, product_id):
 
     # Update the total amount in the cart
     user_cart.total_amount = CartItem.objects.filter(cart=user_cart).aggregate(total=Sum(F('product__productPrice') * F('quantity')))['total']
+    
+    user_cart.new_address = new_address
+    user_cart.new_number = new_number
     user_cart.save()
 
+   
     messages.success(request, "Product added to the cart successfully.")
     return redirect('marketplace')
 
 
 
 def cart_view(request):
-    if request.method == 'POST':
-        # Get or create the user's cart
-        user_cart, created = Cart.objects.get_or_create(user=request.user)
+    user_cart = Cart.objects.filter(user=request.user).first()
+    cart_item = CartItem.objects.filter(cart=user_cart)
+    
+    # if request.method == 'POST':
+    #     print("AAAAAAAAAAAAAAA")
+    #     # Get or create the user's cart
+    #     user_cart_filter = user_cart
 
-        # Iterate through products in the cart and update quantities
-        for cart_item in CartItem.objects.filter(cart=user_cart):
-            new_quantity = int(request.POST.get(f"quantityInput-{cart_item.product.id}", 1))
+    #     # Iterate through products in the cart and update quantities
+    #     for cart_items in CartItem.objects.filter(cart=user_cart_filter):
+    #         new_quantity = int(request.POST.get(f"quantityInput-{cart_items.product.id}", 1))
 
-            # Ensure the new quantity is within the limits (1 to product stock)
-            new_quantity = max(1, min(new_quantity, cart_item.product.productStock))
+    #         # Ensure the new quantity is within the limits (1 to product stock)
+    #         new_quantity = max(1, min(new_quantity, cart_items.product.productStock))
 
-            # Update the quantity in the cart item
-            cart_item.quantity = new_quantity
-            cart_item.save()
-
-        messages.success(request, "Cart updated successfully.")
-
-    user_cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = user_cart.cartitem_set.all()  # Retrieve all cart items for the user's cart
-
+    #         # Update the quantity in the cart item
+    #         cart_items.quantity = new_quantity
+    #         cart_items.save()
+    #         cart_item.append(cart_items)
+        
+    #     messages.success(request, "Cart updated successfully.")
+    # print("cart_itemcart_itemcart_itemcart_itemcart_itemcart_itemcart_item: ", cart_item)
     context = {
-        'cart_items': cart_items,
-        'user_cart': user_cart
+
+        'user_cart': user_cart,
+        'cart_item' : cart_item,
     }
 
     return render(request, 'marketplace/cart.html', context)
@@ -238,6 +248,7 @@ def update_cart(request):
 
 
 def initkhalti(request):
+    
     user = request.user.username
     userinfo = request.user
     contact = userinfo.usersdetail.phone_number
@@ -302,22 +313,39 @@ def verifyKhalti(request):
         new_res = json.loads(res.text)
         print("new_res",new_res)
         
-
-        if new_res['status'] == 'Completed':
+        try:
             
-            print("YA SAMMA PUGO HAIIIII")
+            if new_res['status'] == 'Completed':
+                
+                print("YA SAMMA PUGO HAIIIII")
+                #data  get
+                buyer_get = get_object_or_404(User, user=request.user)
+                seller_get = get_object_or_404(addProducts, user=request.user)
+                totalAmount_get = get_object_or_404(Cart, user=request.user)
+                new_address_get = get_object_or_404(Cart, user=request.user)
+                new_number_get = get_object_or_404(Cart, user=request.user)
+                total_quantity_get = get_object_or_404(Cart, user=request.user)
+                cart = get_object_or_404(Cart, user=request.user)
+                print(cart)
+                
+                try:
+                    with transaction.atomic():
+                        
+                        # datasave
+                        return redirect('paymentSucessful')
+
+                except Exception as e:
+                    print("An error occurred:", e)
+                    return redirect('error')
+                
+            else:
+                return redirect('error')
             
-            cart = get_object_or_404(Cart, user=request.user)
-            print(cart)
-            with transaction.atomic():
+        except KeyError:
+            return redirect("error") 
 
+                
             
-                return redirect('paymentSucessful')
-
-
-
-            
-        
         else:
             pass
             # return redirect('error')
@@ -328,7 +356,32 @@ def paymentSucessful(request):
     return render(request, 'payment/paymentsuccessful.html')
 
 
- 
+def checkout(request):
+    if request.method == 'POST':
+    
+        
+        user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+        # # Check if the cart is empty
+        # if not user_cart.products.exists():
+        #     # If the cart is empty, redirect the user back to the cart page
+        #     return redirect('cart')
+
+        # Update the address and number in the cart
+        # if user_cart.products.exists():
+        new_address = request.POST.get('address')
+        new_number = request.POST.get('phone_number')
+        
+        # Update the address and number in the cart
+        user_cart.new_address = new_address
+        user_cart.new_number = new_number
+        user_cart.save()
+        return redirect('cart')
+       
+        
+    return render(request, 'marketplace/cart.html')
+
+
 # def error(request):
 #     return render(request, "Payment/error.html")
 

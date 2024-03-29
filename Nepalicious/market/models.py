@@ -1,6 +1,7 @@
 from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
  #Category choices
@@ -46,7 +47,9 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.ManyToManyField('addProducts')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
+    new_address = models.CharField(max_length=100, blank = True, default='')
+    new_number = models.CharField(max_length=10, blank = True, default='')
+    
     def __str__(self):
         return f"Cart for {self.user.username}"
     
@@ -67,10 +70,14 @@ class CartItem(models.Model):
 
 class order(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    ordered_number = models.CharField(max_length=10)    
+    ordered_address = models.CharField(max_length=100)
     product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
+    total_quantity = models.PositiveIntegerField() 
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     seller = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name ='seller')
-    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    buy_date = models.DateTimeField(default=timezone.now)
+    
     
     
     

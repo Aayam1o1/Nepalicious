@@ -5,13 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
     <script>
 
         function updateQuantity(productId, change, maxStock) {
             const quantityInput = document.getElementById(`quantityInput-${productId}`);
             console.log(productId);
             console.log(`Updating quantity for product ${productId}. Current value: ${quantityInput.value}`);
-            
+
             let newQuantity = parseInt(quantityInput.value) + change;
 
             // Ensure the new quantity is within the limits (1 to product stock)
@@ -21,9 +23,9 @@
             console.log(`New quantity for product ${productId}: ${newQuantity}`);
 
             // Add additional logs to debug
-            console.log(`Change: ${change}`); 
+            console.log(`Change: ${change}`);
             console.log(`Max Stock: ${maxStock}`);
-            
+
         }
     </script>
 </head>
@@ -37,11 +39,10 @@
                 Shopping Cart
             </h1>
 
-          
-                <button type="submit"
-                form="update-cart-quantity-form"
-        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-        Update
+
+            <button type="submit" form="update-cart-quantity-form"
+                class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                Update
             </button>
 
         </div>
@@ -75,77 +76,78 @@
                                     </tr>
                                 </thead>
 
-                    <form method="post" action="{% url 'update_cart' %}" id="update-cart-quantity-form">
+                                <form method="post" action="{% url 'update_cart' %}" id="update-cart-quantity-form">
                                     {% csrf_token %}
                                     <!-- Your table content here -->
-                    
 
-                                {% for cart_item in cart_items %}
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    <tr>
-                                        <td class="whitespace-nowrap px-4 py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex">
-                                                    <a href="{% url 'productDetail' cart_item.product.id %}">
-                                                        <img src="{{ cart_item.product.images.first.image.url }}"
-                                                            alt="{{ cart_item.product.productName }}"
-                                                            class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
-                                                    </a>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ cart_item.product.productName }}
+
+                                    {% for cart_item in cart_item %}
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        <tr>
+                                            <td class="whitespace-nowrap px-4 py-4">
+                                                <div class="flex items-center">
+                                                    <div class="flex">
+                                                        <a href="{% url 'productDetail' cart_item.product.id %}">
+                                                            <img src="{{ cart_item.product.images.first.image.url }}"
+                                                                alt="{{ cart_item.product.productName }}"
+                                                                class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            {{ cart_item.product.productName }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-12 py-4">
-                                            <div class="text-sm text-gray-900">
-                                                {{ cart_item.product.productBrand }}
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-4">
-                                            Rs {{ cart_item.product.productPrice }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
-                                            <div class="min-w-24 flex">
-                                                <button type="button" class="h-7 w-7"
-                                                    onclick="updateQuantity('{{ cart_item.product.id }}', -1, {{ cart_item.product.productStock }})">
-                                                    -
-                                                </button>
-                                                
-                                                <input type="text" name="quantityInput-{{ cart_item.product.id }}"
-                                                    id="quantityInput-{{ cart_item.product.id }}"
-                                                    class="mx-1 h-7 w-9 rounded-md border text-center"
-                                                    value="{{ cart_item.quantity }}" readonly />
-                                                <button type="button" class="flex h-7 w-7 items-center justify-center"
-                                                    onclick="updateQuantity('{{ cart_item.product.id }}', 1, {{ cart_item.product.productStock }})">
-                                                +
-                                            </button>
-                                            </div>
-                                        </td>
+                                            </td>
+                                            <td class="whitespace-nowrap px-12 py-4">
+                                                <div class="text-sm text-gray-900">
+                                                    {{ cart_item.product.productBrand }}
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-4 py-4">
+                                                Rs {{ cart_item.product.productPrice }}
+                                            </td>
+                                            <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
+                                                <div class="min-w-24 flex">
+                                                    <button type="button" class="h-7 w-7"
+                                                        onclick="updateQuantity('{{ cart_item.product.id }}', -1, {{ cart_item.product.productStock }})">
+                                                        -
+                                                    </button>
 
-                                        <!-- script for quantity add and minus -->                                        
+                                                    <input type="text" name="quantityInput-{{ cart_item.product.id }}"
+                                                        id="quantityInput-{{ cart_item.product.id }}"
+                                                        class="mx-1 h-7 w-9 rounded-md border text-center"
+                                                        value="{{ cart_item.quantity }}" readonly />
+                                                    <button type="button"
+                                                        class="flex h-7 w-7 items-center justify-center"
+                                                        onclick="updateQuantity('{{ cart_item.product.id }}', 1, {{ cart_item.product.productStock }})">
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </td>
+
+                                            <!-- script for quantity add and minus -->
 
 
-                                        <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
-                                                
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="text-red-500">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                        </svg>
-                                        <button type="submit" value="{{cart_item.product.id }}" name="delete"
-                                            class="text-xs font-medium text-red-500">REMOVE</button>
-                                                    
-                                                                                 
-                                        </td>
-                                    </tr>
+                                            <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
 
-                                    {% endfor %}
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="text-red-500">
+                                                    <path d="M3 6h18"></path>
+                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                </svg>
+                                                <button type="submit" value="{{cart_item.product.id }}" name="delete"
+                                                    class="text-xs font-medium text-red-500">REMOVE</button>
+
+
+                                            </td>
+                                        </tr>
+
+                                        {% endfor %}
 
                                 </form>
 
@@ -153,7 +155,7 @@
                             </table>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
@@ -168,9 +170,9 @@
                         <dt class="text-sm text-gray-800">Total Items in Cart</dt>
                         <dd class="text-sm font-medium text-gray-900">
 
-                            {% with total_items=cart_items|length %}
+                            {% with total_items=cart_item|length %}
                             {{ total_items }}
-                            {% endwith %}</dd>  
+                            {% endwith %}</dd>
                     </div>
                     <div class="flex items-center justify-between border-y border-dashed py-4">
                         <dt class="text-base font-medium text-gray-900">Total Amount</dt>
@@ -184,27 +186,138 @@
                         onclick="window.location.href='{% url 'marketplace' %}'">
                         Back to shop
                     </button>
-                    
-                    <form action="{% url 'initiate' %}" method="POST">
-                        {% csrf_token %}
-                    <input type="submit" value="Checkout"
+
+                    <!--  -->
+                    <!-- <input type="button" value="Checkout"
                         class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
-                        <!-- Checkout
+                    -->
+                    <!-- Checkout
                     </button> -->
 
-                    <input type="hidden" name="amount" id="amt" value="{{ user_cart.total_amount }}">
 
-                    <input type="hidden" name="purchase_order_id" id="pid" value="{{request.user}}">
+                    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
+                        class="rounded-md border border-black px-3 py-2 text-sm font-semibold text-white bg-[#FFC061] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                        <span class="text-white">Checkout</span>
+                    </button>
 
-                    <input type="hidden" name="return_url" value="http://127.0.0.1:8000/paymentSucessful">
+                    <!-- checkout modal  -->
+                    <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div class="relative p-4 w-full max-w-md max-h-full">
+                            <form id="" method="post" action="{% url 'checkout' %}">
+                                {% csrf_token %}
+
+                                {% if cart_item %}
+
+                                <!-- Modal content -->
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <!-- Modal header -->
+                                    <div
+                                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Do you want to change the address and location?
+                                        </h3>
+                                        <button type="button"
+                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            data-modal-toggle="crud-modal">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                    </div>
+                                    <!-- Modal body -->
+                                    <div class="grid gap-4 mb-4 grid-cols-2">
+                                        <div class="col-span-2 p-4 md:p-5">
+                                            <div class="flex gap-2">
+                                                <label class="mt-2">Address </label>
+                                                <input name="address"
+                                                    value="{{ user_cart.new_address }}"
+                                                    rows="4"
+                                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            </div>
+                                            <div class="flex gap-2 mt-4">
+                                                <label class="mt-2">Number </label>
+                                                <input name="phone_number"
+                                                    value="{{ user_cart.new_number }}"
+                                                    rows="4"
+                                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-around">
+                                        <button type="submit"
+                                            class=" mb-2 flex justify-center text-white w-[10rem] h-auto inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#61A0FF] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                            <div class="flex">
+                                                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+
+                                                Save
+                                            </div>
+                                        </button>
+                                    </form>
+                                    <form action="{% url 'initiate' %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class=" mb-2 text-white inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#FFC061] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                            Pay with Khalti
+                                            <input type="hidden" name="amount" id="amt" value="{{ user_cart.total_amount }}">
+                                            <input type="hidden" name="purchase_order_id" id="pid" value="{{request.user}}">
+                                            <input type="hidden" name="return_url"
+                                                value="http://127.0.0.1:8000/paymentSucessful">
+                                        </button>
+                                    </form>
+                                    </div>
+                                </div>
+
+                            
+                            {% else %}
+                                 <!-- Modal content -->
+                                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <!-- Modal header -->
+                                    <div
+                                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            No items in cart
+                                        </h3>
+                                        <button type="button"
+                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            data-modal-toggle="crud-modal">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                    </div>
+                            {% endif %}
 
 
-                    </form>
+                        </div>
 
-                    
+
+                    </div>
                 </div>
             </div>
-        </section>
+
+    </div>
+    </div>
+    </section>
     </div>
     {% endblock %}
 </body>

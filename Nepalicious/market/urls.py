@@ -16,6 +16,8 @@ urlpatterns = [
     
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
-    path('paymentSucessful', views.paymentSucessful, name='paymentSucessful')
+    path('paymentSucessful', views.paymentSucessful, name='paymentSucessful'),
 
+    #for checkout update address and number
+    path('checkout', views.checkout, name='checkout')
 ]

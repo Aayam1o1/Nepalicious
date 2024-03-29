@@ -7,5 +7,6 @@ from market.models import *
 admin.site.register(addProducts),
 admin.site.register(productImage),
 admin.site.register(Cart),
-admin.site.register(CartItem)
-admin.site.register(productFeedback)
+admin.site.register(CartItem),
+admin.site.register(productFeedback),
+admin.site.register(order)
