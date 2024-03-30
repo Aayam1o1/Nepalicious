@@ -37,6 +37,7 @@
         .rate {
             display: inline-block;
             border: 0;
+            font-size: 20px;
         }
 
         .rate>label {
@@ -132,237 +133,374 @@
         <div class="container-1 w-[80%] m-auto">
             <div class="flex justify-between mt-[4rem]">
                 <div class=" ">
-                    <h1 class="text-5xl font-bold mb-2 text-[#FFC061]">{{ restaurant.user.usersdetail.restaurant_name }}</h1>
-                    <div>
-                        Stars
+                    <h1 class="text-5xl font-bold mb-2 text-[#F89500]">{{ restaurant.user.usersdetail.restaurant_name }}
+                    </h1>
+                    <div class="">
+                        <div class="rate">
+                            <div class="flex items-center"> <!-- Container for stars and number of reviews -->
+                                {% if avg_rating %}
+                                {% for i in "12345" %}
+                                {% if i|add:0 <= avg_rating %} <span class="star filled">&#9733;</span>
+                                    {% else %}
+                                    <span class="star">&#9733;</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <div class="text-gray-400 ml-4 text-sm mt-[5px]">
+                                        ({{ num_reviews }} Reviews)
+                                    </div>
+                                    {% else %}
+                                    {% if num_reviews == 0 %}
+                                    <p class="text-sm">No reviews yet</p>
+                                    {% endif %}
+                                    {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between text-xl mb-2 w-[20rem] font-medium">
+                    <div class="flex justify-between text-xl my-2 w-[20rem] font-medium">
                         <div>
                             <h2>{{ restaurant.user.usersdetail.address }}</h2>
                         </div>
-                        
+
                     </div>
-                    
+
                 </div>
 
             </div>
-    </div>
-    
-    <!-- for Restaruant Images -->
-    <div class=" pt-5 w-[80%] m-auto">
-        <div class="flex justify-between">
-            {% if restaurant_images.exists %}
-            <div class="">
-                <div class="w-[750px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
-                    <img src="{{ restaurant_images.first.image.url }}" class="w-full h-full object-cover" alt="">
-                </div>
-            </div>
-            
-            <div class="flex flex-col gap-6">
-                <div class="w-[430px] h-[240px] rounded-xl">
-                    <img src="{{ restaurant_images.1.image.url }}" class="w-full h-full object-cover" alt="">
-                </div>
-                
-                <div class="w-[430px] h-[240px]">
-                    {% if restaurant_images.count >= 3 %}
-                    <img src="{{ restaurant_images.2.image.url }}" class="w-full h-full object-cover " alt="">
-                    {% endif %}
+        </div>
+
+        <!-- for Restaruant Images -->
+        <div class=" pt-5 w-[80%] m-auto">
+            <div class="flex justify-between">
+                {% if restaurant_images.exists %}
+                <div class="">
+                    <div class="w-[750px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
+                        <img src="{{ restaurant_images.first.image.url }}" class="w-full h-full object-cover" alt="">
+                    </div>
                 </div>
 
+                <div class="flex flex-col gap-6">
+                    <div class="w-[430px] h-[240px] rounded-xl">
+                        <img src="{{ restaurant_images.1.image.url }}" class="w-full h-full object-cover" alt="">
+                    </div>
+
+                    <div class="w-[430px] h-[240px]">
+                        {% if restaurant_images.count >= 3 %}
+                        <img src="{{ restaurant_images.2.image.url }}" class="w-full h-full object-cover " alt="">
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
-    </div>
-    
-    <div class="flex justify-between w-[80%] mx-auto mt-[3rem] ">
-        <div class=" w-[70%]">
-            <div class="text-3xl font-semibold">
-                <h1>Description</h1>
+
+        <div class="flex justify-between w-[80%] mx-auto mt-[3rem] ">
+            <div class=" w-[70%]">
+                <div class="text-3xl font-semibold">
+                    <h1>Description</h1>
+                </div>
+                <div class="text-l mt-3 w-[82%]">
+                    <p class="text-gray-400"> {{ restaurant.restaurantDescription}}</p>
+                </div>
             </div>
-            <div class="text-l mt-3 w-[82%]">
-                <p> {{ restaurant.restaurantDescription}}</p>
-            </div>
-        </div>
-        <div>
-            <div class="text-3xl font-semibold">
-                Map
-            </div>
-            <div id="map" class="w-[430px] mt-3">
-                {{ maps|safe }}
-            </div>
-            <!-- {% if coordinates.latitude and coordinates.longitude %}
+            <div>
+                <div class="text-3xl font-semibold">
+                    Map
+                </div>
+                <div id="map" class="w-[430px] mt-3">
+                    {{ maps|safe }}
+                </div>
+                <!-- {% if coordinates.latitude and coordinates.longitude %}
             <p>Latitude: {{ coordinates.latitude }}</p>
             <p>Longitude: {{ coordinates.longitude }}</p>
             {% else %}
             <p>Coordinates not available</p>
             {% endif %} -->
 
+            </div>
         </div>
-    </div>
-    
-    <div class="w-[80%] mx-auto mt-[5rem]">
-        <div>
-            <h1 class="text-3xl font-bold mb-2">Similar Restaurant</h1>
-        </div>
-        <div class="grid grid-cols-4">
-            <div>
-                <!-- displaying recipe picture -->
-                <div id="gallery" class="relative w-full" data-carousel="slide">
-                    <!-- Carousel wrapper -->
 
-                    <div class="relative h-56 overflow-hidden rounded-lg">
-                        <!-- {% for image in recipe.images.all %} -->
-                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                            <a href=""><img src="../../static/images/restaurant/banner2.jpg" alt=""
-                                class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+        <div class="w-[80%] mx-auto mt-[5rem]">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Similar Restaurant</h1>
+            </div>
+            <div class="grid grid-cols-4">
+                <div>
+                    <!-- displaying recipe picture -->
+                    <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+
+                        <div class="relative h-56 overflow-hidden rounded-lg">
+                            <!-- {% for image in recipe.images.all %} -->
+                            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                <a href=""><img src="../../static/images/restaurant/banner2.jpg" alt=""
+                                        class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
                             </div>
                             <!-- {% endfor %} -->
                         </div>
-                        
+
                     </div>
-                    
+
                     <!-- display other data -->
                     <div class="">
                         <h1 class="text-lg font-medium mt-4">Restaurant Name</h1>
                         <p class="mt-2 text-sm">Restaruant Type</p>
-                        
-                    </div>
-                </div>
-        </div>
-    </div>
 
-    <!-- comment -->
-    <div class="mt-[5rem] w-[80%] mx-auto">
-        
-        <div class="commnet-container pb-2">
-            <div class="">
-                <div>
-                    <h1 class="text-5xl font-medium">Already Visited This Restaurant??</h1>
-                </div>
-                <div class="my-[3rem]">
-                    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
-                    class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
-                        <span class="text-white">Give Feedback</span>
-                    </button>
-                </div>
-                
-                <!-- Main modal -->
-                <div id="crud-modal" tabindex="-1" aria-hidden="true"
-                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                <div class="relative p-4 w-full max-w-md max-h-full">
-                    <form id="feedbackForm" method="post"
-                    action="{% url 'submit_review_restaurant' restaurant.id %}">
-                    {% csrf_token %}
-                    <!-- Modal content -->
-                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                        <!-- Modal header -->
-                        <div
-                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Give Feedback
-                                    </h3>
-                                    <button type="button"
-                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                    data-modal-toggle="crud-modal">
-                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                                <span class="sr-only">Close modal</span>
-                            </button>
-                        </div>
-                        <!-- Modal body -->
-                        
-                        <div class="grid mb-2 grid-cols-1">
-                            <div class="p-4">
-                                <!-- Rating stars -->
-                                        <div class="rate">
-                                            <input type="radio" name="rating" id="rating10" value="5" required /><label
-                                            for="rating10" title="5"></label>
-                                            <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
-                                            <input type="radio" name="rating" id="rating8" value="4" required /><label
-                                            for="rating8" title="4"></label>
-                                            <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
-                                            <input type="radio" name="rating" id="rating6" value="3" required /><label
-                                            for="rating6" title="3"></label>
-                                            <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
-                                            <input type="radio" name="rating" id="rating4" value="2" required /><label
-                                            for="rating4" title="2"></label>
-                                            <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
-                                            <input type="radio" name="rating" id="rating2" value="1" required /><label
-                                            for="rating2" title="1"></label>
-                                            <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
-                                        </div>
-                                    </div>
-                                    <!-- for review -->
-                                    <div class="col-span-2 p-4 md:p-5">
-                                        <textarea name="feedback" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
-                                    </div>
-                                </div>
-                                <button type="submit"
-                                class=" mb-2 text-white inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#61A0FF] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                        clip-rule="evenodd"></path>
-                                    </svg>
-                                    Give Feedback
-                                </button>
-                            </form>
                     </div>
                 </div>
             </div>
-            
-            <!-- comment section -->
-            <div class="">
-                
-                <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[60%] h-[320px] ">
-                    {% for comment in feedback_comments %}
-                    <div class="bg-blue-50 w-full p-2">
-                        <div class="comment-user flex">
-                            <div>
-                                <span>
-                                    {% if comment.user.userprofilepicture %}
-                                    <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+        </div>
+
+        <!-- comment -->
+        <div class="mt-[5rem] w-[80%] mx-auto">
+
+            <div class="commnet-container pb-2">
+                <div class="">
+                    <div>
+                        <h1 class="text-5xl font-medium">Already Visited This Restaurant??</h1>
+                    </div>
+                    <div class="my-[3rem]">
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
+                            class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
+                            <span class="text-white">Give Feedback</span>
+                        </button>
+                    </div>
+
+                    <!-- Main modal -->
+                    <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div class="relative p-4 w-full max-w-md max-h-full">
+                            <form id="feedbackForm" method="post"
+                                action="{% url 'submit_review_restaurant' restaurant.id %}">
+                                {% csrf_token %}
+                                <!-- Modal content -->
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <!-- Modal header -->
+                                    <div
+                                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Give Feedback
+                                        </h3>
+                                        <button type="button"
+                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            data-modal-toggle="crud-modal">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                    </div>
+                                    <!-- Modal body -->
+
+                                    <div class="grid mb-2 grid-cols-1">
+                                        <div class="p-4">
+                                            <!-- Rating stars -->
+                                            <div class="rate">
+                                                <input type="radio" name="rating" id="rating10" value="5"
+                                                    required /><label for="rating10" title="5"></label>
+                                                <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
+                                                <input type="radio" name="rating" id="rating8" value="4"
+                                                    required /><label for="rating8" title="4"></label>
+                                                <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
+                                                <input type="radio" name="rating" id="rating6" value="3"
+                                                    required /><label for="rating6" title="3"></label>
+                                                <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
+                                                <input type="radio" name="rating" id="rating4" value="2"
+                                                    required /><label for="rating4" title="2"></label>
+                                                <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
+                                                <input type="radio" name="rating" id="rating2" value="1"
+                                                    required /><label for="rating2" title="1"></label>
+                                                <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
+                                            </div>
+                                        </div>
+                                        <!-- for review -->
+                                        <div class="col-span-2 p-4 md:p-5">
+                                            <textarea name="feedback" rows="4"
+                                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                                        </div>
+                                    </div>
+                                    <button type="submit"
+                                        class=" mb-2 text-white inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#61A0FF] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        Give Feedback
+                                    </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- comment section -->
+                <!-- <div class="">
+
+                    <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[60%] h-[320px] ">
+                        {% for comment in feedback_comments %}
+                        <div class="bg-blue-50 w-full p-2">
+                            <div class="comment-user flex">
                                 <div>
-                                    {{ comment.user.username }}
+                                    <span>
+                                        {% if comment.user.userprofilepicture %}
+                                        <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                            src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                        {% endif %}
+                                    </span>
                                 </div>
-                                <div class="pb-10 text-l">
-                                    <p><strong>Rating:</strong>
+                                <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+                                    <div>
+                                        {{ comment.user.username }}
+                                    </div>
+                                    <div class=" text-l">
+
                                         <span class="stars">
                                             {% for i in "12345" %}
                                             {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
-                                            {% else %}
-                                            <span class="star">&#9733;</span>
-                                            {% endif %}
-                                            {% endfor %}
+                                        {% else %}
+                                        <span class="star">&#9733;</span>
+                                        {% endif %}
+                                        {% endfor %}
                                         </span>
-                                    </p>
+                                        </p>
+                                    </div>
+                                    <div class="ml-[25rem]">
+                                         Check if the comment belongs to the current user -->
+                                        <!-- {% if comment.user == request.user %} -->
+                                        <!-- Add a delete button/icon -->
+                                        <!-- <form method="post" action="{% url 'delete_comment' comment.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-500 hover:text-red-700"
+                                                title="Delete comment">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="text-red-500">
+                                                    <path d="M3 6h18"></path>
+                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                        </div>
-                        <div class="comment-user ml-5 text-s w-[90%] font-light leading-6">
-                            <p> {{ comment.feedback }}</p>
-                            
-                        </div>
+                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                                <p> {{ comment.feedback }}</p>
 
+                            </div>
+
+                        </div>
+                        <hr>
+                        {% endfor %}
                     </div>
-                    <hr>
-                    {% endfor %}
+                </div>  -->
+
+
+                <div class="">
+                    <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[60%] h-[320px] ">
+                        {% for comment in feedback_comments %}
+                            {% if comment.user == request.user %}
+                                <div class="bg-blue-50 w-full p-2">
+                                    <div class="comment-user flex">
+                                        <div>
+                                            <span>
+                                                {% if comment.user.userprofilepicture %}
+                                                    <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                                        src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+                                            <div>
+                                                {{ comment.user.username }}
+                                            </div>
+                                            <div class="text-l">
+                                                <span class="stars">
+                                                    {% for i in "12345" %}
+                                                        {% if i|add:0 <= comment.rating %}
+                                                            <span class="star filled">&#9733;</span>
+                                                        {% else %}
+                                                            <span class="star">&#9733;</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                            </div>
+                                            <div class="ml-[25rem]">
+                                                <!-- Check if the comment belongs to the current user -->
+                                                {% if comment.user == request.user %}
+                                                    <!-- Add a delete button/icon -->
+                                                    <form method="post" action="{% url 'delete_comment_restaurant' comment.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="text-red-500 hover:text-red-700"
+                                                            title="Delete comment">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                class="text-red-500">
+                                                                <path d="M3 6h18"></path>
+                                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                                        <p>{{ comment.feedback }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
+                        <!-- Now display other users' comments -->
+                        {% for comment in feedback_comments %}
+                            {% if comment.user != request.user %}
+                                <div class="bg-blue-50 w-full p-2">
+                                    <div class="comment-user flex">
+                                        <div>
+                                            <span>
+                                                {% if comment.user.userprofilepicture %}
+                                                    <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                                        src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+                                            <div>{{ comment.user.username }}</div>
+                                            <div class="text-l">
+                                                <span class="stars">
+                                                    {% for i in "12345" %}
+                                                        {% if i|add:0 <= comment.rating %}
+                                                            <span class="star filled">&#9733;</span>
+                                                        {% else %}
+                                                            <span class="star">&#9733;</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                                        <p>{{ comment.feedback }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
+                
             </div>
-            
         </div>
     </div>
-</div>
 </body>
 {% endblock %}
 

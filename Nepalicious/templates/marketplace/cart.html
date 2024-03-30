@@ -130,19 +130,23 @@
                                             <!-- script for quantity add and minus -->
 
 
-                                            <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
+                                            <td class="whitespace-nowrap px-4  text-right text-sm font-medium">
+                                                <div class="flex items-center gap-3">
 
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="text-red-500">
-                                                    <path d="M3 6h18"></path>
-                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                                </svg>
-                                                <button type="submit" value="{{cart_item.product.id }}" name="delete"
-                                                    class="text-xs font-medium text-red-500">REMOVE</button>
-
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="text-red-500">
+                                                        <path d="M3 6h18"></path>
+                                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                                    </svg>
+                                            
+                                                        <button type="submit" value="{{cart_item.product.id }}" name="delete"
+                                                        class="text-xs font-medium text-red-500 mt-1">REMOVE</button>
+                                                    
+                                                
+                                                 </div>
 
                                             </td>
                                         </tr>

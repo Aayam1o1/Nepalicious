@@ -47,15 +47,15 @@
     <!--  for recipe name and other details -->
     <div class="container-1 w-[80%] m-auto">
         <div class="flex justify-between mt-[4rem]">
-            <div class=" ">
-                <h1 class="text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
-                <div class="flex justify-between text-xl mb-2 w-[20rem] font-medium">
+            <div class="">
+                <h1 class="text-[#F89500] text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
+                <div class="  flex justify-between text-l mb-2 w-[20rem] font-medium">
                     <div>
-                        <h2>By: {{ recipeDetail.user.username }}</h2>
+                        <h2>By: <span class="text-gray-400">{{ recipeDetail.user.username }} </span> </h2>
                     </div>
                 </div>
-                <h2 class="text-xl font-medium mb-1">Total Likes: {{ total_likes }}</h2>
-                <h2 class="text-xl font-medium ">Cusisine Type: {{ recipeDetail.cuisineType }}</h2>
+                <h2 class=" text-l font-medium mb-1">{{ total_likes }} Person Likes this</h2>
+                <h2 class="text-l  font-medium ">Cusisine Type: {{ recipeDetail.cuisineType }}</h2>
             </div>
             
             <!-- show if already saved -->
@@ -120,14 +120,14 @@
                 <h1>Description</h1>
             </div>
             <div class="text-l mt-3 w-[62%]">
-                <p> {{ recipeDetail.recipeDescription}}</p>
+                <p class="text-gray-400"> {{ recipeDetail.recipeDescription}}</p>
             </div>
 
             <div class="mt-10">
                 <h1 class="text-3xl font-semibold">Steps</h1>
             </div>
-            <div class="mt-4 w-[62%]">
-                <p class="text-l font-small italic">
+            <div class="mt-4 w-[62%] text-gray-400">
+                <p class="text-l font-small italic ">
                     {% for step in recipeSteps %}
                     {% if '.' in step %}
                 <p style="margin-bottom: 10px;" class="italic">{{ step|linebreaksbr|safe }}</p>
@@ -146,7 +146,7 @@
             <div class="">
                 <h1 class="text-3xl font-semibold">Ingredients</h1>
             </div>
-            <div class="mt-4 w-full">
+            <div class="mt-4 w-full text-gray-400">
                 <p class="text-l font-small italic">
                     {% for ingredient in recipeIngredient %}
                     {% if '.' in ingredient %}
@@ -261,30 +261,70 @@
                 </div>
             </div>
 
-
-            <!-- comment section -->
             <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[80%] h-[320px]">
                 {% for comment in feedback_comments %}
-                <div class="bg-blue-50  w-full p-2 ml-2">
-                    <div class="comment-user flex">
-                        <div>
-                            <span>
-                                {% if comment.user.userprofilepicture %}
-                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                {% endif %}
-                            </span>
+                    {% if comment.user == request.user %}
+                        <div class="bg-blue-50  w-full p-2 ml-2">
+                            <div class="comment-user flex">
+                                <div>
+                                    <span>
+                                        {% if comment.user.userprofilepicture %}
+                                            <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                                src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="mt-[1rem] ml-4 text-l font-medium">
+                                    {{ comment.user.username }}
+                                </div>
+                                <div class="ml-[29rem] pt-2">
+                                    <!-- Delete button/icon -->
+                                    <form method="post" action="{% url 'delete_comment' comment.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-red-500 hover:text-red-700"
+                                            title="Delete comment">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="text-red-500">
+                                                <path d="M3 6h18"></path>
+                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                                {{ comment.feedback }}
+                            </div>
                         </div>
-                        <div class="mt-[1rem] ml-4 text-l font-medium">
-                            {{ comment.user.username }}
+                        <hr>
+                    {% endif %}
+                {% endfor %}
+                <!-- Now display other users' comments -->
+                {% for comment in feedback_comments %}
+                    {% if comment.user != request.user %}
+                        <div class="bg-blue-50  w-full p-2 ml-2">
+                            <div class="comment-user flex">
+                                <div>
+                                    <span>
+                                        {% if comment.user.userprofilepicture %}
+                                            <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                                src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="mt-[1rem] ml-4 text-l font-medium">
+                                    {{ comment.user.username }}
+                                </div>
+                            </div>
+                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                                {{ comment.feedback }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                        {{ comment.feedback }}
-                    </div>
-                    
-                </div>
-                <hr>
+                        <hr>
+                    {% endif %}
                 {% endfor %}
             </div>
 

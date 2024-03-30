@@ -4,11 +4,19 @@ from .models import *
 from .forms import *
 import folium
 import geocoder
+from django.db.models import Sum, F, Avg
+
 
 # Create your views here.
 def restaurant(request):
     restaurant_list = addRestaurant.objects.all()
     
+    for restaurant in restaurant_list:
+        # Calculate average rating for each product
+        avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+       
+        
     context = {
         'restaurantList': restaurant_list
     }
@@ -83,7 +91,12 @@ def restaurant_detail(request, restaurant_id):
     restaurant_location = Location.objects.filter(restaurant=restaurant).first()
     
     feedback_comments = restaurantFeedback.objects.filter(restaurant=restaurant) 
-
+     # Calculate average rating
+    avg_rating = restaurantFeedback.objects.filter(restaurant=restaurant).aggregate(Avg('rating'))['rating__avg']
+    
+    # Count the number of reviews
+    num_reviews = feedback_comments.count()
+    
     if restaurant_location:
         # Create a map centered at the restaurant's location
         maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
@@ -111,7 +124,9 @@ def restaurant_detail(request, restaurant_id):
         'restaurant_images': restaurant_images,
         'maps': maps,
         'coordinates': coordinates,
-        'feedback_comments': feedback_comments
+        'feedback_comments': feedback_comments,
+        'avg_rating': avg_rating,
+        'num_reviews': num_reviews
     }
 
     return render(request, 'restaurant/restaurantDetail.html', context)
@@ -139,3 +154,23 @@ def submit_review_restaurant(request, restaurant_id):
                 data.save()
                 messages.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
+            
+
+def delete_comment_restaurant(request, comment_id):
+    url  = request.META.get('HTTP_REFERER')
+
+    # Fetch the comment object to be deleted
+    comment = get_object_or_404(restaurantFeedback, id=comment_id)
+
+    # Check if the logged-in user is the owner of the comment
+    if comment.user == request.user:
+        # Delete the comment
+        comment.delete()
+        messages.success(request, 'Comment deleted')
+    else:
+        messages.MessageFailure(request, 'There was an error deleting the comment')
+        print(messages)
+        pass
+
+    # Redirect back to the page where the comment was deleted from
+    return redirect(url)

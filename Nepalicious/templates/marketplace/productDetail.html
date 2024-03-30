@@ -24,51 +24,70 @@
             height: 100%;
             object-fit: cover;
         }
+
         /* for stars */
-        .rate > input{
+        .rate>input {
             display: none;
         }
-        .rate{
+
+        .rate {
             display: inline-block;
             border: 0;
+            font-size: 20px;
         }
 
-        .rate > label{
+        .rate .star {
+            font-size: inherit;
+            /* Ensure that the font size remains consistent */
+        }
+
+        .rate>label {
             float: right;
         }
 
         /* for showing stars */
-        .rate > label:before{
+        .rate>label:before {
             display: inline-block;
             font-size: 1.1rem;
             font-family: FontAwesome;
             content: "\f005";
-            margin:0;
-            padding:0.3rem .2rem;
+            margin: 0;
+            padding: 0.3rem .2rem;
             cursor: pointer;
         }
 
         /* for half stars */
-        .rate .half:before{
+        .rate .half:before {
             content: "\f089";
             position: absolute;
             padding-right: 0;
-        
+
         }
 
         /* click and hover */
-        input:checked ~ label, label:hover ~ label{
+        input:checked~label,
+        label:hover~label {
             color: #ffb503;
         }
 
         /* hover highlight stars */
-        input:checked  + label:hover, input:checked ~ label:hover, input:checked ~ label:hover ~ label,
-        label:hover ~ input:checked ~ label{
+        input:checked+label:hover,
+        input:checked~label:hover,
+        input:checked~label:hover~label,
+        label:hover~input:checked~label {
             color: #cc9000;
         }
-        
+
+        .stars {
+            color: #ddd;
+            /* Default color of stars */
+        }
 
 
+        .filled {
+            color: orange;
+            /* Color for filled stars */
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
@@ -79,10 +98,10 @@
     {% block content %}
     <div class="container my-[5rem] w-[80%] h-full mx-auto">
 
-        <div class="product-description flex h-[25rem] ml-10 w-full justify-around">
+        <div class="product-description flex ml-10 w-full justify-around">
 
             <!-- displaying product picture -->
-            <div id="gallery" class="relative w-[50%] ml-[10rem] overflow-hidden" data-carousel="slide">
+            <div id="gallery" class="relative w-[38%] h-[30rem] ml-[10rem] overflow-hidden" data-carousel="slide">
                 <!-- Carousel wrapper -->
                 <div class="relative h-full w-[50%] overflow-hidden rounded-lg"></div>
                 {% for image in product_image %}
@@ -95,224 +114,247 @@
 
 
             <!-- product Details -->
-            <div class="w-[50%]  pl-[5rem]">
+            <div class="w-[50%]  pl-[2rem]">
                 <div class="px-4">
-                    <h1 class="text-4xl text-[#F89500] font-semibold">{{ productDetail.productName }} - {{ productDetail.productBrand }}</h1>
-                    <div class="flex mt-3">
-                        <div>
-                            <p class="text-xl mt-1 mr-4 text-[#BE485D]">Rs {{ productDetail.productPrice }}</p>
-                        </div>
-                        <div>
-                            <p class="rating-stars" class="">
-                                <!-- Stars will be dynamically added here -->
-                            </p>
-                        </div>
-                        <div class="mt-1 ml-4">
-                            <p class="italic">17 reviews</p>
+                    <h1 class="text-2xl text-[#F89500] font-semibold">{{ productDetail.productName }}</h1>
+                    {% comment %} for avg stars {% endcomment %}
+                    <div class="">
+                        <div class="rate">
+                            <div class="flex items-center"> <!-- Container for stars and number of reviews -->
+                                {% if avg_rating %}
+                                {% for i in "12345" %}
+                                {% if i|add:0 <= avg_rating %} <span class="star filled">&#9733;</span>
+                                    {% else %}
+                                    <span class="star">&#9733;</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <div class="text-gray-400 ml-4 text-sm mt-[5px]">
+                                        ({{ num_reviews }} Reviews)
+                                    </div>
+                                    {% else %}
+                                    {% if num_reviews == 0 %}
+                                    <p class="text-sm">No reviews yet</p>
+                                    {% endif %}
+                                    {% endif %}
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <p class="mt-3 text-l text-[#BE485D]">Stock ({{ productDetail.productStock }})</p>
+                        <p class="text-l mt-1 mr-4 text-[#BE485D]">Rs {{ productDetail.productPrice }}</p>
                     </div>
                     <hr class="mt-4 border-1 w-[25rem]">
 
                     <!-- description -->
                     <div class="mt-5 w-[30rem]">
-                        <p>{{ productDetail.productDescription }}</p>
+                        <p class="text-l text-gray-400">{{ productDetail.productDescription }}</p>
                     </div>
-
                     <!-- button -->
                     <div class="mt-5">
                         <form method="POST" action="{% url 'add_to_cart' productDetail.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class=" rounded-l w-[10rem] h-10 bg-[#FFC061]">
-                            <span class="text-white">Add To Cart</span>
-                        </button>
+                            {% csrf_token %}
+                            <button type="submit" class=" rounded-l w-[10rem] h-10 bg-[#FFC061]">
+                                <span class="text-white">Add To Cart</span>
+                            </button>
                         </form>
                     </div>
                 </div>
-
+                <div class="ml-5 mt-5 text-sm text-gray-500">
+                    <div>
+                        <p class="mt-3 "><span class="text-gray-300 font-bold">o</span> Stock:
+                            {{productDetail.productStock }}</p>
+                    </div>
+                    <div>
+                        <p>
+                            <span class="text-gray-300 font-bold">o</span> Brand: {{ productDetail.productBrand }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
         </div>
 
+        <!-- for commment -->
+        <div class="commnet-container flex justify-around mt-[5rem]">
+            <div class="w-[60%] ml-[7rem]">
+                <div>
+                    <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
+                </div>
+                <div class="my-[3rem]">
+                    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
+                        class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5">
+                        <span class="text-white">Give Feedback</span>
+                    </button>
+                </div>
 
-        <div class="container-2 mt-[5rem] w-full">
-
-            <!-- for commment -->
-            <div class="commnet-container flex h-[60vh] justify-around">
-                <div class="w-[60%] ml-[7rem]">
-                    <div>
-                        <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
-                    </div>
-                    <div class="my-[3rem]">
-                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
-                            class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5">
-                            <span class="text-white">Give Feedback</span>
-                        </button>
-                    </div>
-
-                    <!-- Main modal -->
-                    <div id="crud-modal" tabindex="-1" aria-hidden="true"
-                        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-md max-h-full">
-                            <form id="feedbackForm" method="post" action="{% url 'submit_review_product' productDetail.id %}">
-                                {% csrf_token %}
-                                <!-- Modal content -->
-                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                    <!-- Modal header -->
-                                    <div
-                                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            Give Feedback
-                                        </h3>
-                                        <button type="button"
-                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                            data-modal-toggle="crud-modal">
-                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 14 14">
-                                                <path stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2"
-                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                            </svg>
-                                            <span class="sr-only">Close modal</span>
-                                        </button>
-                                    </div>
-                                    <!-- Modal body -->
-
-                                    <div class="grid mb-2 grid-cols-1">
-                                        <div class="p-4">
-                                            <!-- Rating stars -->
-                                            <div class="rate">
-                                                <input type="radio" name="rating" id="rating10"  value="5" required/><label for="rating10" title="5"></label>
-                                                <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
-                                                <input type="radio" name="rating" id="rating8"  value="4" required/><label for="rating8" title="4"></label>
-                                                <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
-                                                <input type="radio" name="rating" id="rating6"  value="3" required/><label for="rating6" title="3"></label>
-                                                <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
-                                                <input type="radio" name="rating" id="rating4"  value="2" required/><label for="rating4" title="2"></label>
-                                                <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
-                                                <input type="radio" name="rating" id="rating2"  value="1" required/><label for="rating2" title="1"></label>
-                                                <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
-                                            </div>
-                                        </div>
-                                        <!-- for review -->
-                                        <div class="col-span-2 p-4 md:p-5">
-                                          <textarea name="feedback" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
-                                        </div>
-                                    </div>
-                                    <button type="submit"
-                                        class=" mb-2 text-white inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#61A0FF] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                        <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
+                <!-- Main modal -->
+                <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div class="relative p-4 w-full max-w-md max-h-full">
+                        <form id="feedbackForm" method="post"
+                            action="{% url 'submit_review_product' productDetail.id %}">
+                            {% csrf_token %}
+                            <!-- Modal content -->
+                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                <!-- Modal header -->
+                                <div
+                                    class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                                         Give Feedback
+                                    </h3>
+                                    <button type="button"
+                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                        data-modal-toggle="crud-modal">
+                                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 14 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                        </svg>
+                                        <span class="sr-only">Close modal</span>
                                     </button>
-                            </form>
-                        </div>
+                                </div>
+                                <!-- Modal body -->
+
+                                <div class="grid mb-2 grid-cols-1">
+                                    <div class="p-4">
+                                        <!-- Rating stars -->
+                                        <div class="rate">
+                                            <input type="radio" name="rating" id="rating10" value="5" required /><label
+                                                for="rating10" title="5"></label>
+                                            <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
+                                            <input type="radio" name="rating" id="rating8" value="4" required /><label
+                                                for="rating8" title="4"></label>
+                                            <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
+                                            <input type="radio" name="rating" id="rating6" value="3" required /><label
+                                                for="rating6" title="3"></label>
+                                            <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
+                                            <input type="radio" name="rating" id="rating4" value="2" required /><label
+                                                for="rating4" title="2"></label>
+                                            <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
+                                            <input type="radio" name="rating" id="rating2" value="1" required /><label
+                                                for="rating2" title="1"></label>
+                                            <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
+                                        </div>
+                                    </div>
+                                    <!-- for review -->
+                                    <div class="col-span-2 p-4 md:p-5">
+                                        <textarea name="feedback" rows="4"
+                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class=" mb-2 text-white inline-flex items-center ml-[1rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#61A0FF] dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    Give Feedback
+                                </button>
+                        </form>
                     </div>
                 </div>
-            
-                <!-- comment section -->
-                <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[80%] h-[320px]">
-                    {% for comment in feedback_comments %}
-                    <div class="bg-blue-50  w-full p-2 ml-2">
-                        <div class="comment-user flex">
+            </div>
+
+            <!-- comment section -->
+
+            <div class="overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[80%] h-[320px]">
+                {% for comment in feedback_comments %}
+                {% if comment.user == request.user %}
+                <div class="bg-blue-50 w-full p-2 ml-2">
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                {% if comment.user.userprofilepicture %}
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+                            <div>{{ comment.user.username }}</div>
                             <div>
-                                <span>
-                                    {% if comment.user.userprofilepicture %}
-                                    <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                        src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                    {% endif %}
+                                <span class="stars">
+                                    {% for i in "12345" %}
+                                    {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
+                                {% else %}
+                                <span class="star">&#9733;</span>
+                                {% endif %}
+                                {% endfor %}
                                 </span>
                             </div>
-                            <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
-                                <div>
-                                    {{ comment.user.username }}
-                                </div>
-                                <div>
-                                    <p><strong>Rating:</strong> {{ comment.rating }}</p>
-                                </div>
+                            <div class="ml-[21rem]">
+                                <!-- Check if the comment belongs to the current user -->
+                                {% if comment.user == request.user %}
+                                <!-- Add a delete button/icon -->
+                                <form method="post" action="{% url 'delete_comment_product' comment.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-500 hover:text-red-700"
+                                        title="Delete comment">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                            <p><strong>Comment:</strong> {{ comment.feedback }}</p>
+                    </div>
+                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                        <p>{{ comment.feedback }}</p>
+                    </div>
+                </div>
+                <hr>
+                {% endif %}
+                {% endfor %}
+                <!-- Now display other users' comments -->
+                {% for comment in feedback_comments %}
+                {% if comment.user != request.user %}
+                <div class="bg-blue-50 w-full p-2 ml-2">
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                {% if comment.user.userprofilepicture %}
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
+                            <div>{{ comment.user.username }}</div>
+                            <div>
+                                <span class="stars">
+                                    {% for i in "12345" %}
+                                    {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
+                                {% else %}
+                                <span class="star">&#9733;</span>
+                                {% endif %}
+                                {% endfor %}
+                                </span>
+                            </div>
+
 
                         </div>
-
                     </div>
-                    <hr>
-                    {% endfor %}
+
+                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                        <p>{{ comment.feedback }}</p>
+                    </div>
                 </div>
-            </div>
-            <!-- recommend other products -->
-            <div class="bg-blue-100 w-[40%]">
-                other products
+                <hr>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
-
+        <!-- recommend other products -->
+        <div class="bg-blue-100 w-[40%]">
+            other products
+        </div>
     </div>
-    </div>
-
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Select all elements with the class 'rating-stars'
-            const starsContainers = document.querySelectorAll('.rating-stars');
-
-            // Iterate through each stars container
-            starsContainers.forEach(starsContainer => {
-                // Create 5 stars for each container
-                for (let i = 1; i <= 5; i++) {
-                    const star = document.createElement('span');
-                    star.classList.add(
-                        'cursor-pointer',
-                        'text-2xl',
-                        'mr-1',
-                        'pr-1',
-                        'hover:text-yellow-500',
-                        'transition',
-                        'transform',
-                        'duration-200',
-                        'ease-in-out'
-                    );
-                    star.innerHTML = '★';
-
-                    // Attach click event to each star
-                    star.addEventListener('click', function () {
-                        const rating = i;
-                        updateRating(starsContainer, rating);
-                    });
-
-                    starsContainer.appendChild(star);
-                }
-            });
-
-            // Function to update rating for a specific container
-            function updateRating(container, rating) {
-                // Update UI (you can also send the rating to the server)
-                highlightStars(container, rating);
-            }
-
-            // Function to highlight stars up to the given rating for a specific container
-            function highlightStars(container, rating) {
-                const stars = container.children;
-
-                for (let i = 0; i < stars.length; i++) {
-                    if (i < rating) {
-                        stars[i].classList.add('text-yellow-500');
-                    } else {
-                        stars[i].classList.remove('text-yellow-500');
-                    }
-                }
-            }
-        });
-
-    </script>
     {% endblock %}
 </body>
 

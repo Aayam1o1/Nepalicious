@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Avg
 import json
 import requests
 from django.http import HttpResponse
@@ -12,6 +12,11 @@ from django.db import transaction
 def marketplace(request):
     productList = addProducts.objects.all()
     
+    for product in productList:
+        # Calculate average rating for each product
+        avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+        
     context = {
         'productList': productList,
         
@@ -78,9 +83,14 @@ def productDetail(request, product_id):
 
     product_image = productImage.objects.filter(addProducts = productdetailForImage)
      
+    # Calculate average rating
+    avg_rating = productFeedback.objects.filter(product=productDetail).aggregate(Avg('rating'))['rating__avg']
     
+
     # Retrieve comments related to the specific product
     feedback_comments = productFeedback.objects.filter(product=productDetail) 
+    # Count the number of reviews
+    num_reviews = feedback_comments.count()
     context = {
         'productList': productList,
         'productdetailForImage' : productdetailForImage,
@@ -88,6 +98,8 @@ def productDetail(request, product_id):
         'productDetail': productDetail,
         # 'feedback_form' : feedback_form,
         'feedback_comments': feedback_comments,
+        'num_reviews': num_reviews,
+        'avg_rating': avg_rating,
     }
     
     return render(request, 'marketplace/productDetail.html', context)
@@ -117,7 +129,24 @@ def submit_review_product(request, product_id):
                 messages.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
 
+def delete_comment_product(request, comment_id):
+    url  = request.META.get('HTTP_REFERER')
 
+    # Fetch the comment object to be deleted
+    comment = get_object_or_404(productFeedback, id=comment_id)
+
+    # Check if the logged-in user is the owner of the comment
+    if comment.user == request.user:
+        # Delete the comment
+        comment.delete()
+        messages.success(request, 'Comment deleted')
+    else:
+        messages.MessageFailure(request, 'There was an error deleting the comment')
+        print(messages)
+        pass
+
+    # Redirect back to the page where the comment was deleted from
+    return redirect(url)
 
 # for add to cart button
 def add_to_cart(request, product_id):

@@ -315,3 +315,23 @@ def dislike_recipe(request, recipe_id):
             messages.error(request, 'Recipe does not exist')
         
     return redirect(url)
+
+
+def delete_comment(request, comment_id):
+    url  = request.META.get('HTTP_REFERER')
+
+    # Fetch the comment object to be deleted
+    comment = get_object_or_404(recipeFeedback, id=comment_id)
+
+    # Check if the logged-in user is the owner of the comment
+    if comment.user == request.user:
+        # Delete the comment
+        comment.delete()
+        messages.success(request, 'Comment deleted')
+    else:
+        messages.MessageFailure(request, 'There was an error deleting the comment')
+        print(messages)
+        pass
+
+    # Redirect back to the page where the comment was deleted from
+    return redirect(url)
