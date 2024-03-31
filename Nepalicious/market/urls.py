@@ -14,11 +14,11 @@ urlpatterns = [
     path('update_cart/', views.update_cart, name='update_cart'),
     path('submit_review_product/<int:product_id>/', views.submit_review_product, name='submit_review_product'),
     path('delete_comment_product/<int:comment_id>', views.delete_comment_product, name='delete_comment_product'),
-
-    
+    path('payment_history', views.payment_history, name='payment_history'),
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
     path('paymentSucessful', views.paymentSucessful, name='paymentSucessful'),
+    path('error', views.error, name='error'),
 
     #for checkout update address and number
     path('checkout', views.checkout, name='checkout')

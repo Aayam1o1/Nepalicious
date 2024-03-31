@@ -342,42 +342,45 @@ def verifyKhalti(request):
         new_res = json.loads(res.text)
         print("new_res",new_res)
         
-        try:
-            
-            if new_res['status'] == 'Completed':
+        
+        if new_res['status'] == 'Completed':
+            try:
+                # Get user's cart
+                user = request.user
+                cart = Cart.objects.get(user=user)
                 
-                print("YA SAMMA PUGO HAIIIII")
-                #data  get
-                buyer_get = get_object_or_404(User, user=request.user)
-                seller_get = get_object_or_404(addProducts, user=request.user)
-                totalAmount_get = get_object_or_404(Cart, user=request.user)
-                new_address_get = get_object_or_404(Cart, user=request.user)
-                new_number_get = get_object_or_404(Cart, user=request.user)
-                total_quantity_get = get_object_or_404(Cart, user=request.user)
-                cart = get_object_or_404(Cart, user=request.user)
-                print(cart)
-                
-                try:
-                    with transaction.atomic():
-                        
-                        # datasave
-                        return redirect('paymentSucessful')
+                with transaction.atomic():
+                    print("Transaction started")  # Add this line for debugging
 
-                except Exception as e:
-                    print("An error occurred:", e)
-                    return redirect('error')
-                
-            else:
+                    # Create orders directly from cart items
+                    order.objects.create(
+                        buyer=user,
+                        ordered_address=cart.new_address,
+                        product=cart.cartitem_set.all().values_list('product', flat=True),
+                        total_quantity=cart.total_quantity,
+                        total_amount=cart.total_amount,
+                        seller=cart.cartitem_set.first().product.user,
+                        is_completed='Pending'
+                    )
+                    order.save()
+                    # Clear the cart
+                    cart.cartitem_set.all().delete()
+
+                # Redirect to payment success page
+                return redirect('paymentSucessful')
+            
+            except Exception as e:
+                print("Error in transaction:", str(e))
+                # Rollback transaction
+                transaction.rollback()
                 return redirect('error')
-            
-        except KeyError:
-            return redirect("error") 
-
                 
-            
         else:
-            pass
-            # return redirect('error')
+            return redirect('error')
+
+    else:
+        return redirect('error')
+
 
 
     
@@ -411,8 +414,12 @@ def checkout(request):
     return render(request, 'marketplace/cart.html')
 
 
-# def error(request):
-#     return render(request, "Payment/error.html")
+def payment_history(request):
+    return render(request, 'profiles/paymentHistory.html')
+
+
+def error(request):
+    return render(request, "Payment/error.html")
 
 
 

@@ -72,6 +72,11 @@ class CartItem(models.Model):
     
 
 class order(models.Model):
+    complete_choice = (
+        ('Rejected', 'Rejected'),
+        ('Completed', 'Completed'),
+        ('Pending', 'Pending'),
+    )
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered_number = models.CharField(max_length=10)    
     ordered_address = models.CharField(max_length=100)
@@ -80,7 +85,10 @@ class order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     seller = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name ='seller')
     buy_date = models.DateTimeField(default=timezone.now)
-    
+    is_completed = models.CharField(max_length=10, choices=complete_choice, default='Pending')
+
+    def __str__(self):
+        return f"Order for {self.buyer.username} - {self.id}"
     
     
     
