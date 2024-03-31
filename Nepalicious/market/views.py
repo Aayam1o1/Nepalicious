@@ -157,9 +157,11 @@ def add_to_cart(request, product_id):
 
     new_address = request.user.usersdetail.address
     new_number = request.user.usersdetail.phone_number   
+    seller = product.user
     
+    print('seller', seller)
     # Check if the product is already in the cart
-    cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product)
+    cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product, seller=seller)
 
     # If the item is already in the cart, increase the quantity
     if not item_created:
@@ -175,6 +177,7 @@ def add_to_cart(request, product_id):
     
     user_cart.new_address = new_address
     user_cart.new_number = new_number
+    
     user_cart.save()
 
    
@@ -306,68 +309,95 @@ def initkhalti(request):
         'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede', 
         'Content-Type': 'application/json',
     }
-
-    try:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        new_res = json.loads(response.text)
-
-        payment_url = new_res.get('payment_url')
-        if payment_url:
-            return redirect(payment_url)
-        else:
-            print("Payment URL not found in response:", new_res)
-            return HttpResponse("Payment URL not found in response")
-    except Exception as e:
-        print("Error occurred during payment initiation:", e)
-        return HttpResponse("An error occurred during payment initiation")
+    
+    response = requests.request("POST", url, headers=headers, data=payload)
+    new_res = json.loads(response.text)
+    
+    
+    if new_res['payment_url']:
+        
+        return redirect(new_res['payment_url'])
+        # return redirect("verify")
+    else:
+        messages.error(request, "Something went wrong.")
+        return redirect("error")
+    # payment_url = new_res.get('payment_url')
+       
+    # except Exception as e:
+    #     print("Error occurred during payment initiation:", e)
+    #     return HttpResponse("An error occurred during payment initiation")
      
 
     
 
 def verifyKhalti(request):
+    print('url hai::')
     url = "https://a.khalti.com/api/v2/epayment/lookup/"
+    
     if request.method == 'GET':
         headers = {
             'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede',
             'Content-Type': 'application/json',
         }
         pidx = request.GET.get('pidx')
-        
         payload = json.dumps({
         'pidx': pidx
         })
-        
+        print('payload re hai:: ', payload)
         res = requests.request('POST',url,headers=headers,data=payload)
-        
         new_res = json.loads(res.text)
-        print("new_res",new_res)
         
         
         if new_res['status'] == 'Completed':
             try:
                 # Get user's cart
-                user = request.user
-                cart = Cart.objects.get(user=user)
+                buyer = request.user
+                cart = Cart.objects.get(user=buyer)
+                cartItems = CartItem.objects.filter(cart=cart) # Assuming you want the first cart item
                 
+                # for cartItem in cartItems:
+                #     product = cartItem.product
+                #     seller = cartItem.product.user
+                #     quantity = cartItem.quantity
+                #     ordered_phone_number = cart.new_number
+                #     ordered_address = cart.new_address
+            
+               
                 with transaction.atomic():
                     print("Transaction started")  # Add this line for debugging
-
-                    # Create orders directly from cart items
-                    order.objects.create(
-                        buyer=user,
-                        ordered_address=cart.new_address,
-                        product=cart.cartitem_set.all().values_list('product', flat=True),
-                        total_quantity=cart.total_quantity,
+                    
+                    new_order = order.objects.create(
+                        buyer = buyer, 
                         total_amount=cart.total_amount,
-                        seller=cart.cartitem_set.first().product.user,
+                        ordered_phone_number = cart.new_number,
+                        ordered_address = cart.new_address,
                         is_completed='Pending'
                     )
-                    order.save()
+                    
+                    # Loop through each cart item and create orderDetail instances
+                    for cart_item in cartItems:
+                        product = cart_item.product
+                        quantity = cart_item.quantity
+                        seller = cart_item.seller
+                        
+                        print("Seller:", seller.username)
+                        orderDetail.objects.create(
+                            order=new_order,
+                            seller = seller,
+                            product = product,
+                            quantity= quantity,
+                        )           
+                
+                        
+                    # Create orders directly from cart items
+                    new_order.save()
                     # Clear the cart
-                    cart.cartitem_set.all().delete()
+                    cart.delete()
+                    # cart.cartitem_set.all().delete()
 
-                # Redirect to payment success page
-                return redirect('paymentSucessful')
+            # Redirect  to payment success page
+                    return render(request, 'payment/paymentsuccessful.html')
+            
             
             except Exception as e:
                 print("Error in transaction:", str(e))
@@ -380,12 +410,7 @@ def verifyKhalti(request):
 
     else:
         return redirect('error')
-
-
-
     
-def paymentSucessful(request):
-    return render(request, 'payment/paymentsuccessful.html')
 
 
 def checkout(request):

@@ -66,7 +66,8 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey('addProducts', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)  # Add a quantity field
-
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seller_cart_items')    
+    
     def __str__(self):
         return f"{self.quantity} x {self.product.productName} in Cart for {self.cart.user.username}"
     
@@ -78,12 +79,9 @@ class order(models.Model):
         ('Pending', 'Pending'),
     )
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
-    ordered_number = models.CharField(max_length=10)    
+    ordered_phone_number = models.CharField(max_length=10)    
     ordered_address = models.CharField(max_length=100)
-    product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
-    total_quantity = models.PositiveIntegerField() 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    seller = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name ='seller')
     buy_date = models.DateTimeField(default=timezone.now)
     is_completed = models.CharField(max_length=10, choices=complete_choice, default='Pending')
 
@@ -92,4 +90,11 @@ class order(models.Model):
     
     
     
+class orderDetail(models.Model):
+    order = models.ForeignKey(order, on_delete=models.CASCADE)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name ='seller')
+    product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
+    quantity = models.PositiveIntegerField() 
     
+    def __str__(self):
+        return f"Order details for {self.order} - {self.id}"

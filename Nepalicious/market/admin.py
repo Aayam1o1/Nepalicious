@@ -9,4 +9,5 @@ admin.site.register(productImage),
 admin.site.register(Cart),
 admin.site.register(CartItem),
 admin.site.register(productFeedback),
-admin.site.register(order)
+admin.site.register(order),
+admin.site.register(orderDetail)

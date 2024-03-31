@@ -17,7 +17,7 @@ urlpatterns = [
     path('payment_history', views.payment_history, name='payment_history'),
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
-    path('paymentSucessful', views.paymentSucessful, name='paymentSucessful'),
+    path('paymentSucessful', views.verifyKhalti, name='paymentSucessful'),
     path('error', views.error, name='error'),
 
     #for checkout update address and number
