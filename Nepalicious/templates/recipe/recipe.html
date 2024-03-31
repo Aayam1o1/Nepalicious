@@ -124,33 +124,33 @@
             <h1>Super Delicious</h1>
         </div>
         <div class="w-[100%] grid grid-cols-4 gap-3">
-            
-                <div class="w-[18rem] p-4">    
-                    <!-- displaying product picture -->
-                    <div id="gallery" class="relative w-full" data-carousel="slide">
-                        <!-- Carousel wrapper -->
-                        <div class="relative h-56 overflow-hidden rounded-lg border-2">         
-                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <a href=""><img src="../../static/images/recipe/rice.svg" alt=""
-                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
-                               </div>
-                            
-                        </div>
-                        
+            {% for recipe in top_four_recipe %}
+            <div class="w-[18rem] p-4">    
+                <!-- displaying recipe picture -->
+                <div id="gallery" class="relative w-full" data-carousel="slide">
+                    <!-- Carousel wrapper -->
+                    <div class="relative h-56 overflow-hidden rounded-lg">
+                        {% for image in recipe.images.all %}
+                            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                <a href="{% url 'recipeDetail' recipe.id %}"><img src="{{ image.image.url }}" alt=""
+                                class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                           </div>
+                        {% endfor %}
                     </div>
-
-                    <!-- display other data -->
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">Recipe Name</h1>
-                        <p class="mt-2 text-sm">Chef name</p>
-                        <p class="mt-2 text-sm">Cuisine Type</p>
-                        <p class="rating-stars" class="">
-                            <!-- Stars will be dynamically added here -->
-
-                        
-                        
-                    </div>
-                </div>            
+                </div>
+    
+                <!-- display other data -->
+                <div class="">
+                    <h1 class="text-lg font-medium mt-4">{{ recipe.recipeName }}</h1>
+                    <p class="mt-2 text-sm">{{ recipe.user.username }}</p>
+                    <p class="mt-2 text-sm">{{ recipe.cuisineType }}</p>
+                    <p class="rating-stars" class="">
+                        <!-- Stars will be dynamically added here -->
+                    </p>
+                    <p id="rating-message" class="mt-2 text-gray-600"></p>
+                </div>
+            </div>  
+            {% endfor %}
         </div>
     </div>
 
@@ -159,38 +159,37 @@
             <h1>Latest Recipe</h1>
         </div>
         <div class="w-[100%] grid grid-cols-5 gap-3">
-            
+            {% for recipe in latest_recipe %}
                 <div class="w-[18rem] p-4">    
                     <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
                         <!-- Carousel wrapper -->
                         <div class="relative h-[10rem] w-[13rem] overflow-hidden rounded-lg border-2">         
+                            {% for image in recipe.images.all %}
                                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <a href=""><img src="../../static/images/recipe/rice.svg" alt=""
-                                    class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover " /></a>
-                               </div>
-                            
+                                    <a href="{% url 'recipeDetail' recipe.id %}">
+                                        <img src="{{ image.image.url }}" alt=""
+                                        class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover " />
+                                    </a>
+                                </div>
+                            {% endfor %}
                         </div>
-                        
                     </div>
-
                     <!-- display other data -->
                     <div class="">
-                        <h1 class="text-lg font-medium mt-4">Recipe Name</h1>
-                        <p class="mt-2 text-sm">Chef name</p>
-                        <p class="mt-2 text-sm">Cuisine Type</p>
+                        <h1 class="text-lg font-medium mt-4">{{ recipe.recipeName }}</h1>
+                        <p class="mt-2 text-sm">{{ recipe.user.username }}</p>
+                        <p class="mt-2 text-sm">{{ recipe.cuisineType }}</p>
                         <p class="rating-stars" class="">
                             <!-- Stars will be dynamically added here -->
-
                         </p>
                         <p id="rating-message" class="mt-2 text-gray-600"></p>
-                        
                     </div>
-                </div>            
+                </div>  
+            {% endfor %}
         </div>
     </div>
     
-
     {% endblock %}
 </body>
 </html>

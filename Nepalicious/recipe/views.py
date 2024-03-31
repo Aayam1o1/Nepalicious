@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.db.models import Count
 
 
-# Crpath('removeRecipe', views.remove_Recipe, name='removeRecipe'),h('removeRecipe', views.remove_Recipe, name='removeRecipe'),e your views here.
 
 def recipe(request):
-    recipe_list = addRecipe.objects.all()
-    
+    recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
+    top_four_recipe = addRecipe.objects.annotate(num_likes=Count('likedislikerecipe', filter=models.Q(likedislikerecipe__choice='like'))).order_by('-num_likes')[:4]
+    latest_recipe = addRecipe.objects.all().order_by('-id')
+
     context = {
-        'recipeList': recipe_list
+        'recipeList': recipe_list,
+        'top_four_recipe': top_four_recipe,
+        'latest_recipe': latest_recipe,
     }
     return render(request, 'recipe/recipe.html', context)
 
