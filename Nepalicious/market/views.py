@@ -379,13 +379,15 @@ def verifyKhalti(request):
                         product = cart_item.product
                         quantity = cart_item.quantity
                         seller = cart_item.seller
+                        total_each_product = product.productPrice * quantity
                         
                         print("Seller:", seller.username)
                         orderDetail.objects.create(
-                            order=new_order,
+                            order_for = new_order,
                             seller = seller,
                             product = product,
                             quantity= quantity,
+                            total_each_product=total_each_product
                         )           
                 
                         
@@ -439,8 +441,28 @@ def checkout(request):
     return render(request, 'marketplace/cart.html')
 
 
-def payment_history(request):
-    return render(request, 'profiles/paymentHistory.html')
+def order_history(request):
+    
+    user= request.user
+    orders = order.objects.filter(buyer=user)
+    
+    #retreving order id
+    order_ids = orders.values_list('id', flat=True)
+
+    
+    orderlist = orderDetail.objects.filter(order_for__in=order_ids)
+    
+    
+        
+    context = {
+        'user': user,
+        'orders': orders,
+        'orderlist': orderlist,
+        
+       
+    }
+    
+    return render(request, 'profiles/paymentHistory.html', context)
 
 
 def error(request):

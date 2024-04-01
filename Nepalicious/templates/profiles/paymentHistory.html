@@ -8,8 +8,97 @@
 <body>
     {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
     {% load custom_tags %}
-    Payment history
+    <div class="mt-5">
 
+        <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 w-full">
+                    <tr>
+                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <span>Order ID</span>
+                        </th>
+                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <span>Product</span>
+                        </th>
+                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <span>Product Name</span>
+                        </th>
+                        <th scope="col"
+                        class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Brand
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Price (per 1)
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Quantity
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Total
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Status
+                    </th>
+                </tr>
+            </thead>
+            
+            
+            <!-- Your table content here -->
+            <tbody class="divide-y divide-gray-200 bg-white w-full">
+                {% for order_item in orders %}
+                {% for order_detail in order_item.orderdetail_set.all %}
+                
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-4">{{ order_item.id }}</td>
+                    <td class="whitespace-nowrap px-4 py-4">
+                        <div class="flex items-center">
+                            <div class="flex">
+                                <a href="{% url 'productDetail' order_detail.product.id %}">
+                                    <img src="{{ order_detail.product.images.first.image.url }}"
+                                    alt="{{ order_detail.product.productName }}"
+                                    class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
+                                </a>
+                            </div>
+                            
+                        </div>
+                        
+                    </td>
+                    <td>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ order_detail.product.productName }}                  
+                            </div>
+                        </div>
+                    </td>
+                        <td class="whitespace-nowrap px-4 py-4">
+                            <div class="text-sm text-gray-900">
+                                {{ order_detail.product.productBrand }}
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-4">
+                            Rs {{ order_detail.product.productPrice }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity }}</td>
+                        <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
+                        
+                        
+                        <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_item.is_completed }}</span></td>
+                        
+                        <!-- script for quantity add and minus -->
+                        
+                        
+                        
+                    </tr>
+                    
+                    {% endfor %}
+                    {% endfor %}
+
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
     {% endblock %}
 </body>
 </html>
