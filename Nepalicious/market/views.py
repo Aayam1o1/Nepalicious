@@ -7,6 +7,7 @@ import json
 import requests
 from django.http import HttpResponse
 from django.db import transaction
+import sweetify
 
 # Create your views here.
 def marketplace(request):
@@ -115,7 +116,7 @@ def submit_review_product(request, product_id):
             reviews = productFeedback.objects.get(user__id=request.user.id, product__id = product_id)
             form = FeedbackForm(request.POST, instance=reviews)
             form.save()
-            messages.success(request, 'Thank you, Your review has been updated')
+            sweetify.success(request, 'Thank you, Your review has been updated')
             return redirect(url)
         except:
             form = FeedbackForm(request.POST)
@@ -126,7 +127,7 @@ def submit_review_product(request, product_id):
                 data.product_id = product_id
                 data.user_id = request.user.id
                 data.save()
-                messages.success(request, 'Thank you, Your review has been submitted')
+                sweetify.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
 
 def delete_comment_product(request, comment_id):
@@ -181,7 +182,7 @@ def add_to_cart(request, product_id):
     user_cart.save()
 
    
-    messages.success(request, "Product added to the cart successfully.")
+    sweetify.success(request, "Product added to the cart successfully.")
     return redirect('marketplace')
 
 
@@ -371,7 +372,6 @@ def verifyKhalti(request):
                         total_amount=cart.total_amount,
                         ordered_phone_number = cart.new_number,
                         ordered_address = cart.new_address,
-                        is_completed='Pending'
                     )
                     
                     # Loop through each cart item and create orderDetail instances
@@ -380,6 +380,7 @@ def verifyKhalti(request):
                         quantity = cart_item.quantity
                         seller = cart_item.seller
                         total_each_product = product.productPrice * quantity
+                        is_completed ='Shipping Pending'
                         
                         print("Seller:", seller.username)
                         orderDetail.objects.create(
@@ -387,7 +388,8 @@ def verifyKhalti(request):
                             seller = seller,
                             product = product,
                             quantity= quantity,
-                            total_each_product=total_each_product
+                            total_each_product=total_each_product,
+                            is_completed = is_completed
                         )           
                 
                         
@@ -441,6 +443,12 @@ def checkout(request):
     return render(request, 'marketplace/cart.html')
 
 
+def error(request):
+    return render(request, "Payment/error.html")
+
+
+
+
 def order_history(request):
     
     user= request.user
@@ -448,25 +456,26 @@ def order_history(request):
     
     #retreving order id
     order_ids = orders.values_list('id', flat=True)
-
-    
     orderlist = orderDetail.objects.filter(order_for__in=order_ids)
     
-    
-        
     context = {
         'user': user,
         'orders': orders,
-        'orderlist': orderlist,
-        
+        'orderlist': orderlist,     
        
     }
-    
     return render(request, 'profiles/paymentHistory.html', context)
 
 
-def error(request):
-    return render(request, "Payment/error.html")
-
-
-
+def pending_orders(request):
+    
+    seller = request.user
+    sold_products = orderDetail.objects.filter(seller=seller)
+    
+    
+    context = {
+        'seller': seller,
+        'sold_products': sold_products,
+        
+    }
+    return render(request, 'profiles/pendingOrder.html', context)

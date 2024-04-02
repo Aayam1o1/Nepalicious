@@ -195,6 +195,14 @@
               <a href="#"><p class="text-l ml-5">Your Products</p> </a>
             </div>
             {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'pending_orders' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Pending Orders</p>
+            </div>
+            </a>
+            {% endif %}
           </div>
         </div>
       </div>

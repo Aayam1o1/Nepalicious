@@ -73,17 +73,11 @@ class CartItem(models.Model):
     
 
 class order(models.Model):
-    complete_choice = (
-        ('Rejected', 'Rejected'),
-        ('Completed', 'Completed'),
-        ('Pending', 'Pending'),
-    )
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered_phone_number = models.CharField(max_length=10)    
     ordered_address = models.CharField(max_length=100)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     buy_date = models.DateTimeField(default=timezone.now)
-    is_completed = models.CharField(max_length=10, choices=complete_choice, default='Pending')
 
     def __str__(self):
         return f"Order for {self.buyer.username} - {self.id}"
@@ -91,11 +85,17 @@ class order(models.Model):
     
     
 class orderDetail(models.Model):
+    complete_choice = (
+        ('Shipping Canceled', 'Shipping Canceled'),
+        ('Shipping Completed', 'Shipping Completed'),
+        ('Shipping Pending', 'Shipping Pending'),
+    )
     order_for = models.ForeignKey(order, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name ='seller')
     product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
     quantity = models.PositiveIntegerField() 
     total_each_product = models.DecimalField(max_digits=10, decimal_places=2) 
+    is_completed = models.CharField(max_length=120, choices=complete_choice, default='Shipping Pending')
 
     def __str__(self):
         return f"Order details for {self.order_for} - {self.id}"

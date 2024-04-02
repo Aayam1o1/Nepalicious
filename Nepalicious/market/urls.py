@@ -15,6 +15,9 @@ urlpatterns = [
     path('submit_review_product/<int:product_id>/', views.submit_review_product, name='submit_review_product'),
     path('delete_comment_product/<int:comment_id>', views.delete_comment_product, name='delete_comment_product'),
     path('order_history', views.order_history, name='order_history'),
+    path('pending_orders', views.pending_orders, name='pending_orders'),
+    
+    
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
     path('paymentSucessful', views.verifyKhalti, name='paymentSucessful'),

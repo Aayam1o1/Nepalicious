@@ -49,7 +49,7 @@
                 {% for order_detail in order_item.orderdetail_set.all %}
                 
                 <tr>
-                    <td class="whitespace-nowrap px-4 py-4">{{ order_item.id }}</td>
+                    <td class="whitespace-nowrap px-4 py-4">{{ order_detail.id }}</td>
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex items-center">
                             <div class="flex">
@@ -82,7 +82,7 @@
                         <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
                         
                         
-                        <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_item.is_completed }}</span></td>
+                        <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
                         
                         <!-- script for quantity add and minus -->
                         

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'recipe',
     'market',
-    'restaurant'
+    'restaurant',
+    'sweetify'
 ]
 
 MIDDLEWARE = [

@@ -96,7 +96,7 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
-    <div class="container my-[5rem] w-[80%] h-full mx-auto">
+    <div class="container mt-[5rem] w-[80%] h-full mx-auto overflow-x-hidden">
 
         <div class="product-description flex ml-10 w-full justify-around">
 
@@ -271,37 +271,43 @@
                                 {% endif %}
                             </span>
                         </div>
-                        <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
-                            <div>{{ comment.user.username }}</div>
-                            <div>
-                                <span class="stars">
-                                    {% for i in "12345" %}
-                                    {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
-                                {% else %}
-                                <span class="star">&#9733;</span>
-                                {% endif %}
-                                {% endfor %}
-                                </span>
+                        <div class="mt-[1rem] ml-4 text-l font-medium gap-5 w-full">
+                            <div class="flex justify-between">
+                                <div class="flex gap-4">
+
+                                    <div>{{ comment.user.username }}</div>
+                                    <div>
+                                        <span class="stars">
+                                            {% for i in "12345" %}
+                                            {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
+                                            {% else %}
+                                            <span class="star">&#9733;</span>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class=" mr-4">
+                                    <!-- Check if the comment belongs to the current user -->
+                                    {% if comment.user == request.user %}
+                                    <!-- Add a delete button/icon -->
+                                    <form method="post" action="{% url 'delete_comment_product' comment.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-red-500 hover:text-red-700"
+                                            title="Delete comment">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+                                                <path d="M3 6h18"></path>
+                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="ml-[21rem]">
-                                <!-- Check if the comment belongs to the current user -->
-                                {% if comment.user == request.user %}
-                                <!-- Add a delete button/icon -->
-                                <form method="post" action="{% url 'delete_comment_product' comment.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="text-red-500 hover:text-red-700"
-                                        title="Delete comment">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </div>
+
                         </div>
                     </div>
                     <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
@@ -357,5 +363,4 @@
     </div>
     {% endblock %}
 </body>
-
 </html>
