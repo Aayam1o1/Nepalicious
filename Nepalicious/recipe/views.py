@@ -3,7 +3,8 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from django.db.models import Count
-
+from market.models import *
+import random
 
 
 def recipe(request):
@@ -28,7 +29,24 @@ def add_Recipe(request):
             
             # Sterp 1 Handle cusine type
             selected_cuisine_type = form.cleaned_data['cuisineType']
+           
+            # STEP 3: Choose Amenities
+            recipeProductTags = []
+            # Check if each checkbox is checked and add its value to the amenities list
+            if "reicpeTag1" in request.POST:
+                recipeProductTags.append(request.POST["reicpeTag1"])
+            if "reicpeTag2" in request.POST:
+                recipeProductTags.append(request.POST["reicpeTag2"])
+            if "reicpeTag3" in request.POST:
+                recipeProductTags.append(request.POST["reicpeTag3"])
+            if "reicpeTag4" in request.POST:
+                recipeProductTags.append(request.POST["reicpeTag4"])
+            if "reicpeTag5" in request.POST:
+                recipeProductTags.append(request.POST["reicpeTag5"])
             
+            instance.recipeProductTags = recipeProductTags
+                
+            #saviing the tags
             instance.cuisineType = selected_cuisine_type
             instance.save()
             
@@ -78,6 +96,24 @@ def recipeDetail(request, recipe_id):
     recipeDetail = get_object_or_404(addRecipe, id=recipe_id)
     saved_recipe = False
 
+
+    # for tags
+    recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
+    # Get all products
+    all_products = addProducts.objects.all()
+    
+     # Filter products based on recipe tags or category
+    # filtered_products = []
+    # for product in all_products:
+    #     if product.productCategory in recipe_tags:
+    #         filtered_products.append(product)
+    
+     # Filter products based on recipe tags or category
+    filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
+    
+    # Shuffle the filtered products and select the first two
+    random.shuffle(filtered_products)
+    selected_products = filtered_products[:2]     
     
     # for steps
     recipeStepsString = recipeDetail.recipeSteps
@@ -155,8 +191,8 @@ def recipeDetail(request, recipe_id):
         'saved_recipe': saved_recipe,
         'liked_recipe': liked_recipe,
         'disliked_recipe': disliked_recipe,
-        'total_likes': total_likes
-
+        'total_likes': total_likes,
+        'selected_products': selected_products 
     }
     
     return render(request, 'recipe/recipeDetail.html', context)

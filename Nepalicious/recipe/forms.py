@@ -26,7 +26,7 @@ class addRecipeForm(ModelForm):
     
     class Meta:
         model = addRecipe
-        fields = ['recipeName', 'recipeDescription', 'cuisineType' ]
+        fields = ['recipeName', 'recipeDescription', 'cuisineType']
         
         
 class FeedbackForm(forms.ModelForm):

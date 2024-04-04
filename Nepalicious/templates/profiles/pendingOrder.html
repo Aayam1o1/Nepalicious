@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Order</title>
 </head>
-<body>
+<body class="bg-gray-100">
     {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
     {% load custom_tags %}
 
@@ -13,6 +13,7 @@
         <div class="mt-5">
 
             <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+                
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 w-full">
                         <tr>
@@ -78,23 +79,37 @@
                             <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity }}</td>
                             <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
                             <form method="post">
-                                {% csrf_token %}
+                            {% csrf_token %}
+                            {% if  order_detail.is_completed == 'Shipping Pending' %}
                                 <td class="whitespace-nowrap px-4 py-4">
-                                    <select name="status_{{ order_detail.id }}">
-                                        <option value="Shipping Pending">Pending</option>
+                                    <select name="status">
+                                        <option value="Shipping Pending"> Pending</option>
                                         <option value="Shipping Completed">Completed</option>
-                                        <option value="Shipping Rejected">Rejected</option>
+                                        <option value="Shipping Canceled">Canceled</option>
                                     </select>
                                 </td>
-                            </form>
+                            {% else %}
 
-                            <form method="post">
-                                {% csrf_token %}
+                            {% if  order_detail.is_completed == 'Shipping Completed' %}
+                            <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-green-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
+                            
+                            {% elif order_detail.is_completed == 'Shipping Canceled' %}
+                            <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-red-400 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
+                                {% else %}
+                            {% endif %}
+                            {% endif %}
+
+                            {% if order_detail.is_completed == 'Shipping Pending' %}
                             <td>
+                                
+                                <input type="hidden" name="productQuantity" value="{{ order_detail.quantity }}">
                                 <input type="hidden" name="order_id" value="{{ order_detail.id }}">
-                                <button type="submit">Update</button>
+                                <button type="submit" name="Update">Update</button>
                             </td>
+                            
+                            {% endif %}
                         </form>
+                        
                         </tr>
                         {% endfor %}
                     </tbody>

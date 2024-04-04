@@ -8,6 +8,8 @@ import requests
 from django.http import HttpResponse
 from django.db import transaction
 import sweetify
+from django.core.mail import send_mail
+
 
 # Create your views here.
 def marketplace(request):
@@ -41,7 +43,6 @@ def addProduct(request):
             # Set the selected category for the product
             instance.productCategory = selected_category_name
             
-
             instance.save()
             
             # Step 2: Image handle
@@ -382,6 +383,11 @@ def verifyKhalti(request):
                         total_each_product = product.productPrice * quantity
                         is_completed ='Shipping Pending'
                         
+                        
+                        #decrease quantity
+                        product.productStock -= quantity
+                        product.save()
+                        
                         print("Seller:", seller.username)
                         orderDetail.objects.create(
                             order_for = new_order,
@@ -468,10 +474,73 @@ def order_history(request):
 
 
 def pending_orders(request):
-    
+    if request.method == 'POST' and 'Update' in request.POST:
+        status =  request.POST.get("status")
+        orderID =  request.POST.get("order_id")
+        quantity =  int(request.POST.get("productQuantity"))
+        orderdetails =  orderDetail.objects.get(pk=orderID)
+        UserEmail = orderdetails.order_for.buyer.email 
+        
+        print('email', UserEmail)
+        print('quantity', quantity)
+        print('orderDetails', orderdetails.id)
+        if status == "Shipping Completed":
+            orderdetails.is_completed = "Shipping Completed"
+            
+            print('order details complete', orderdetails.is_completed)
+            orderdetails.save()
+            print('sureee') 
+            message = f"""Dear {orderdetails.order_for.buyer.username}, 
+                Your order id - {orderdetails.id} - {orderdetails.product.productName} has been delivered. 
+                Your paid amount is {orderdetails.total_each_product}. 
+                Please contact our customer support for further information 
+                Contact Number: 9840033590 
+                
+                Regards,
+                [Nepalicious]"""
+                
+                
+            # Sending mail after user is approved
+            send_mail(
+            "Your ordered item has been deliverd.",
+            message,
+            "nepalicious.webapp@gmail.com",
+            [UserEmail],
+            fail_silently=False,
+            )
+            
+        elif status == 'Shipping Canceled':
+            orderdetails.is_completed = 'Shipping Canceled'
+            productID = orderdetails.product.id
+            
+            # updating quanity again
+            productDetails = addProducts.objects.get(pk=productID)
+            productDetails.productStock += quantity
+            orderdetails.save()
+            productDetails.save()
+            message = f"""Dear {orderdetails.order_for.buyer.username},
+            Your order id - {orderdetails.id} - {orderdetails.product.productName} delivery has been cancelled. 
+            Your paid amount {orderdetails.total_each_product} will be refunded. 
+            Please contact our customer support for further information 
+            Contact Number: 9840033590 
+                
+                Regards,
+                [Nepalicious]"""
+            # Sending mail after user is approved
+            send_mail(
+            "Your item delivery has been cancelled.",
+            message,
+            "nepalicious.webapp@gmail.com",
+            [UserEmail],
+            fail_silently=False,
+            )
+            print("kal")
+        
     seller = request.user
     sold_products = orderDetail.objects.filter(seller=seller)
     
+    
+        
     
     context = {
         'seller': seller,

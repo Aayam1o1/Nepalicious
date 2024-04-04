@@ -13,7 +13,6 @@ cuisine = (
 )
 
 
-
 # Create your models here.
 class addRecipe(models.Model):
     recipeName = models.CharField(max_length=100)
@@ -22,9 +21,8 @@ class addRecipe(models.Model):
     recipeIngredient = models.TextField(blank=True)
     recipeSteps = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.recipeName
+    recipeProductTags = models.TextField(blank=False)
+
     
     
 class recipeImage(models.Model):

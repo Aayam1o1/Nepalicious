@@ -82,8 +82,15 @@
                         <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
                         
                         
-                        <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
-                        
+                        <td class="whitespace-nowrap px-4 py-4">
+                            {% if order_detail.is_completed == 'Shipping Completed' %}
+                                <span class="bg-green-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% elif order_detail.is_completed == 'Shipping Canceled' %}
+                                <span class="bg-red-400 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% elif order_detail.is_completed == 'Shipping Pending' %}
+                                <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% endif %}
+                        </td>                        
                         <!-- script for quantity add and minus -->
                         
                         

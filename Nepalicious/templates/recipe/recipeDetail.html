@@ -48,7 +48,7 @@
     <div class="container-1 w-[80%] m-auto">
         <div class="flex justify-between mt-[4rem]">
             <div class="">
-                <h1 class="text-[#F89500] text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
+                <h1 class="text-[#F89500] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
                 <div class="  flex justify-between text-l mb-2 w-[20rem] font-medium">
                     <div>
                         <h2>By: <span class="text-gray-400">{{ recipeDetail.user.username }} </span> </h2>
@@ -64,8 +64,8 @@
                 {% csrf_token %}
                 <div>
                     <button type="submit">
-                        <div class="h-[4rem] w-[4rem]">
-                            <img class="" src="../../static/images/recipe/bookmarkfilled.svg" alt="Saved">
+                        <div class="h-[2rem] w-[2rem] sm:h-[3rem] sm:w-[3rem] md:w-[4rem] md:w-[4rem]">
+                            <img src="../../static/images/recipe/bookmarkfilled.svg" alt="Saved" >
                         </div>
                     </button>
                 </div>
@@ -76,8 +76,8 @@
                 {% csrf_token %}
                 <div>
                     <button type="submit">
-                        <div class="h-[4rem] w-[4rem]">
-                            <img class="" src="../../static/images/recipe/bookmark.svg" alt="">
+                        <div class="h-[2rem] w-[2rem] sm:h-[3rem] sm:w-[3rem] md:w-[4rem] md:w-[4rem]">
+                            <img  src="../../static/images/recipe/bookmark.svg" alt="">
                         </div>
                     </button>
                 </div>
@@ -88,20 +88,21 @@
 
     <!-- for Recipe Images -->
     <div class=" pt-5 w-[80%] m-auto">
-        <div class="flex justify-between">
+        <div class="flex justify-between ">
             {% if recipe_image.exists %}
+             {% comment %} w-[450px]    sm:w-[650px]  md:w-[750px] xl:w-[830px] xl:h-[31.5rem] {% endcomment %}
             <div class="">
-                <div class="w-[830px] h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
+                <div class="w-[400px]    sm:w-[500px]  md:w-[600px] xl:w-[830px] xl:h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left  ">
                     <img src="{{ recipe_image.first.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6 mr-3">
-                <div class="w-[340px] h-[240px] rounded-xl">
+            <div class="flex flex-col gap-6 mr-3 hidden xl:block">
+                <div class="w-[340px] h-[240px] rounded-xl ">
                     <img src="{{ recipe_image.1.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
 
-                <div class="w-[340px] h-[240px]">
+                <div class="w-[340px] h-[240px] mt-4">
                     {% if recipe_image.count >= 3 %}
                     <img src="{{ recipe_image.2.image.url }}" class="w-full h-full object-cover " alt="">
                     {% endif %}
@@ -114,19 +115,19 @@
 
 
     <!-- For Descripton, steps and ingredients -->
-    <div class="flex justify-between w-[80%] m-auto mt-10">
-        <div class=" w-[70%]">
+    <div class="flex justify-between flex-col md:flex-row w-[80%] m-auto mt-10">
+        <div class="w-[90%] md:w-[70%]">
             <div class="text-3xl font-semibold">
                 <h1>Description</h1>
             </div>
-            <div class="text-l mt-3 w-[62%]">
+            <div class="text-l mt-3 w-[100%] md:w-[62%]">
                 <p class="text-gray-400"> {{ recipeDetail.recipeDescription}}</p>
             </div>
 
             <div class="mt-10">
                 <h1 class="text-3xl font-semibold">Steps</h1>
             </div>
-            <div class="mt-4 w-[62%] text-gray-400">
+            <div class="mt-4 w-full md:w-[62%] text-gray-400">
                 <p class="text-l font-small italic ">
                     {% for step in recipeSteps %}
                     {% if '.' in step %}
@@ -332,6 +333,12 @@
         <!-- recommend other products -->
         <div class="bg-blue-100 w-[40%]">
             other products
+            {% for product in selected_products %}
+    <div>
+        <p>{{ product.productName }}</p>
+        <!-- Add more details as needed -->
+    </div>
+{% endfor %}
         </div>
     </div>
 
