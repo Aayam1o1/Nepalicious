@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.db.models import Count
 from market.models import *
 import random
+from django.db.models import Sum, F, Avg
 
 
 def recipe(request):
@@ -12,10 +13,17 @@ def recipe(request):
     top_four_recipe = addRecipe.objects.annotate(num_likes=Count('likedislikerecipe', filter=models.Q(likedislikerecipe__choice='like'))).order_by('-num_likes')[:4]
     latest_recipe = addRecipe.objects.all().order_by('-id')
 
+    
+    filtered_recipe = list(addRecipe.objects.all())
+    random.shuffle(filtered_recipe)
+
+    random_recipe = filtered_recipe[0] if filtered_recipe else None
+    print(random_recipe)
     context = {
         'recipeList': recipe_list,
         'top_four_recipe': top_four_recipe,
         'latest_recipe': latest_recipe,
+        'random_recipe': random_recipe
     }
     return render(request, 'recipe/recipe.html', context)
 
@@ -91,29 +99,10 @@ def add_Recipe(request):
 def recipeDetail(request, recipe_id):
     
     recipetList = addRecipe.objects.all()
-    
+
     # to get the details of the product
     recipeDetail = get_object_or_404(addRecipe, id=recipe_id)
-    saved_recipe = False
-
-
-    # for tags
-    recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
-    # Get all products
-    all_products = addProducts.objects.all()
-    
-     # Filter products based on recipe tags or category
-    # filtered_products = []
-    # for product in all_products:
-    #     if product.productCategory in recipe_tags:
-    #         filtered_products.append(product)
-    
-     # Filter products based on recipe tags or category
-    filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
-    
-    # Shuffle the filtered products and select the first two
-    random.shuffle(filtered_products)
-    selected_products = filtered_products[:2]     
+    saved_recipe = False 
     
     # for steps
     recipeStepsString = recipeDetail.recipeSteps
@@ -179,6 +168,31 @@ def recipeDetail(request, recipe_id):
 
     total_likes = LikeDislikeRecipe.objects.filter(recipe=recipeDetail, choice='like').count()
     
+    
+    # for similar recipe
+    cuisine_type = recipeDetail.cuisineType
+    similar_recipes = addRecipe.objects.filter(cuisineType=cuisine_type).exclude(id=recipe_id)    
+    
+    similar_recipes = similar_recipes.order_by('-id')[:4]
+    
+    
+    # for tags
+    recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
+    # Get all products
+    all_products = addProducts.objects.all()
+    
+    filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
+    
+    # Shuffle the filtered products and select the first two
+    random.shuffle(filtered_products)
+    selected_products = filtered_products[:2]    
+    
+    for product in selected_products:
+        # Calculate average rating for each product
+        avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    
+    
     context = {
         'recipetList': recipetList,
         'recipedetailForImage' : recipedetailForImage,
@@ -192,7 +206,9 @@ def recipeDetail(request, recipe_id):
         'liked_recipe': liked_recipe,
         'disliked_recipe': disliked_recipe,
         'total_likes': total_likes,
-        'selected_products': selected_products 
+        'selected_products': selected_products,
+        'similar_recipes': similar_recipes,
+        'avg_rating': avg_rating
     }
     
     return render(request, 'recipe/recipeDetail.html', context)

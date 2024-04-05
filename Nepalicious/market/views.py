@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.db import transaction
 import sweetify
 from django.core.mail import send_mail
+import random
 
 
 # Create your views here.
@@ -88,20 +89,39 @@ def productDetail(request, product_id):
     # Calculate average rating
     avg_rating = productFeedback.objects.filter(product=productDetail).aggregate(Avg('rating'))['rating__avg']
     
-
+    
     # Retrieve comments related to the specific product
     feedback_comments = productFeedback.objects.filter(product=productDetail) 
     # Count the number of reviews
     num_reviews = feedback_comments.count()
+    
+    
+     # Filter products by category
+    filtered_products = list(addProducts.objects.filter(productCategory=productDetail.productCategory).exclude(id=product_id))
+    
+    # Shuffle the list of filtered products
+    random.shuffle(filtered_products)
+    
+    # Select the first 4 shuffled products
+    category_products = filtered_products[:4]
+    
+    avg_rating_category = 0
+
+    for product in category_products:
+        # Calculate average rating for each product
+        avg_rating_category = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        product.avg_rating = avg_rating_category  # Add avg_rating attribute to product instance
+
     context = {
         'productList': productList,
         'productdetailForImage' : productdetailForImage,
         'product_image' : product_image,
         'productDetail': productDetail,
-        # 'feedback_form' : feedback_form,
         'feedback_comments': feedback_comments,
         'num_reviews': num_reviews,
         'avg_rating': avg_rating,
+        'category_products': category_products,
+        'avg_rating_category': avg_rating_category,
     }
     
     return render(request, 'marketplace/productDetail.html', context)
@@ -165,6 +185,12 @@ def add_to_cart(request, product_id):
     # Check if the product is already in the cart
     cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product, seller=seller)
 
+    productquantity = product.productStock
+    cart_item_quantity = cart_item.quantity
+    
+    if not item_created and cart_item_quantity == productquantity:
+        sweetify.error(request, "Maximum quantity reached for the product, Cannot add any more to the cart.") 
+        return redirect('marketplace')
     # If the item is already in the cart, increase the quantity
     if not item_created:
         cart_item.quantity += 1
@@ -192,25 +218,6 @@ def cart_view(request):
     user_cart = Cart.objects.filter(user=request.user).first()
     cart_item = CartItem.objects.filter(cart=user_cart)
     
-    # if request.method == 'POST':
-    #     print("AAAAAAAAAAAAAAA")
-    #     # Get or create the user's cart
-    #     user_cart_filter = user_cart
-
-    #     # Iterate through products in the cart and update quantities
-    #     for cart_items in CartItem.objects.filter(cart=user_cart_filter):
-    #         new_quantity = int(request.POST.get(f"quantityInput-{cart_items.product.id}", 1))
-
-    #         # Ensure the new quantity is within the limits (1 to product stock)
-    #         new_quantity = max(1, min(new_quantity, cart_items.product.productStock))
-
-    #         # Update the quantity in the cart item
-    #         cart_items.quantity = new_quantity
-    #         cart_items.save()
-    #         cart_item.append(cart_items)
-        
-    #     messages.success(request, "Cart updated successfully.")
-    # print("cart_itemcart_itemcart_itemcart_itemcart_itemcart_itemcart_item: ", cart_item)
     context = {
 
         'user_cart': user_cart,
@@ -381,7 +388,7 @@ def verifyKhalti(request):
                         quantity = cart_item.quantity
                         seller = cart_item.seller
                         total_each_product = product.productPrice * quantity
-                        is_completed ='Shipping Pending'
+                        is_completed ='Delivery Pending'
                         
                         
                         #decrease quantity
@@ -484,8 +491,8 @@ def pending_orders(request):
         print('email', UserEmail)
         print('quantity', quantity)
         print('orderDetails', orderdetails.id)
-        if status == "Shipping Completed":
-            orderdetails.is_completed = "Shipping Completed"
+        if status == "Delivery Completed":
+            orderdetails.is_completed = "Delivery Completed"
             
             print('order details complete', orderdetails.is_completed)
             orderdetails.save()
@@ -508,9 +515,10 @@ def pending_orders(request):
             [UserEmail],
             fail_silently=False,
             )
+            return redirect('vendor_order')
             
-        elif status == 'Shipping Canceled':
-            orderdetails.is_completed = 'Shipping Canceled'
+        elif status == 'Delivery Canceled':
+            orderdetails.is_completed = 'Delivery Canceled'
             productID = orderdetails.product.id
             
             # updating quanity again
@@ -535,16 +543,25 @@ def pending_orders(request):
             fail_silently=False,
             )
             print("kal")
+            return redirect('vendor_order')
         
     seller = request.user
-    sold_products = orderDetail.objects.filter(seller=seller)
-    
+    sold_products = orderDetail.objects.filter(seller=seller, is_completed='Delivery Pending')
     
         
-    
+    print('soldprodi', sold_products)
     context = {
         'seller': seller,
         'sold_products': sold_products,
         
     }
     return render(request, 'profiles/pendingOrder.html', context)
+
+
+def vendor_order(request):
+    completed_or_canceled_orders = orderDetail.objects.filter(is_completed__in=['Delivery Completed', 'Delivery Canceled'])
+    
+    context = {
+        'completed_or_canceled_orders': completed_or_canceled_orders,
+    }
+    return render(request, 'profiles/vendororder.html', context)

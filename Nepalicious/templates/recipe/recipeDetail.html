@@ -12,14 +12,15 @@
         .custom-scrollbar {
             overflow-y: scroll;
         }
-    
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
-    
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background-color: transparent;
         }
+
         .comment-user {
             font-family: 'Libre Franklin', sans-serif;
             /* Add additional styles as needed */
@@ -38,6 +39,61 @@
             height: 100%;
             object-fit: cover;
         }
+        /* for stars */
+        .rate > input{
+            display: none;
+        }
+        .rate{
+            display: inline-block;
+            border: 0;
+            font-size: 20px;
+        }
+        .rate .star {
+            font-size: inherit; /* Ensure that the font size remains consistent */
+        }
+        .rate > label{
+            float: right;
+        }
+
+        /* for showing stars */
+        .rate > label:before{
+            display: inline-block;
+            font-size: 1.1rem;
+            font-family: FontAwesome;
+            content: "\f005";
+            margin:0;
+            padding:0.3rem .2rem;
+            cursor: pointer;
+        }
+
+        /* for half stars */
+        .rate .half:before{
+            content: "\f089";
+            position: absolute;
+            padding-right: 0;
+        
+        }
+
+        /* click and hover */
+        input:checked ~ label, label:hover ~ label{
+            color: #ffb503;
+        }
+
+        /* hover highlight stars */
+        input:checked  + label:hover, input:checked ~ label:hover, input:checked ~ label:hover ~ label,
+        label:hover ~ input:checked ~ label{
+            color: #cc9000;
+        }
+        .stars {
+            color: #ddd;
+            /* Default color of stars */
+        }
+
+
+        .filled {
+            color: orange;
+            /* Color for filled stars */
+        }
     </style>
 </head>
 
@@ -48,7 +104,7 @@
     <div class="container-1 w-[80%] m-auto">
         <div class="flex justify-between mt-[4rem]">
             <div class="">
-                <h1 class="text-[#F89500] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{{ recipeDetail.recipeName}}</h1>
+                <h1 class="text-[#F89500] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{{recipeDetail.recipeName}}</h1>
                 <div class="  flex justify-between text-l mb-2 w-[20rem] font-medium">
                     <div>
                         <h2>By: <span class="text-gray-400">{{ recipeDetail.user.username }} </span> </h2>
@@ -57,15 +113,15 @@
                 <h2 class=" text-l font-medium mb-1">{{ total_likes }} Person Likes this</h2>
                 <h2 class="text-l  font-medium ">Cusisine Type: {{ recipeDetail.cuisineType }}</h2>
             </div>
-            
+
             <!-- show if already saved -->
             {% if saved_recipe %}
-            <form method="POST" action="{% url 'deleteSavedRecipe' saved_recipe.id %}" >
+            <form method="POST" action="{% url 'deleteSavedRecipe' saved_recipe.id %}">
                 {% csrf_token %}
                 <div>
                     <button type="submit">
                         <div class="h-[2rem] w-[2rem] sm:h-[3rem] sm:w-[3rem] md:w-[4rem] md:w-[4rem]">
-                            <img src="../../static/images/recipe/bookmarkfilled.svg" alt="Saved" >
+                            <img src="../../static/images/recipe/bookmarkfilled.svg" alt="Saved">
                         </div>
                     </button>
                 </div>
@@ -77,7 +133,7 @@
                 <div>
                     <button type="submit">
                         <div class="h-[2rem] w-[2rem] sm:h-[3rem] sm:w-[3rem] md:w-[4rem] md:w-[4rem]">
-                            <img  src="../../static/images/recipe/bookmark.svg" alt="">
+                            <img src="../../static/images/recipe/bookmark.svg" alt="">
                         </div>
                     </button>
                 </div>
@@ -90,9 +146,10 @@
     <div class=" pt-5 w-[80%] m-auto">
         <div class="flex justify-between ">
             {% if recipe_image.exists %}
-             {% comment %} w-[450px]    sm:w-[650px]  md:w-[750px] xl:w-[830px] xl:h-[31.5rem] {% endcomment %}
+            {% comment %} w-[450px] sm:w-[650px] md:w-[750px] xl:w-[830px] xl:h-[31.5rem] {% endcomment %}
             <div class="">
-                <div class="w-[400px]    sm:w-[500px]  md:w-[600px] xl:w-[830px] xl:h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left  ">
+                <div
+                    class="w-[400px]    sm:w-[500px]  md:w-[600px] xl:w-[830px] xl:h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left  ">
                     <img src="{{ recipe_image.first.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
             </div>
@@ -158,10 +215,46 @@
                 {% endfor %}
                 </p>
             </div>
+        </div>
+    </div>
 
-            <div class="mt-10">
-                <h1 class="text-3xl font-semibold">Similar Recipe</h1>
+    <div class="similar-recipe w-[83%] mx-auto mt-5">
+        <div class="text-3xl font-semibold">
+            <h1>Similar Recipe</h1>
+        </div>
+        <div class="w-[100%] grid grid-cols-4 gap-3">
+
+            {% if similar_recipes %}
+
+            {% for recipe in similar_recipes %}
+            <div class="w-[18rem] p-4">
+                <!-- displaying recipe picture -->
+                <div id="gallery" class="relative w-full" data-carousel="slide">
+                    <!-- Carousel wrapper -->
+                    <div class="relative h-56 overflow-hidden rounded-lg">
+                        {% for image in recipe.images.all %}
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                            <a href="{% url 'recipeDetail' recipe.id %}"><img src="{{ image.image.url }}" alt=""
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- display other data -->
+                <div class="">
+                    <h1 class="text-lg font-bold font-medium mt-4">{{ recipe.recipeName }}</h1>
+                    <p class="mt-2 text-sm">{{ recipe.user.username }}</p>
+                    <p class="rating-stars" class="">
+                        <!-- Stars will be dynamically added here -->
+                    </p>
+
+                </div>
             </div>
+            {% endfor %}
+            {% else %}
+            <p>No similar recipes found.</p>
+            {% endif %}
         </div>
     </div>
 
@@ -176,7 +269,7 @@
                     <div>
                         <h1 class="text-5xl font-medium ml-4">Already Made This??</h1>
                     </div>
-                    
+
                 </div>
 
 
@@ -185,32 +278,34 @@
                     <div class="flex gap-[25rem]">
 
                         <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
-                        class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
-                        <span class="text-white">Give Feedback</span>
+                            class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
+                            <span class="text-white">Give Feedback</span>
                         </button>
-                    
+
                         <div class="flex gap-4">
                             <form action="{% url 'like_recipe' recipeDetail.id %}" method="POST">
                                 {% csrf_token %}
                                 <button type="submit">
 
                                     <div>
-                                        <img src="{% if liked_recipe %}../../static/images/restaurant/like-filled.svg{% else %}../../static/images/restaurant/like.svg{% endif %}" alt="">    
+                                        <img src="{% if liked_recipe %}../../static/images/restaurant/like-filled.svg{% else %}../../static/images/restaurant/like.svg{% endif %}"
+                                            alt="">
                                     </div>
                                 </button>
                             </form>
-                           
+
                             <form action="{% url 'dislike_recipe' recipeDetail.id %}" method="POST">
                                 {% csrf_token %}
                                 <button type="submit">
 
-                                <div>
-                                    <img src="{% if disliked_recipe %}../../static/images/restaurant/dislike-filled.svg{% else %}../../static/images/restaurant/dislike.svg{% endif %}" alt="">    
-                                    
-                                </div>
+                                    <div>
+                                        <img src="{% if disliked_recipe %}../../static/images/restaurant/dislike-filled.svg{% else %}../../static/images/restaurant/dislike.svg{% endif %}"
+                                            alt="">
+
+                                    </div>
                                 </button>
                             </form>
-        
+
                         </div>
                     </div>
                 </div>
@@ -244,7 +339,8 @@
 
                                 <div class="grid gap-4 mb-4 grid-cols-2">
                                     <div class="col-span-2 p-4 md:p-5">
-                                            <textarea name="feedback" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                                        <textarea name="feedback" rows="4"
+                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                                     </div>
                                 </div>
                                 <button type="submit"
@@ -264,81 +360,127 @@
 
             <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[80%] h-[320px]">
                 {% for comment in feedback_comments %}
-                    {% if comment.user == request.user %}
-                        <div class="bg-blue-50  w-full p-2 ml-2">
-                            <div class="comment-user flex">
-                                <div>
-                                    <span>
-                                        {% if comment.user.userprofilepicture %}
-                                            <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                                src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                        {% endif %}
-                                    </span>
-                                </div>
-                                <div class="mt-[1rem] ml-4 text-l font-medium">
-                                    {{ comment.user.username }}
-                                </div>
-                                <div class="ml-[29rem] pt-2">
-                                    <!-- Delete button/icon -->
-                                    <form method="post" action="{% url 'delete_comment' comment.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="text-red-500 hover:text-red-700"
-                                            title="Delete comment">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="text-red-500">
-                                                <path d="M3 6h18"></path>
-                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                                {{ comment.feedback }}
-                            </div>
+                {% if comment.user == request.user %}
+                <div class="bg-blue-50  w-full p-2 ml-2">
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                {% if comment.user.userprofilepicture %}
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                {% endif %}
+                            </span>
                         </div>
-                        <hr>
-                    {% endif %}
+                        <div class="mt-[1rem] ml-4 text-l font-medium">
+                            {{ comment.user.username }}
+                        </div>
+                        <div class="ml-[29rem] pt-2">
+                            <!-- Delete button/icon -->
+                            <form method="post" action="{% url 'delete_comment' comment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete comment">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-red-500">
+                                        <path d="M3 6h18"></path>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                        {{ comment.feedback }}
+                    </div>
+                </div>
+                <hr>
+                {% endif %}
                 {% endfor %}
                 <!-- Now display other users' comments -->
                 {% for comment in feedback_comments %}
-                    {% if comment.user != request.user %}
-                        <div class="bg-blue-50  w-full p-2 ml-2">
-                            <div class="comment-user flex">
-                                <div>
-                                    <span>
-                                        {% if comment.user.userprofilepicture %}
-                                            <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                                src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                        {% endif %}
-                                    </span>
-                                </div>
-                                <div class="mt-[1rem] ml-4 text-l font-medium">
-                                    {{ comment.user.username }}
-                                </div>
-                            </div>
-                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                                {{ comment.feedback }}
-                            </div>
+                {% if comment.user != request.user %}
+                <div class="bg-blue-50  w-full p-2 ml-2">
+                    <div class="comment-user flex">
+                        <div>
+                            <span>
+                                {% if comment.user.userprofilepicture %}
+                                <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
+                                    src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
+                                {% endif %}
+                            </span>
                         </div>
-                        <hr>
-                    {% endif %}
+                        <div class="mt-[1rem] ml-4 text-l font-medium">
+                            {{ comment.user.username }}
+                        </div>
+                    </div>
+                    <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
+                        {{ comment.feedback }}
+                    </div>
+                </div>
+                <hr>
+                {% endif %}
                 {% endfor %}
             </div>
 
         </div>
         <!-- recommend other products -->
-        <div class="bg-blue-100 w-[40%]">
-            other products
+        <div class=" w-[40%] ">
+            <p class="text-4xl font-bold">
+                Products You may require
+            </p>
             {% for product in selected_products %}
-    <div>
-        <p>{{ product.productName }}</p>
-        <!-- Add more details as needed -->
-    </div>
-{% endfor %}
+            <div class="grid grid-row-2 w-[90%] mx-auto">
+                
+
+                    <div class="py-4 flex">
+                        <!-- displaying product picture -->
+                        <div id="gallery" class="relative w-full" data-carousel="slide">
+                            <!-- Carousel wrapper -->
+
+                            <div class="relative h-[12rem] w-[12rem] overflow-hidden rounded-lg">
+                                {% for image in product.images.all %}
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}"
+                                            alt=""
+                                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- display other data -->
+                        <div class="w-full mt-10">
+                            <h1 class="text-lg font-medium  ">{{ product.productName }}</h1>
+                            <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
+                            <p class="rating-stars">
+                                <!-- Display average rating as stars -->
+                                {% if product.avg_rating %}
+                                {% for i in "12345" %}
+                                {% if i|add:0 <= product.avg_rating %}
+                                <span class="star filled">&#9733;</span>
+                                {% else %}
+                                <span class="star">&#9733;</span>
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                <p class="text-sm mt-1">
+                                    No reviews yet
+                                </p>
+                                {% endif %}
+                            </p>
+                            <p id="rating-message" class="mt-2 text-gray-600"></p>
+
+
+                        </div>
+                    </div>
+
+                
+                <!-- Add more details as needed -->
+            </div>
+            {% endfor %}
         </div>
     </div>
 

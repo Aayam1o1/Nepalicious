@@ -1,53 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Order</title>
 </head>
+
 <body class="bg-gray-100">
     {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
     {% load custom_tags %}
 
     <div class="container">
-        <div class="mt-5">
+        <div class="">
+            {% if sold_products %}
 
             <div class="overflow-hidden border border-gray-200 md:rounded-lg">
-                
+
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 w-full">
                         <tr>
                             <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                                 <span>Order ID</span>
                             </th>
-                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <th scope="col" class="pl-[3rem] py-3.5 text-left text-sm font-normal text-gray-700">
                                 <span>Product</span>
                             </th>
                             <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                                 <span>Product Name</span>
                             </th>
-                            <th scope="col"
-                            class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                            Brand
-                        </th>
-                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                            Price (per 1)
-                        </th>
-                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                            Quantity
-                        </th>
-                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                            Total
-                        </th>
-                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                            Status
-                        </th>
-                    </tr>
-                </thead>
-                
-                <!-- Your table content here -->
-                <tbody class="divide-y divide-gray-200 bg-white w-full">
-                    {% for order_detail in sold_products %}
+                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Buyer
+                            </th>
+                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Address
+                            </th>
+                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Number
+                            </th>
+                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Price
+                            </th>
+                            <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Quantity
+                            </th>
+                            <th scope="col" class="pl-7 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Total
+                            </th>
+                            <th scope="col" class="pl-8 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Delivery Status
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <!-- Your table content here -->
+                    <tbody class="divide-y divide-gray-200 bg-white w-full">
+                        {% for order_detail in sold_products %}
                         <tr>
                             <td class="whitespace-nowrap px-4 py-4">{{ order_detail.id }}</td>
                             <td class="whitespace-nowrap px-4 py-4">
@@ -55,8 +63,8 @@
                                     <div class="flex">
                                         <a href="{% url 'productDetail' order_detail.product.id %}">
                                             <img src="{{ order_detail.product.images.first.image.url }}"
-                                            alt="{{ order_detail.product.productName }}"
-                                            class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
+                                                alt="{{ order_detail.product.productName }}"
+                                                class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
                                         </a>
                                     </div>
                                 </div>
@@ -64,62 +72,79 @@
                             <td>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">
-                                        {{ order_detail.product.productName }}                  
+                                        {{ order_detail.product.productName }}
                                     </div>
                                 </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4">
-                                <div class="text-sm text-gray-900">
-                                    {{ order_detail.product.productBrand }}
+                                <div class="text-sm text-[#F89500]">
+                                    {{ order_detail.order_for.buyer.username }}
+                                </div>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-4">
+                                <div class="text-sm ">
+                                    {{ order_detail.order_for.ordered_address }}
+                                </div>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-4">
+                                <div class="text-sm">
+                                    {{ order_detail.order_for.ordered_phone_number }}
                                 </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4">
                                 Rs {{ order_detail.product.productPrice }}
                             </td>
-                            <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity }}</td>
+                            <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity}}</td>
                             <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
                             <form method="post">
-                            {% csrf_token %}
-                            {% if  order_detail.is_completed == 'Shipping Pending' %}
+                                {% csrf_token %}
+                                {% if order_detail.is_completed == 'Delivery Pending' %}
                                 <td class="whitespace-nowrap px-4 py-4">
-                                    <select name="status">
-                                        <option value="Shipping Pending"> Pending</option>
-                                        <option value="Shipping Completed">Completed</option>
-                                        <option value="Shipping Canceled">Canceled</option>
+                                    <select name="status"
+                                        class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="Delivery Pending" class="py-1">Delivery Pending</option>
+                                        <option value="Delivery Completed" class="py-1">Delivery Completed</option>
+                                        <option value="Delivery Canceled" class="py-1">Delivery Canceled</option>
                                     </select>
                                 </td>
-                            {% else %}
-
-                            {% if  order_detail.is_completed == 'Shipping Completed' %}
-                            <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-green-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
-                            
-                            {% elif order_detail.is_completed == 'Shipping Canceled' %}
-                            <td class="whitespace-nowrap px-4 py-4 "> <span class="bg-red-400 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span></td>
                                 {% else %}
-                            {% endif %}
-                            {% endif %}
+                                {% if order_detail.is_completed == 'Delivery Completed' %}
+                                <td class="whitespace-nowrap px-4 py-4"><span
+                                        class="text-green-400 h-auto rounded-xl px-2 py-1 bg-green-50">{{
+                                        order_detail.is_completed }}</span></td>
+                                {% elif order_detail.is_completed == 'Delivery Canceled' %}
+                                <td class="whitespace-nowrap px-4 py-4"><span
+                                        class="text-red-400 h-auto rounded-xl px-2 py-1 bg-red-50">{{
+                                        order_detail.is_completed }}</span></td>
+                                {% endif %}
+                                {% endif %}
 
-                            {% if order_detail.is_completed == 'Shipping Pending' %}
-                            <td>
-                                
-                                <input type="hidden" name="productQuantity" value="{{ order_detail.quantity }}">
-                                <input type="hidden" name="order_id" value="{{ order_detail.id }}">
-                                <button type="submit" name="Update">Update</button>
-                            </td>
-                            
-                            {% endif %}
-                        </form>
-                        
+                                {% if order_detail.is_completed == 'Delivery Pending' %}
+                                <td>
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="productQuantity" value="{{ order_detail.quantity }}">
+                                        <input type="hidden" name="order_id" value="{{ order_detail.id }}">
+                                        <button type="submit" name="Update"
+                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update</button>
+                                    </form>
+                                </td>
+                                {% endif %}
+                            </form>
+
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            
+            {% else %}
+            <p>No pending orders.</p>
+            {% endif %}
         </div>
 
     </div>
 
     {% endblock %}
 </body>
+
 </html>

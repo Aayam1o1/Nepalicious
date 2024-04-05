@@ -86,16 +86,16 @@ class order(models.Model):
     
 class orderDetail(models.Model):
     complete_choice = (
-        ('Shipping Canceled', 'Shipping Canceled'),
-        ('Shipping Completed', 'Shipping Completed'),
-        ('Shipping Pending', 'Shipping Pending'),
+        ('Delivery Canceled', 'Delivery Canceled'),
+        ('Delivery Completed', 'Delivery Completed'),
+        ('Delivery Pending', 'Delivery Pending'),
     )
     order_for = models.ForeignKey(order, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name ='seller')
     product = models.ForeignKey('addProducts', on_delete=models.CASCADE, related_name='ordered_products')
     quantity = models.PositiveIntegerField() 
     total_each_product = models.DecimalField(max_digits=10, decimal_places=2) 
-    is_completed = models.CharField(max_length=120, choices=complete_choice, default='Shipping Pending')
+    is_completed = models.CharField(max_length=120, choices=complete_choice, default='Delivery Pending')
 
     def __str__(self):
         return f"Order details for {self.order_for} - {self.id}"

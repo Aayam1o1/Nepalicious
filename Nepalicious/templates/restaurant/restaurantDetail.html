@@ -224,30 +224,54 @@
             <div>
                 <h1 class="text-3xl font-bold mb-2">Similar Restaurant</h1>
             </div>
-            <div class="grid grid-cols-4">
-                <div>
-                    <!-- displaying recipe picture -->
+            <div class="grid grid-cols-4 ml-[4rem] ">
+
+                {% for restaurant in category_restaurants %}
+                <div class="w-[18rem] py-4">
+
+                    <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
                         <!-- Carousel wrapper -->
 
-                        <div class="relative h-56 overflow-hidden rounded-lg">
-                            <!-- {% for image in recipe.images.all %} -->
+                        <div class="relative h-[15rem] w-[15rem] overflow-hidden rounded-lg">
+                            {% for image in restaurant.images.all %}
                             <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                <a href=""><img src="../../static/images/restaurant/banner2.jpg" alt=""
-                                        class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                                <a href="#"><img src="{{ image.image.url }}" alt="" class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover" /></a>
                             </div>
-                            <!-- {% endfor %} -->
+                            {% endfor %}
                         </div>
 
                     </div>
 
+
                     <!-- display other data -->
                     <div class="">
-                        <h1 class="text-lg font-medium mt-4">Restaurant Name</h1>
-                        <p class="mt-2 text-sm">Restaruant Type</p>
+
+                        <h1 class="text-lg font-medium mt-4">{{ restaurant.user.usersdetail.restaurant_name }}</h1>
+                        
+
+                        <p class="rating-stars" class="">
+                            <!-- Display average rating as stars -->
+                            {% if restaurant.avg_rating %}
+                            {% for i in "12345" %}
+                            {% if i|add:0 <= restaurant.avg_rating %} <span class="star filled">&#9733;</span>
+                                {% else %}
+                                <span class="star">&#9733;</span>
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                <p class="text-sm mt-1">
+                                    No reviews yet
+                                </p>
+                                {% endif %}
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
 
                     </div>
                 </div>
+
+                {% endfor %}
+
             </div>
         </div>
 
@@ -337,69 +361,7 @@
                     </div>
                 </div>
 
-                <!-- comment section -->
-                <!-- <div class="">
-
-                    <div class=" overflow-y-scroll overflow-x-hidden bg-blue-50 rounded-xl w-[60%] h-[320px] ">
-                        {% for comment in feedback_comments %}
-                        <div class="bg-blue-50 w-full p-2">
-                            <div class="comment-user flex">
-                                <div>
-                                    <span>
-                                        {% if comment.user.userprofilepicture %}
-                                        <img class="h-[2.5rem] w-[2.5rem] ml-4 mt-2 rounded-full object-cover"
-                                            src="{{ comment.user.userprofilepicture.profileImage.url }}" alt="profile">
-                                        {% endif %}
-                                    </span>
-                                </div>
-                                <div class="mt-[1rem] ml-4 text-l font-medium flex justify-around gap-5">
-                                    <div>
-                                        {{ comment.user.username }}
-                                    </div>
-                                    <div class=" text-l">
-
-                                        <span class="stars">
-                                            {% for i in "12345" %}
-                                            {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
-                                        {% else %}
-                                        <span class="star">&#9733;</span>
-                                        {% endif %}
-                                        {% endfor %}
-                                        </span>
-                                        </p>
-                                    </div>
-                                    <div class="ml-[25rem]">
-                                         Check if the comment belongs to the current user -->
-                                        <!-- {% if comment.user == request.user %} -->
-                                        <!-- Add a delete button/icon -->
-                                        <!-- <form method="post" action="{% url 'delete_comment' comment.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="text-red-500 hover:text-red-700"
-                                                title="Delete comment">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="text-red-500">
-                                                    <path d="M3 6h18"></path>
-                                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="comment-user ml-5 mt-4 text-xs w-[90%] font-light leading-6">
-                                <p> {{ comment.feedback }}</p>
-
-                            </div>
-
-                        </div>
-                        <hr>
-                        {% endfor %}
-                    </div>
-                </div>  -->
+               
 
 
                 <div class="">

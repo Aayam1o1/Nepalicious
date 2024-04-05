@@ -5,6 +5,7 @@ from .forms import *
 import folium
 import geocoder
 from django.db.models import Sum, F, Avg
+import random
 
 
 # Create your views here.
@@ -118,6 +119,15 @@ def restaurant_detail(request, restaurant_id):
         # If no location is available, provide a default map centered at a specific location
         maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
         
+    
+    filtered_restaurant = list(addRestaurant.objects.filter(restaurantType=restaurant.restaurantType).exclude(id=restaurant_id))
+    random.shuffle(filtered_restaurant) 
+    
+    category_restaurants = filtered_restaurant[:4]
+    
+    for cat_restaurant in category_restaurants:
+        avg_rating_category = restaurantFeedback.objects.filter(restaurant=cat_restaurant).aggregate(Avg('rating'))['rating__avg']
+        cat_restaurant.avg_rating = avg_rating_category
         
     context = {
         'restaurant': restaurant,
@@ -126,7 +136,10 @@ def restaurant_detail(request, restaurant_id):
         'coordinates': coordinates,
         'feedback_comments': feedback_comments,
         'avg_rating': avg_rating,
-        'num_reviews': num_reviews
+        'num_reviews': num_reviews,
+        'filtered_restaurant': filtered_restaurant,
+        'category_restaurants': category_restaurants,
+
     }
 
     return render(request, 'restaurant/restaurantDetail.html', context)

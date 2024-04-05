@@ -16,7 +16,8 @@ urlpatterns = [
     path('delete_comment_product/<int:comment_id>', views.delete_comment_product, name='delete_comment_product'),
     path('order_history', views.order_history, name='order_history'),
     path('pending_orders', views.pending_orders, name='pending_orders'),
-    
+    path('vendor_order', views.vendor_order, name='vendor_order'),
+
     
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),

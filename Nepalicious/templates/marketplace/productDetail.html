@@ -173,6 +173,82 @@
 
         </div>
 
+
+
+        {% comment %} Similar products {% endcomment %}
+        <div class="w-[85%] mx-auto mt-[7rem]">
+            <div class="text-4xl ml-[6rem] font-bold">
+                Similar Products
+            </div>
+            <div class="flex justify-center">
+
+                <div class="grid grid-cols-4 ml-[4rem] ">
+
+                    {% for product in category_products %}
+                    <div class="w-[18rem] py-4">
+
+                        <!-- displaying product picture -->
+                        <div id="gallery" class="relative w-full" data-carousel="slide">
+                            <!-- Carousel wrapper -->
+
+                            <div class="relative h-[13rem] w-[14rem] overflow-hidden rounded-lg">
+                                {% for image in product.images.all %}
+                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                    <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}"
+                                            alt=""
+                                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- display other data -->
+                        <div class="">
+
+                            <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
+                            <p class="mt-2 text-sm">{{ product.productBrand }}</p>
+                            <p class="mt-2 text-sm">Stock ({{ product.productStock }})</p>
+                            <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
+
+                            <p class="rating-stars" class="">
+                                <!-- Display average rating as stars -->
+                                {% if product.avg_rating %}
+                                {% for i in "12345" %}
+                                {% if i|add:0 <= product.avg_rating %} <span class="star filled">&#9733;</span>
+                                    {% else %}
+                                    <span class="star">&#9733;</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% else %}
+                                    <p class="text-sm mt-1">
+                                        No reviews yet
+                                    </p>
+                                    {% endif %}
+                            </p>
+                            <p id="rating-message" class="mt-2 text-gray-600"></p>
+
+                            <div class="">
+                                <!-- Pass the plant ID to the addtocart() function -->
+                                <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-[15rem]">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+
+
         <!-- for commment -->
         <div class="commnet-container flex justify-around mt-[5rem]">
             <div class="w-[60%] ml-[7rem]">
@@ -280,10 +356,10 @@
                                         <span class="stars">
                                             {% for i in "12345" %}
                                             {% if i|add:0 <= comment.rating %} <span class="star filled">&#9733;</span>
-                                            {% else %}
-                                            <span class="star">&#9733;</span>
-                                            {% endif %}
-                                            {% endfor %}
+                                        {% else %}
+                                        <span class="star">&#9733;</span>
+                                        {% endif %}
+                                        {% endfor %}
                                         </span>
                                     </div>
                                 </div>
@@ -357,10 +433,11 @@
             </div>
         </div>
         <!-- recommend other products -->
-        <div class="bg-blue-100 w-[40%]">
-            other products
+        <div class=" w-[40%]">
+
         </div>
     </div>
     {% endblock %}
 </body>
+
 </html>

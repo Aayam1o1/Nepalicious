@@ -9,6 +9,7 @@
     {% extends '../profiles/navigationSidebar/profilebase.html' %} {% block content %}
     {% load custom_tags %}
     <div class="mt-5">
+        {% if orders %}
 
         <div class="overflow-hidden border border-gray-200 md:rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
@@ -23,10 +24,14 @@
                         <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                             <span>Product Name</span>
                         </th>
+                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <span>Seller</span>
+                        </th>
                         <th scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                         Brand
                     </th>
+                    
                     <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                         Price (per 1)
                     </th>
@@ -70,6 +75,13 @@
                             </div>
                         </div>
                     </td>
+                    <td>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ order_detail.seller }}                  
+                            </div>
+                        </div>
+                    </td>
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="text-sm text-gray-900">
                                 {{ order_detail.product.productBrand }}
@@ -83,12 +95,12 @@
                         
                         
                         <td class="whitespace-nowrap px-4 py-4">
-                            {% if order_detail.is_completed == 'Shipping Completed' %}
-                                <span class="bg-green-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
-                            {% elif order_detail.is_completed == 'Shipping Canceled' %}
-                                <span class="bg-red-400 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
-                            {% elif order_detail.is_completed == 'Shipping Pending' %}
-                                <span class="bg-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% if order_detail.is_completed == 'Delivery Completed' %}
+                                <span class="text-green-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% elif order_detail.is_completed == 'Delivery Canceled' %}
+                                <span class="text-red-400 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
+                            {% elif order_detail.is_completed == 'Delivery Pending' %}
+                                <span class="texts-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
                             {% endif %}
                         </td>                        
                         <!-- script for quantity add and minus -->
@@ -104,7 +116,9 @@
                 </tbody>
             </table>
         </div>
-        
+        {% else %}
+        <p>No orders made.</p>
+        {% endif %}
     </div>
     {% endblock %}
 </body>
