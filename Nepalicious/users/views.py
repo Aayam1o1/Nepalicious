@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from users.models import *
 from django.db import transaction
 from django.contrib.auth.models import User,Group
-
+import sweetify
 # SEND MAIL
 from django.core.mail import send_mail
 # Create your views here.
@@ -44,7 +44,7 @@ def loginUser(request):
                 return redirect('index')
 
         else:
-            messages.info(request, 'Username or Password is incorrect')
+            sweetify.error(request, 'Username or Password is incorrect')
 
     return render(request, 'login-Register/login.html')
 
