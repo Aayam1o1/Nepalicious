@@ -16,6 +16,14 @@
         {% endif %}
         </div>
         <div class="text-xl text-gray-600 mr-[10rem]">
+        {% if userData.usersdetail.restaurant_name %}
+        <div class="flex mb-2 gap-[7rem]">
+            <p class="font-semibold pb-2">First Name: </p>
+            <span>{{ userData.usersdetail.restaurant_name }}</span>
+        </div>
+
+        {% else %}
+        
             <div class="flex mb-2 gap-[7rem]">
                 <p class="font-semibold pb-2">First Name: </p>
                 <span>{{ userData.first_name }}</span>
@@ -24,6 +32,7 @@
                 <p class="font-semibold pb-2">Last Name: </p>
                 <span>{{ userData.last_name }}</span>
             </div>
+        {% endif %}
             <div class="flex mb-2 gap-[10rem]">
                 <p class="font-semibold pb-2">Email: </p>
                 <span>{{ userData.email }}</span>
@@ -52,7 +61,7 @@
         {% for img in documentImages %}
         <div class="w-full h-[20rem]">
             <a href="{{ img.documentImage.url }}" target="_blank">
-                <img src="{{ img.documentImage.url }}" alt="Document Photo" class=" w-full h-[20rem] object-fit">
+                <img src="{{ img.documentImage.url }}" alt="Document Photo" class=" w-full h-[20rem] object-cover">
             </a>
         </div>
         {% endfor %}

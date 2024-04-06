@@ -32,7 +32,8 @@
 
 <body>
     {% extends '../navigationBar/base.html' %} {% block content %}
-
+    {% if cart_item %}
+    
     <div class="w-[85%] mx-auto mt-10">
         <div class="flex justify-between w-[82%]">
             <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -323,6 +324,14 @@
     </div>
     </section>
     </div>
+    {% else %}
+    <div class="flex justify-center my-10">
+        <div class="flex flex-col justify-center">
+            <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-10 flex justify-center">Cart is empty. Please add items in your cart</p>
+            <img src="../../static/images/marketplace/no_cart.svg" class="h-[25rem] w-[25rem] ml-[5rem]" alt="">
+        </div>
+    </div>
+    {% endif %}
     {% endblock %}
 </body>
 

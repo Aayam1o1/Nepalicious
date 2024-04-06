@@ -103,6 +103,12 @@
                 </tbody>
               </table>
 {% else %}
-<p class="text-gray-700">No requests</p>
+<div class=" w-[50%] mx-auto flex jusitfy-center">
+  <div class="flex flex-col">
+
+      <p class=" text-2xl text-gray-500 font-bold w-full mt-10 ml-5 flex justify-center">No Pending Requests waiting to be approved.</p>
+      <img src="../../static/images/adminImages/nouser.svg" class="ml-[8rem] h-[25rem] w-[25rem] mt-10" alt="">
+  </div>
+</div>
 {% endif %}
 {% endblock %}

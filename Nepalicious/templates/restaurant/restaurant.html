@@ -91,7 +91,7 @@
     {% block content %}
     <!-- FILTER -->
     
-    <div class="my-[4rem]">
+    <div class="mt-[4rem]">
 
         <div class="filter-heading">
 
@@ -149,8 +149,9 @@
             </div>
         </div>
     </div>
-
-    <div class="w-[90%] mx-auto h-auto">
+    {% if restaurantList %}
+    
+    <div class="w-[90%] mx-auto h-auto mt-10">
         <div class="grid grid-cols-2 gap-[4rem]">
             {% for restaurant in restaurantList %}
 
@@ -203,7 +204,16 @@
             {% endfor %}
         </div>
     </div>
+    {% else %}
+    <div class=" w-[30%] mx-auto flex jusitfy-center">
+        <div class="flex flex-col">
 
+            <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-6 flex justify-center">Restaurants Not Found.</p>
+            <img src="../../static/images/restaurant/restaurantnotfound.svg" class="h-[25rem] w-[25rem] ml-10" alt="">
+        </div>
+    </div>
+
+    {% endif %}
     {% endblock %}
 </body>
 

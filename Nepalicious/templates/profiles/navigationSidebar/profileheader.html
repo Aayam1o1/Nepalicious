@@ -164,6 +164,13 @@
               <a href="{% url 'viewSavedRecipe' %}"><p class="text-l ml-5">Saved Recipe</p> </a>
             </div>
             {% endif %}
+            {% if request.user.is_authenticated and request.user|has_group:" "  or request.user|has_group:"user" %}
+
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/recipebook.png" class="ml-[1.4rem] h-[2rem]" alt="" />
+              <a href="{% url 'order_history' %}"><p class="text-l ml-5">Order History</p> </a>
+            </div>
+            {% endif %}
             {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
             <a href="{% url 'addProduct' %}"> 
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
@@ -202,6 +209,14 @@
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
               <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
               <p class="text-l ml-5">Pending Orders</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'vendor_order' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Orders History</p>
             </div>
             </a>
             {% endif %}

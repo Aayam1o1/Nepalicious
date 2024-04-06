@@ -138,7 +138,13 @@
                 </table>
             </div>
             {% else %}
-            <p>No pending orders.</p>
+            <div class=" w-[50%] mx-auto flex jusitfy-center">
+                <div class="flex flex-col">
+    
+                    <p class=" text-2xl text-gray-500 font-bold w-full mt-10 flex justify-center">No Pending orders. Wait for your orders to arrive</p>
+                    <img src="../../static/images/marketplace/waiting.svg" class="ml-8 h-[25rem] w-[25rem]" alt="">
+                </div>
+            </div>
             {% endif %}
         </div>
 

@@ -8,15 +8,11 @@
 <body class="bg-gray-100">
     {% extends "../profiles/navigationSidebar/profilebase.html" %}
     {% block content %}
-    <div class="text-2xl p-4">
-        <div class="ml-[2rem] mt-[2rem]">
-            Saved Recipe
-        </div>
-    </div>
+    {% if  saved_recipes %}
     <div class="container">
-            <div class="w-[100%] grid grid-cols-4 gap-3">
+        <div class="w-[100%] grid grid-cols-4 gap-3">
                 {% for saved_recipe in saved_recipes %}
-
+                
                 <div class="w-[18rem] p-4">    
                     <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
@@ -25,7 +21,7 @@
                                 <div class=" duration-700 ease-in-out" data-carousel-item>
                                     <a href="{% url 'recipeDetail' saved_recipe.recipe.id %}"><img src="{{ saved_recipe.recipe.images.first.image.url  }}" alt="noimg"
                                     class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
-                               </div>
+                                </div>
                         </div>
                     </div>
                     <!-- display other data -->
@@ -35,15 +31,24 @@
                         <p class="mt-2 text-sm">{{ saved_recipe.recipe.cuisineType }}</p>
                         <p class="rating-stars" class="">
                             <!-- Stars will be dynamically added here -->
-
+                            
                         </p>
                         <p id="rating-message" class="mt-2 text-gray-600"></p>
                         
                     </div>
                 </div>       
-                {%endfor%}     
+                {% endfor %}     
+            </div>
+    </div>
+    {% else %}
+    <div class=" w-[50%] mx-auto flex jusitfy-center">
+        <div class="flex flex-col">
+
+            <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-10 flex justify-center">Please save a recipe first.</p>
+            <img src="../../../static/images/profileDashboards/saverecipe.svg" class="h-[25rem] w-[25rem] ml-10" alt="">
         </div>
     </div>
+    {% endif %}
     {%endblock%}
 </body>
 </html>

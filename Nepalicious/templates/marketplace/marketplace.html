@@ -146,6 +146,7 @@
         </div>
 
         <!-- display products -->
+        {% if productList %}
         <div class="w-[100%] grid grid-cols-4 gap-3">
         
             {% for product in productList %}
@@ -208,6 +209,16 @@
             {% endfor %}  
             
         </div>
+        {% else %}
+
+        <div class=" w-[40%] mx-auto flex jusitfy-center">
+            <div class="flex flex-col">
+
+                <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-10 flex justify-center">Products Not available.</p>
+                <img src="../../static/images/marketplace/marketnotfound.svg" class="h-[25rem] w-[25rem] ml-10" alt="">
+            </div>
+        </div>
+        {% endif %}
     </div>
 
 
