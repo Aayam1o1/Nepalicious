@@ -9,6 +9,8 @@ from users.models import *
 from django.db import transaction
 from django.contrib.auth.models import User,Group
 import sweetify
+
+
 # SEND MAIL
 from django.core.mail import send_mail
 # Create your views here.
@@ -29,18 +31,25 @@ def loginUser(request):
         user = authenticate(request, username=username, password=password)
             
         if user is not None:
-            login(request, user)
-            
-            # Check if the user is an admin
-            if user.username == "admin":
+            if user.is_superuser:
+                login(request, user)
+                sweetify.success(request, f"logged in as admin")
                 return redirect('adminHome')
+            elif user.usersdetail.hasBlockedUser == True:
+                sweetify.error(request, 'Your account has been blocked.')
+                return redirect('login')
+            
             else:
+                
+                login(request, user)
+
+            
                 try:
                     user_profile = usersDetail.objects.get(user=user)
                     user_type = user_profile.requestedGroup
-                    messages.success(request, f"Logged in as {username}. User type: {user_type}")
+                    sweetify.success(request, f"Logged in as {username}.")
                 except usersDetail.DoesNotExist:
-                    messages.warning(request, f"User profile not found for {username}")
+                    sweetify.warning(request, f"User profile not found for {username}")
                 return redirect('index')
 
         else:
@@ -141,25 +150,27 @@ def adminDashboard(request):
     
     if request.method == 'POST':
         print("CLICKED")
-        if "deleteUser" in request.POST:
-            username = request.POST.get('username')
-            user = User.objects.get(User, username=username)
-            
-            print(username)
-            print(user, "USER IT is")
-            
-            # DELETE THE USER 
-            user.delete()
-            
-            messages.error(request, 'User Deleted')
-            
-            return redirect('adminHome') 
+        
+        if "block" in request.POST:
+            username = request.POST.get("username")
+            user = User.objects.get(username=username)
+            userDetail = usersDetail.objects.get(user=user)
+            userDetail.hasBlockedUser = True
+            print("BLOCKED", userDetail.hasBlockedUser)
+            userDetail.save()
+            sweetify.success(request, 'User Blocked successfully')
+        
+        elif "unblock" in request.POST:
+            username = request.POST.get("username")
+            user = User.objects.get(username=username)
+            userDetail = usersDetail.objects.get(user=user)
+            userDetail.hasBlockedUser = False
+            userDetail.save()
+            sweetify.success(request, 'User Unblocked successfully')
     
     requestedUserType = usersDetail.objects.all() 
     
     allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', 'restaurant'])
-    
-    
     
     totalChef = User.objects.filter(groups__name='chef').exclude(is_superuser=True).count()
     totalRestaurant = User.objects.filter(groups__name='restaurant').exclude(is_superuser=True).count()

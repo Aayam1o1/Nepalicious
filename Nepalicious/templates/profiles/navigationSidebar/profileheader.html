@@ -220,6 +220,18 @@
             </div>
             </a>
             {% endif %}
+            {% if not request.user|has_group:"vendor" and not request.user|has_group:"restaurant" and not request.user|has_group:"chef" %}
+            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+
+            {% else %}
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              
+              <p class="text-l ml-5">Account not apprroved yet</p>
+            </div>
+            {% endif %}
+            {% else %}
+            
+            {% endif %}
           </div>
         </div>
       </div>
