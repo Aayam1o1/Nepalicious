@@ -6,7 +6,7 @@ from django.db.models import Count
 from market.models import *
 import random
 from django.db.models import Sum, F, Avg
-
+import sweetify
 
 def recipe(request):
     recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
@@ -238,7 +238,9 @@ def submit_review_recipe(request, recipe_id):
             
 
 def save_recipe(request, recipe_id):
+    url  = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
+
         recipe = addRecipe.objects.get(pk=recipe_id)
         print('Recipe: ', recipe)
         
@@ -251,11 +253,12 @@ def save_recipe(request, recipe_id):
             print('Recipe saved successfully')
             
             # Add a success message
-            messages.add_message(request, messages.SUCCESS, 'Successfully saved')
+            sweetify.success(request, 'Successfully saved')
+            return redirect(url)
         else:
             print('Recipe already saved')
             # Add a warning message
-            messages.add_message(request, messages.WARNING, 'Recipe already saved')
+            sweetify.warning(request, 'Recipe already saved')
         
         # Redirect to the same page
         return redirect('recipeDetail', recipe_id=recipe_id)
@@ -273,14 +276,16 @@ def viewSavedRecipe(request):
     return render(request, 'profiles/savedRecipe.html', context)
 
 def deleteSavedRecipe(request, saved_recipe_id):
+    url  = request.META.get('HTTP_REFERER')
+
     if request.method == 'POST':
         saved_recipe = savedRecipe.objects.get(pk=saved_recipe_id)
         print('saved recipe: ', saved_recipe)
         
         if saved_recipe.user == request.user:
             saved_recipe.delete()
-            messages.success(request, 'The recipe was removed from bookmark')
-            return redirect('viewSavedRecipe')
+            sweetify.success(request, 'The recipe was removed from bookmark')
+            return redirect(url)
     return render(request, 'profiles/savedRecipe.html')
 
 

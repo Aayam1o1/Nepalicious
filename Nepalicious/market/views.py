@@ -10,6 +10,7 @@ from django.db import transaction
 import sweetify
 from django.core.mail import send_mail
 import random
+from django.contrib.auth.decorators import user_passes_test, login_required
 
 
 # Create your views here.
@@ -132,25 +133,32 @@ def submit_review_product(request, product_id):
     # getting the url fort the same webpage
     url  = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
-        try:
-            # to check if review is already submitted
-            reviews = productFeedback.objects.get(user__id=request.user.id, product__id = product_id)
-            form = FeedbackForm(request.POST, instance=reviews)
-            form.save()
-            sweetify.success(request, 'Thank you, Your review has been updated')
-            return redirect(url)
-        except:
-            form = FeedbackForm(request.POST)
-            if form.is_valid():
-                data = productFeedback()
-                data.rating = form.cleaned_data['rating']
-                data.feedback = form.cleaned_data['feedback']
-                data.product_id = product_id
-                data.user_id = request.user.id
-                data.save()
-                sweetify.success(request, 'Thank you, Your review has been submitted')
+        if orderDetail.objects.filter(product_id=product_id, order_for__buyer=request.user).exists():
+            try:
+                # to check if review is already submitted
+                reviews = productFeedback.objects.get(user__id=request.user.id, product__id = product_id)
+                form = FeedbackForm(request.POST, instance=reviews)
+                form.save()
+                sweetify.success(request, 'Thank you, Your review has been updated')
                 return redirect(url)
-
+            except:
+                form = FeedbackForm(request.POST)
+                if form.is_valid():
+                    data = productFeedback()
+                    data.rating = form.cleaned_data['rating']
+                    data.feedback = form.cleaned_data['feedback']
+                    data.product_id = product_id
+                    data.user_id = request.user.id
+                    data.save()
+                    sweetify.success(request, 'Thank you, Your review has been submitted')
+                    return redirect(url)
+                else:
+                    messages.error(request, 'Failed to submit review. Please check the form.')
+        else:
+            sweetify.error(request, 'You cannot review this product because you have not purchased it.')
+    return redirect(url)
+        
+        
 def delete_comment_product(request, comment_id):
     url  = request.META.get('HTTP_REFERER')
 
@@ -171,6 +179,7 @@ def delete_comment_product(request, comment_id):
     return redirect(url)
 
 # for add to cart button
+@login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(addProducts, id=product_id)
 
@@ -213,8 +222,12 @@ def add_to_cart(request, product_id):
     return redirect('marketplace')
 
 
+def is_user(user):
+    return user.groups.filter(name = ' ').exists() or user.groups.filter(name= 'user').exists()
 
+@login_required
 def cart_view(request):
+
     user_cart = Cart.objects.filter(user=request.user).first()
     cart_item = CartItem.objects.filter(cart=user_cart)
     

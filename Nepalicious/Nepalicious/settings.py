@@ -162,3 +162,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'nepalicious.webapp@gmail.com' 
 EMAIL_HOST_PASSWORD = 'zoec vvpv wjqh cnbp' 
 EMAIL_USE_TLS = True
+
+LOGIN_URL = 'login'

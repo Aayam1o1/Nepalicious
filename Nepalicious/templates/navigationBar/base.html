@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="../../static/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 {% include "../navigationBar/header.html" %}
@@ -18,5 +20,16 @@
 
 {% endblock  %}
 {% include "../navigationBar/footer.html" %}
+<script>
+
+    function error() {
+      Swal.fire({
+        title: 'Access Denied',
+        text: 'Need to be usertype user to access this feature.',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+    }
+    </script>
 </body>
 </html>

@@ -96,6 +96,8 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
+    {% load static %}
+    {% load custom_tags %}
     <div class="container mt-[5rem] w-[80%] h-full mx-auto overflow-x-hidden">
 
         <div class="product-description flex ml-10 w-full justify-around">
@@ -150,12 +152,18 @@
                     </div>
                     <!-- button -->
                     <div class="mt-5">
+                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
                         <form method="POST" action="{% url 'add_to_cart' productDetail.id %}">
                             {% csrf_token %}
                             <button type="submit" class=" rounded-l w-[10rem] h-10 bg-[#FFC061]">
                                 <span class="text-white">Add To Cart</span>
                             </button>
                         </form>
+                        {% else %}
+                        <button type="submit" onclick="error()" class=" rounded-l w-[10rem] h-10 bg-[#FFC061]">
+                            <span class="text-white">Add To Cart</span>
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="ml-5 mt-5 text-sm text-gray-500">
@@ -231,12 +239,19 @@
 
                             <div class="">
                                 <!-- Pass the plant ID to the addtocart() function -->
+                                {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+
                                 <form method="POST" action="{% url 'add_to_cart' product.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-[15rem]">
                                         Add to Cart
                                     </button>
                                 </form>
+                                {% else %}
+                                <button type="submit" onclick="error()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-[15rem]">
+                                    Add to Cart
+                                </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -255,16 +270,27 @@
                 <div>
                     <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
                 </div>
-                <div class="my-[3rem]">
-                    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
-                        class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5">
-                        <span class="text-white">Give Feedback</span>
-                    </button>
-                </div>
+                    <div class="my-[3rem]">
+                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
 
-                <!-- Main modal -->
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
+                            class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" >
+                            <span class="text-white">Give Feedback</span>
+                        </button>
+                        {% else %}
+                        <button type="button" onclick="error()"
+                            class=" rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" >
+                            <span class="text-white">Give Feedback</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                
+
+                    <!-- Main modal -->
                 <div id="crud-modal" tabindex="-1" aria-hidden="true"
                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    
+                    
                     <div class="relative p-4 w-full max-w-md max-h-full">
                         <form id="feedbackForm" method="post"
                             action="{% url 'submit_review_product' productDetail.id %}">
@@ -329,7 +355,10 @@
                                 </button>
                         </form>
                     </div>
+                    
                 </div>
+                
+                
             </div>
 
             <!-- comment section -->

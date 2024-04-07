@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,7 +90,8 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
-
+    {% load static %}
+    {% load custom_tags %}
     <!-- <div class="bg-gray-200 h-[7rem] w-full">
         <img class="w-full h-full" src="../../static/images/marketplace/banner.jpg" alt="">    
     </div> -->
@@ -196,12 +198,19 @@
                     
                         <div class="">
                             <!-- Pass the plant ID to the addtocart() function -->
+                            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
                             <form method="POST" action="{% url 'add_to_cart' product.id %}">
                                 {% csrf_token %}
+
                                 <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
                                     Add to Cart
                                 </button>
                             </form>
+                            {% else %}
+                            <button type="submit" onclick="error()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                                Add to Cart
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

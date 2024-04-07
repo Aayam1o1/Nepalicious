@@ -127,7 +127,8 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
-
+    {% load static %}
+    {% load custom_tags %}
     <div class="">
 
         <div class="container-1 w-[80%] m-auto">
@@ -284,10 +285,18 @@
                         <h1 class="text-5xl font-medium">Already Visited This Restaurant??</h1>
                     </div>
                     <div class="my-[3rem]">
+                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+
                         <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
                             class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
                             <span class="text-white">Give Feedback</span>
                         </button>
+                        {% else %}
+                        <button  type="button" onclick="error()"
+                        class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
+                        <span class="text-white">Give Feedback</span>
+                        </button>
+                        {% endif %}
                     </div>
 
                     <!-- Main modal -->
