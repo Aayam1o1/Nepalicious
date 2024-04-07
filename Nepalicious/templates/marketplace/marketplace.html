@@ -214,10 +214,14 @@
                         </div>
                     </div>
                 </div>
+
+
                 {% endif %}
             {% endfor %}  
-            
         </div>
+        
+
+        
         {% else %}
 
         <div class=" w-[40%] mx-auto flex jusitfy-center">
@@ -229,7 +233,33 @@
         </div>
         {% endif %}
     </div>
+    {% comment %} pagination {% endcomment %}
+    <div class="flex flex-col xs:flex-row ml-[17rem] jusity-center items-center xs:justify-between">
+        <div class="inline-flex mt-2 xs:mt-0 gap-4 ">
+            <!-- Pagination Next and Previous -->
+            {% if productList.has_previous %}
+                <a href="?page={{ productList.previous_page_number }}"
+                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
+                    Prev
+                </a>
+            {% else %}
+                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
+                    Prev
+                </button>
+            {% endif %}
 
+            {% if productList.has_next %}
+                <a href="?page={{ productList.next_page_number }}"
+                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
+                    Next
+                </a>
+            {% else %}
+                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
+                    Next
+                </button>
+            {% endif %}
+        </div>
+    </div>
 
     {% endblock %}
 </body>

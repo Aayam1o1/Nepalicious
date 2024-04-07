@@ -11,11 +11,32 @@ import sweetify
 from django.core.mail import send_mail
 import random
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.all()
+    items_per_page = 9
+    
+    page = request.GET.get('page', 1)
+    
+    
+     # Create a Paginator object
+    paginator = Paginator(productList, items_per_page)
+
+    try:
+        # Get the current page
+        productList = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        productList = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        productList = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
+    
     
     for product in productList:
         # Calculate average rating for each product

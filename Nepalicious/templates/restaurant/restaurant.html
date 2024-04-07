@@ -211,9 +211,35 @@
             <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-6 flex justify-center">Restaurants Not Found.</p>
             <img src="../../static/images/restaurant/restaurantnotfound.svg" class="h-[25rem] w-[25rem] ml-10" alt="">
         </div>
-    </div>
-
+    </div>  
     {% endif %}
+    {% comment %} pagination {% endcomment %}
+    <div class="flex flex-col xs:flex-row mr-[2rem] jusity-center items-center xs:justify-between">
+        <div class="inline-flex mt-2 xs:mt-0 gap-4 ">
+            <!-- Pagination Next and Previous -->
+            {% if restaurantList.has_previous %}
+                <a href="?page={{ restaurantList.previous_page_number }}"
+                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
+                    Prev
+                </a>
+            {% else %}
+                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
+                    Prev
+                </button>
+            {% endif %}
+
+            {% if restaurantList.has_next %}
+                <a href="?page={{ restaurantList.next_page_number }}"
+                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
+                    Next
+                </a>
+            {% else %}
+                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
+                    Next
+                </button>
+            {% endif %}
+        </div>
+    </div>
     {% endblock %}
 </body>
 

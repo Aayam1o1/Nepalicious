@@ -7,12 +7,33 @@ from market.models import *
 import random
 from django.db.models import Sum, F, Avg
 import sweetify
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 def recipe(request):
     recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
     top_four_recipe = addRecipe.objects.annotate(num_likes=Count('likedislikerecipe', filter=models.Q(likedislikerecipe__choice='like'))).order_by('-num_likes')[:4]
     latest_recipe = addRecipe.objects.all().order_by('-id')
+    
+    items_per_page = 11
+    
+    page = request.GET.get('page', 1)
+    
+    
+     # Create a Paginator object
+    paginator = Paginator(latest_recipe, items_per_page)
 
+    try:
+        # Get the current page
+        latest_recipe = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        latest_recipe = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        latest_recipe = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
     
     filtered_recipe = list(addRecipe.objects.all())
     random.shuffle(filtered_recipe)
