@@ -16,7 +16,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def marketplace(request):
-    productList = addProducts.objects.all()
+    productList = addProducts.objects.filter(isdeleted = False)
     items_per_page = 9
     
     page = request.GET.get('page', 1)
@@ -148,7 +148,56 @@ def productDetail(request, product_id):
     
     return render(request, 'marketplace/productDetail.html', context)
 
+def your_product(request):
+    user = request.user
+    productList = addProducts.objects.filter(user=user, isdeleted = False)
+    
+    items_per_page = 5
+    
+    page = request.GET.get('page', 1)
+    
+    
+     # Create a Paginator object
+    paginator = Paginator(productList, items_per_page)
 
+    try:
+        # Get the current page
+        productList = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        productList = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        productList = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
+    
+
+    for product in productList:
+        # Calculate average rating for each product
+        avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        product.avg_rating = avg_rating
+    context = {
+        'productList': productList,
+    }
+
+    
+    return render(request, 'marketplace/yourproduct.html', context)
+
+def delete_product(request, product_id):
+    url  = request.META.get('HTTP_REFERER')
+    product = addProducts.objects.get(id=product_id)
+    
+    if request.method == 'POST':
+        try:
+            product.isdeleted = True
+            product.save()     
+            sweetify.success(request, "Product has been deleted successfully", button='OK', timer=3000)
+            return redirect(url)  
+        except Exception as e:
+            messages.error(request, f"Error deleting product: {str(e)}")
+            return redirect(url)
+    return redirect(url)
 
 def submit_review_product(request, product_id):
     # getting the url fort the same webpage

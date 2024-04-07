@@ -21,11 +21,11 @@ class addProducts(models.Model):
     productBrand = models.CharField(max_length=100)
     productDescription = models.TextField()
     productCategory = models.CharField(max_length=100, choices=productCategoryChoice)
-    
     productPrice = models.DecimalField(max_digits=10, decimal_places=2)
     productStock = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    isdeleted = models.BooleanField(default=False)
+
     def __str__(self):
         return self.productName
     
