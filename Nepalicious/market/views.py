@@ -74,7 +74,7 @@ def addProduct(request):
             for image in product_image:
                 productImage.objects.create(addProducts=instance, image=image)
                 
-            messages.success(request, "Sucessfully added product")
+            sweetify.success(request, "Sucessfully added product")
             
             # Redirect to a page or route after successfully adding a product
             return redirect('marketplace') 
@@ -119,7 +119,7 @@ def productDetail(request, product_id):
     
     
      # Filter products by category
-    filtered_products = list(addProducts.objects.filter(productCategory=productDetail.productCategory).exclude(id=product_id))
+    filtered_products = list(addProducts.objects.filter(productCategory=productDetail.productCategory, isdeleted = False).exclude(id=product_id))
     
     # Shuffle the list of filtered products
     random.shuffle(filtered_products)
@@ -152,7 +152,7 @@ def your_product(request):
     user = request.user
     productList = addProducts.objects.filter(user=user, isdeleted = False)
     
-    items_per_page = 5
+    items_per_page = 4
     
     page = request.GET.get('page', 1)
     
@@ -184,6 +184,7 @@ def your_product(request):
     
     return render(request, 'marketplace/yourproduct.html', context)
 
+#for delete product
 def delete_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     product = addProducts.objects.get(id=product_id)
@@ -198,6 +199,46 @@ def delete_product(request, product_id):
             messages.error(request, f"Error deleting product: {str(e)}")
             return redirect(url)
     return redirect(url)
+
+def edit_product(request, product_id):
+    # Retrieve the product instance
+    product_instance = get_object_or_404(addProducts, pk=product_id)
+    
+    if request.method == 'POST':
+        # If it's a POST request, process the form data
+        form = editProductForm(request.POST, instance=product_instance)
+        if form.is_valid():
+            form.save()
+            
+            new_images = request.FILES.getlist('productImage')
+            
+            # Get the list of existing images
+            old_images = product_instance.images.all()
+            
+            # Delete old images not included in the new set
+            
+            # Handle product images
+            if new_images:
+                for old_image in old_images:
+                    if old_image.image not in new_images:
+                        old_image.delete()
+
+                for uploaded_file in new_images:
+                    productImage.objects.create(addProducts=product_instance, image=uploaded_file)
+            
+            messages.success(request, "Successfully edited product")
+            return redirect('productDetail', product_id=product_instance.id)
+    else:
+        # If it's not a POST request, populate the form with instance data
+        form = editProductForm(instance=product_instance)
+    
+    context = {
+        'form': form,
+        'product_instance': product_instance,
+        
+    }
+    return render(request, 'marketplace/editProduct.html', context)
+
 
 def submit_review_product(request, product_id):
     # getting the url fort the same webpage

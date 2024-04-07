@@ -200,7 +200,7 @@ def recipeDetail(request, recipe_id):
     # for tags
     recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
     # Get all products
-    all_products = addProducts.objects.all()
+    all_products = addProducts.objects.filter(isdeleted = False)
     
     filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
     
@@ -208,6 +208,7 @@ def recipeDetail(request, recipe_id):
     random.shuffle(filtered_products)
     selected_products = filtered_products[:2]    
     
+    avg_rating = 0
     for product in selected_products:
         # Calculate average rating for each product
         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
