@@ -7,7 +7,7 @@ import geocoder
 from django.db.models import Sum, F, Avg
 import random
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import sweetify
 
 # Create your views here.
 def restaurant(request):
@@ -175,7 +175,7 @@ def submit_review_restaurant(request, restaurant_id):
             reviews = restaurantFeedback.objects.get(user__id=request.user.id, restaurant__id = restaurant_id)
             form = FeedbackForm(request.POST, instance=reviews)
             form.save()
-            messages.success(request, 'Thank you, Your review has been updated')
+            sweetify.success(request, 'Thank you, Your review has been updated')
             return redirect(url)
         except:
             form = FeedbackForm(request.POST)
@@ -186,7 +186,7 @@ def submit_review_restaurant(request, restaurant_id):
                 data.restaurant_id = restaurant_id
                 data.user_id = request.user.id
                 data.save()
-                messages.success(request, 'Thank you, Your review has been submitted')
+                sweetify.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
             
 
@@ -200,10 +200,9 @@ def delete_comment_restaurant(request, comment_id):
     if comment.user == request.user:
         # Delete the comment
         comment.delete()
-        messages.success(request, 'Comment deleted')
+        sweetify.success(request, 'Comment deleted')
     else:
-        messages.MessageFailure(request, 'There was an error deleting the comment')
-        print(messages)
+        sweetify.error(request, 'There was an error deleting the comment')
         pass
 
     # Redirect back to the page where the comment was deleted from

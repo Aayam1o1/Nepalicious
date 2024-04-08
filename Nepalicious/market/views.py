@@ -16,9 +16,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def marketplace(request):
-    productList = addProducts.objects.filter(isdeleted = False)
-    items_per_page = 9
-    
+    productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
+    items_per_page = 8
     page = request.GET.get('page', 1)
     
     
@@ -119,7 +118,7 @@ def productDetail(request, product_id):
     
     
      # Filter products by category
-    filtered_products = list(addProducts.objects.filter(productCategory=productDetail.productCategory, isdeleted = False).exclude(id=product_id))
+    filtered_products = list(addProducts.objects.filter(productCategory=productDetail.productCategory, isdeleted = False, productStock__gt = 0).exclude(id=product_id))
     
     # Shuffle the list of filtered products
     random.shuffle(filtered_products)
@@ -157,7 +156,7 @@ def your_product(request):
             return redirect("edit_product", product_id)
             
     user = request.user
-    productList = addProducts.objects.filter(user=user, isdeleted = False)
+    productList = addProducts.objects.filter(user=user, isdeleted = False, productStock__gt = 0)
     
     items_per_page = 4
     
@@ -271,7 +270,7 @@ def submit_review_product(request, product_id):
                     sweetify.success(request, 'Thank you, Your review has been submitted')
                     return redirect(url)
                 else:
-                    messages.error(request, 'Failed to submit review. Please check the form.')
+                    sweetify.error(request, 'Failed to submit review. Please check the form.')
         else:
             sweetify.error(request, 'You cannot review this product because you have not purchased it.')
     return redirect(url)
@@ -287,10 +286,9 @@ def delete_comment_product(request, comment_id):
     if comment.user == request.user:
         # Delete the comment
         comment.delete()
-        messages.success(request, 'Comment deleted')
+        sweetify.success(request, 'Comment deleted')
     else:
-        messages.MessageFailure(request, 'There was an error deleting the comment')
-        print(messages)
+        sweetify.error(request, 'There was an error deleting the comment')
         pass
 
     # Redirect back to the page where the comment was deleted from
@@ -345,7 +343,7 @@ def is_user(user):
 
 @login_required
 def cart_view(request):
-
+    
     user_cart = Cart.objects.filter(user=request.user).first()
     cart_item = CartItem.objects.filter(cart=user_cart)
     
@@ -646,6 +644,7 @@ def pending_orders(request):
             [UserEmail],
             fail_silently=False,
             )
+            sweetify.success(request, "The ordered delivery status has been changed to completed succesfully.")
             return redirect('vendor_order')
             
         elif status == 'Delivery Canceled':
@@ -673,7 +672,7 @@ def pending_orders(request):
             [UserEmail],
             fail_silently=False,
             )
-            print("kal")
+            sweetify.info(request, "The ordered delivery status has been changed to cancelled :( .")
             return redirect('vendor_order')
         
     seller = request.user

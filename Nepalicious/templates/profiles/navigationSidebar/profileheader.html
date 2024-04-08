@@ -70,6 +70,14 @@
 
         <!-- cart and profile -->
         <div class="cart-and-profile flex items-center gap-x-3 mt-3">
+          {% if not request.user.is_authenticated %}
+          <button onclick="loginrequired()">
+            <span class="cart">
+              <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+            </span>
+          </button>
+          {% else %}
+
           {% if request.user|has_group:" "  or request.user|has_group:"user" %}
           <a href="{% url 'cart' %}">
             <span class="cart">
@@ -82,6 +90,7 @@
               <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
             </span>
           </button>
+          {% endif %}
           {% endif %}
           <!-- profile -->
           <div class="relative inline-block text-left">
@@ -261,6 +270,14 @@
           Swal.fire({
             title: 'Access Denied',
             text: 'Need to be usertype user to access cart.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+        }
+        function loginrequired() {
+          Swal.fire({
+            title: 'Access Denied',
+            text: 'Please login first.',
             icon: 'error',
             confirmButtonText: 'Ok'
           });

@@ -130,9 +130,16 @@
                 </div>
             </form>
             {% else %}
+            {% if not request.user.is_authenticated %}
+            <button type="submit" onclick="loginrequired()">
+                <div class="h-[2rem] w-[2rem] sm:h-[3rem] sm:w-[3rem] md:w-[4rem] md:w-[4rem]">
+                    <img src="../../static/images/recipe/bookmark.svg" alt="">
+                </div>
+            </button>
+            {% else %}
             <!-- show if not saved -->                            
             {% if request.user|has_group:" "  or request.user|has_group:"user" %}
-
+            
             <form method="POST" action="{% url 'savedRecipe' recipeDetail.id %}">
                 {% csrf_token %}
                 <div>
@@ -149,6 +156,7 @@
                     <img src="../../static/images/recipe/bookmark.svg" alt="">
                 </div>
             </button>
+            {% endif %}
             {% endif %}
             {% endif %}
         </div>

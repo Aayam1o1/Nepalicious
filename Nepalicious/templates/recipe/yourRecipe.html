@@ -16,13 +16,13 @@
     <div class="p-4">
         <h1 class="text-3xl font-semibold">Your Recipe</h1>
     </div>
-    <div class="w-[100%] grid grid-cols-5 gap-6">
+    <div class="w-full grid grid-cols-4 gap-6">
         {% for recipe in latest_recipe %}
-            <div class="w-[18rem] p-4">    
+            <div class="w-full p-4">    
                 <!-- displaying product picture -->
                 <div id="gallery" class="relative w-full" data-carousel="slide">
                     <!-- Carousel wrapper -->
-                    <div class="relative h-[15rem] w-[15rem] overflow-hidden rounded-lg border-2">         
+                    <div class="relative h-[16rem] w-[16rem] overflow-hidden rounded-lg border-2">         
                         {% for image in recipe.images.all %}
                             <div class="hidden duration-700 ease-in-out" data-carousel-item>
                                 <a href="{% url 'recipeDetail' recipe.id %}">

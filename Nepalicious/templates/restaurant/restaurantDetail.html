@@ -285,17 +285,25 @@
                         <h1 class="text-5xl font-medium">Already Visited This Restaurant??</h1>
                     </div>
                     <div class="my-[3rem]">
-                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+                        {% if not request.user.is_authenticated %}
+                        <button  type="button" onclick="loginrequired()"
+                    class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
+                    <span class="text-white">Give Feedback</span>
+                </button>
 
-                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
-                            class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
-                            <span class="text-white">Give Feedback</span>
-                        </button>
                         {% else %}
-                        <button  type="button" onclick="error()"
+                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+                        
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" type="button"
                         class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
                         <span class="text-white">Give Feedback</span>
-                        </button>
+                    </button>
+                    {% else %}
+                    <button  type="button" onclick="error()"
+                    class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
+                    <span class="text-white">Give Feedback</span>
+                </button>
+                {% endif %}
                         {% endif %}
                     </div>
 

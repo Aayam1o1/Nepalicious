@@ -152,7 +152,6 @@
         <div class="w-[100%] grid grid-cols-4 gap-3">
         
             {% for product in productList %}
-                {% if product.productStock > 0 %}
 
                 <div class="w-[18rem] p-4">    
 
@@ -197,11 +196,16 @@
                         <p id="rating-message" class="mt-2 text-gray-600"></p>
                     
                         <div class="">
+                            {% if not request.user.is_authenticated %}
+                            <button type="submit" onclick="loginrequired()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                                Add to Cart
+                            </button>
+                            {% else %}
                             <!-- Pass the plant ID to the addtocart() function -->
                             {% if request.user|has_group:" "  or request.user|has_group:"user" %}
                             <form method="POST" action="{% url 'add_to_cart' product.id %}">
                                 {% csrf_token %}
-
+                                
                                 <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
                                     Add to Cart
                                 </button>
@@ -211,13 +215,13 @@
                                 Add to Cart
                             </button>
                             {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
 
 
-                {% endif %}
-            {% endfor %}  
+                {% endfor %}  
         </div>
         
 

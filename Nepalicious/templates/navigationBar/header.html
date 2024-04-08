@@ -40,21 +40,28 @@
 
         <!-- cart and profile -->
         <div class="cart-and-profile flex items-center gap-x-3 mt-3">
-
-          {% if request.user|has_group:" "  or request.user|has_group:"user" %}
-          <a href="{% url 'cart' %}">
-            <span class="cart">
-              <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
-            </span>
-          </a>
-          {% else %}
-          <button onclick="error()">
+          {% if not request.user.is_authenticated %}
+          <button onclick="loginrequired()">
             <span class="cart">
               <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
             </span>
           </button>
-          {% endif %}
+          {% else %}
 
+            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+            <a href="{% url 'cart' %}">
+              <span class="cart">
+                <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+              </span>
+            </a>
+            {% else %}
+            <button onclick="error()">
+              <span class="cart">
+                <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+              </span>
+            </button>
+            {% endif %}
+          {% endif %}
 
           <!-- profile -->
           {% comment %} loop for authincated and unathenticated users {% endcomment %}
@@ -100,13 +107,21 @@
       <div class="row-header-2">
         <nav class="navigation-bar-menu">
           <ul class="flex justify-center items-center gap-x-10 text-xl mt-2 ml-[4rem]">
-            <li><a href="{% url 'home' %}">Home</a></li>
+            <li class="{% if request.path == '/' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+              <a href="{% url 'home' %}">Home</a>
+            </li>
             |
-            <li><a href="{% url 'recipe' %}">Recipes</a></li>
+            <li class="{% if request.path == '/recipe' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+              <a href="{% url 'recipe' %}">Recipes</a>
+            </li>
             |
-            <li><a href="{% url 'restaurant' %}">Restaurants</a></li>
+            <li class="{% if request.path == '/restaurant' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+              <a href="{% url 'restaurant' %}">Restaurants</a>
+            </li>
             |
-            <li><a href="{% url 'marketplace' %}">Market</a></li>
+            <li class="{% if request.path == '/marketplace' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+              <a href="{% url 'marketplace' %}">Market</a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -138,6 +153,15 @@
     Swal.fire({
       title: 'Access Denied',
       text: 'Need to be usertype user to access cart.',
+      icon: 'error',
+      confirmButtonText: 'Ok'
+    });
+  }
+
+  function loginrequired() {
+    Swal.fire({
+      title: 'Access Denied',
+      text: 'Please login first.',
       icon: 'error',
       confirmButtonText: 'Ok'
     });

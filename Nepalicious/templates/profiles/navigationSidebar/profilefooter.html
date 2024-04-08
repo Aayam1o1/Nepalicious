@@ -18,22 +18,22 @@
 
         </div>
         <div class="mb-8 lg:mb-0 ml-[9rem]">
-            <p class="mb-3 text-2xl font-bold mt-3">Company</p>
-            <ul class="flex flex-col space-y-1 text-[14px] font-medium text-gray-500">
-                <li>Home</li>
-                <li>Recipes</li>
-                <li>Restaurant</li>
-                <li>Market</li>
+          <p class="mb-3 text-2xl font-bold mt-3">Company</p>
+          <ul class="flex flex-col space-y-1 text-[14px] font-medium text-gray-500">
+              <a href="{% url 'home' %}"><li class="hover:text-[#F89500]">Home</li ></a>
+              <a href="{% url 'recipe' %}"><li class="hover:text-[#F89500]">Recipes</li></a>
+              <a href="{% url 'restaurant' %}"><li class="hover:text-[#F89500]">Restaurant</li></a>
+              <a href="{% url 'marketplace' %}"><li class="hover:text-[#F89500]">Market</li></a>
 
-            </ul>
-        </div>
-        <div class="mb-8 lg:mb-0 ml-[9rem]">
-            <p class="mb-3 text-2xl font-bold mt-3">Account</p>
-            <ul class="flex flex-col space-y-1 text-[14px] font-medium text-gray-500">
-                <li>Sign Up</li>
-                <li>Sign In</li>
-            </ul>
-        </div>
+          </ul>
+      </div>
+      <div class="mb-8 lg:mb-0 ml-[9rem]">
+          <p class="mb-3 text-2xl font-bold mt-3">Account</p>
+          <ul class="flex flex-col space-y-1 text-[14px]  font-medium text-gray-500">
+              <a href="{% url 'register' %}"><li class="hover:text-[#F89500]">Sign Up</li></a>
+              <a href="{% url 'login' %}"><li class="hover:text-[#F89500]">Sign In</li></a>
+          </ul>
+      </div>
         <div class="mb-8 lg:mb-0 ml-[6rem]">
             <p class="mb-6 text-2xl font-bold mt-3 ml-6">Follow Us</p>
             <div class="-m-1.5 flex flex-wrap mr-5">

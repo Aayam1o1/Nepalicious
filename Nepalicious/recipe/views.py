@@ -59,9 +59,9 @@ def add_Recipe(request):
             # Sterp 1 Handle cusine type
             selected_cuisine_type = form.cleaned_data['cuisineType']
            
-            # STEP 3: Choose Amenities
+            # STEP 3: Choose tags
             recipeProductTags = []
-            # Check if each checkbox is checked and add its value to the amenities list
+            # Check if each checkbox is checked and add its value to the tag list
             if "reicpeTag1" in request.POST:
                 recipeProductTags.append(request.POST["reicpeTag1"])
             if "reicpeTag2" in request.POST:
@@ -99,11 +99,12 @@ def add_Recipe(request):
             # Save the instance again to update the fields
             instance.save()
 
-            messages.success(request, "Sucessfully added recipe")
+            sweetify.success(request, "Sucessfully added recipe")
             return redirect('recipe')
         
         else:
             print(form.errors)
+            sweetify(request, forms.errors)
             
     else:
         form = addRecipeForm()
@@ -157,35 +158,39 @@ def recipeDetail(request, recipe_id):
     recipe_image = recipeImage.objects.filter(addRecipe = recipedetailForImage)
     
     # for feedback
-    if request.method == 'POST':
-        feedback_form = FeedbackForm(request.POST)
+    # if request.method == 'POST':
+    #     feedback_form = FeedbackForm(request.POST)
 
-        if feedback_form.is_valid():
-            # Create a new feedback object and associate it with the current recipe and user
-            new_feedback = feedback_form.save(commit=False)
-            new_feedback.recipe = recipeDetail
-            new_feedback.user = request.user
-            new_feedback.save()
+    #     if feedback_form.is_valid():
+    #         new_feedback = feedback_form.save(commit=False)
+    #         new_feedback.recipe = recipeDetail
+    #         if request.user.is_authenticated:
+    #             new_feedback.user = request.user
+    #         else:
+    #             new_feedback.user = None
+    #         # Create a new feedback object and associate it with the current recipe and user
+    #         new_feedback.save()
 
-            # Redirect to the same recipe detail page after submitting feedback
-            return redirect('recipeDetail', recipe_id=recipe_id)
-    else:
-        feedback_form = FeedbackForm()
+    #         # Redirect to the same recipe detail page after submitting feedback
+    #         return redirect('recipeDetail', recipe_id=recipe_id)
+    # else:
+    #     feedback_form = FeedbackForm()
     
     if request.user.is_authenticated:
         saved_recipe = savedRecipe.objects.filter(user=request.user, recipe=recipeDetail).first()
+        # Check if the recipe has been liked by the current user
+        liked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='like').exists()
+        
+        disliked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='dislike').exists()
     else:
         saved_recipe = False
-        
+        disliked_recipe = False
+        liked_recipe = False
     print("saved recipe id: ", saved_recipe)
     # Retrieve comments related to the specific recipe
     feedback_comments = recipeFeedback.objects.filter(recipe=recipeDetail)
     
     
-    # Check if the recipe has been liked by the current user
-    liked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='like').exists()
-    
-    disliked_recipe = LikeDislikeRecipe.objects.filter(user=request.user, recipe=recipeDetail, choice='dislike').exists()
 
     total_likes = LikeDislikeRecipe.objects.filter(recipe=recipeDetail, choice='like').count()
     
@@ -200,7 +205,7 @@ def recipeDetail(request, recipe_id):
     # for tags
     recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
     # Get all products
-    all_products = addProducts.objects.filter(isdeleted = False)
+    all_products = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
     
     filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
     
@@ -222,7 +227,6 @@ def recipeDetail(request, recipe_id):
         'recipeDetail': recipeDetail,
         'recipeSteps': recipeSteps,
         'recipeIngredient': recipeIngredient,
-        'feedback_form': feedback_form,
         'feedback_comments': feedback_comments,
         'saved_recipe': saved_recipe,
         'liked_recipe': liked_recipe,
@@ -357,7 +361,7 @@ def submit_review_recipe(request, recipe_id):
             reviews = recipeFeedback.objects.get(user__id=request.user.id, recipe__id = recipe_id)
             form = FeedbackForm(request.POST, instance=reviews)
             form.save()
-            messages.success(request, 'Thank you, Your review has been updated')
+            sweetify.success(request, 'Thank you, Your review has been updated')
             return redirect(url)
         except:
             form = FeedbackForm(request.POST)
@@ -367,7 +371,7 @@ def submit_review_recipe(request, recipe_id):
                 data.recipe_id = recipe_id
                 data.user_id = request.user.id
                 data.save()
-                messages.success(request, 'Thank you, Your review has been submitted')
+                sweetify.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
             
 
@@ -436,23 +440,23 @@ def like_recipe(request, recipe_id):
             if not existing_like:
                 # If the user already liked or disliked the recipe, update the choice to 'like'
                 LikeDislikeRecipe.objects.create(user=user, recipe=recipe, choice='like')
-                messages.success(request, 'Successfully Liked')
+                sweetify.success(request, 'Successfully Liked')
                 
             elif existing_like.choice == 'dislike':
                     # If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
                     existing_like.choice = 'like'
                     existing_like.save()
-                    messages.success(request, 'Recipe Dislike changed to Like successfully')
+                    sweetify.success(request, 'Recipe Dislike changed to Like successfully')
             
             elif existing_like.choice == 'like':
                 existing_like.delete()
-                messages.success(request, 'Recipe like removed')
+                sweetify.success(request, 'Recipe like removed')
 
             else:
                 if existing_like.choice != 'dislike':
                     existing_like.choice = 'like'
                     existing_like.save()
-                    messages.success(request, 'Recipe Like changed successfully')
+                    sweetify.success(request, 'Recipe Like changed successfully')
                 
                 
             
@@ -480,34 +484,26 @@ def dislike_recipe(request, recipe_id):
                     # If the recipe is liked, update the existing like to dislike
                     existing_like.choice = 'dislike'
                     existing_like.save()
-                    messages.success(request, 'Recipe Like changed to Dislike successfully')
+                    sweetify.success(request, 'Recipe Like changed to Dislike successfully')
                     
                 elif existing_like.choice == 'dislike':
                     # If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
                     
                     existing_like.delete()
-                    messages.success(request, 'Recipe Dislike changed to Like successfully')    
+                    sweetify.success(request, 'Recipe Dislike removed successfully.')    
 
 
             else:
                 #If the recipe is not disliked, create and save the LikeDislikeRecipe object with choice='dislike'
                 LikeDislikeRecipe.objects.create(user=user, recipe=recipe, choice='dislike')
-                messages.success(request, 'Successfully Disliked')
+                sweetify.success(request, 'Recipe Disliked')
                 
-            
-            
-            
-            # # Delete any existing saved entry for the recipe by the current user
-            # saved_recipe = savedRecipe.objects.filter(user=user, recipe=recipe).first()
-            # if saved_recipe:
-            #     saved_recipe.delete()
-            #     messages.success(request, 'Recipe unsaved due to Dislike')
                 
             return redirect(url)
         
         except addRecipe.DoesNotExist:
             # Handle the case where the recipe with the given ID does not exist
-            messages.error(request, 'Recipe does not exist')
+            sweetify.error(request, 'Recipe does not exist')
         
     return redirect(url)
 
@@ -522,10 +518,10 @@ def delete_comment(request, comment_id):
     if comment.user == request.user:
         # Delete the comment
         comment.delete()
-        messages.success(request, 'Comment deleted')
+        sweetify.success(request, 'Comment deleted')
     else:
-        messages.MessageFailure(request, 'There was an error deleting the comment')
-        print(messages)
+        sweetify.failure(request, 'There was an error deleting the comment')
+        
         pass
 
     # Redirect back to the page where the comment was deleted from

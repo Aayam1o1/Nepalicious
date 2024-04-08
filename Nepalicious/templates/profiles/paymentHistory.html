@@ -32,9 +32,7 @@
                         Brand
                     </th>
                     
-                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
-                        Price (per 1)
-                    </th>
+                    
                     <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                         Quantity
                     </th>
@@ -87,9 +85,7 @@
                                 {{ order_detail.product.productBrand }}
                             </div>
                         </td>
-                        <td class="whitespace-nowrap px-4 py-4">
-                            Rs {{ order_detail.product.productPrice }}
-                        </td>
+                        
                         <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity }}</td>
                         <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
                         

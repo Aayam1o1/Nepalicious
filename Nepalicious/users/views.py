@@ -9,7 +9,7 @@ from users.models import *
 from django.db import transaction
 from django.contrib.auth.models import User,Group
 import sweetify
-
+import re
 
 # SEND MAIL
 from django.core.mail import send_mail
@@ -62,15 +62,24 @@ def loginUser(request):
 # REGISTER
 def registerUser(request):
     form = CreateUserForm()
-
+    
     # Get the requested group
     if "UserRequestedGroup" in request.POST:
         userRequestedGroup = request.POST.get('UserRequestedGroup')
-
+    
     if request.method == 'POST':
         form = CreateUserForm(request.POST, request.FILES)
         
         if form.is_valid():
+            
+            if User.objects.filter(email=request.POST.get('email')).exists():
+                sweetify.error(request, "Email already registered!")
+                return redirect('register')
+            if 'contact_number' in request.POST:
+                contact_number = request.POST.get('contact_number')
+                if not re.match(r'^(98|97)\d{8}$', contact_number):
+                    sweetify.error(request,"Invalid contact number")
+                    return redirect('register')
             #Getting Username
             username = form.cleaned_data.get('username')
             
@@ -117,15 +126,20 @@ def registerUser(request):
                         for img in images:
                             documentImg = userDocument(user=user, documentImage=img)
                             documentImg.save()
-                        messages.success(request,"Account Created for " + username + " Please wait before we verify.")
+                        sweetify.success(request,"Account Created for " + username + " Please wait before we verify.")
                     
                 else:
                     group, create = Group.objects.get_or_create(name = 'user')
                     user.groups.add(group)
-                    messages.success(request,"Account Created for " + username)
+                    sweetify.success(request,"Account Created for " + username)
                 print("Choosen Group is: ", userRequestedGroup)
                 return redirect('login')
-            
+        
+        else:
+            messasg_error = next(iter(form.errors.values()))[0]     # Retrieving the first error message from the form errors
+            sweetify.error(request, messasg_error)
+
+     
     context={
         'form': form
     }
@@ -304,16 +318,19 @@ def editprofile(request):
             #saving the updated data
             user.usersdetail.save()
             msg = "Profile Updated"
-            messages.success(request, 'Profile Updated')           
-               
+            sweetify.success(request, 'Profile Updated')           
+            return redirect('editprofile')   
         #  for uploading new profile picture
         if "saveImage" in request.POST:
-            # Saving user New profile
-            user_profile = UserProfilePicture.objects.get(user=user)
-            user_profile.profileImage  = request.FILES['img']
-            user_profile.save()
-            messages.success(request, 'Profile Picture Updated')
-        
+            if request.FILES:
+                # Saving user New profile
+                user_profile = UserProfilePicture.objects.get(user=user)
+                user_profile.profileImage  = request.FILES['img']
+                user_profile.save()
+                sweetify.success(request, 'Profile Picture Updated')
+                return redirect('editprofile')   
+            else:
+                sweetify.info(request, "Please select an image first")
         # for setting default profile
         if "deleteImage" in request.POST:
             user_profile = UserProfilePicture.objects.get(user=user)
@@ -325,8 +342,9 @@ def editprofile(request):
                 user_default_profile_picture.profileImage = defaultProfilePicture()
                 user_default_profile_picture.save()
           
-            messages.success(request, 'Profile Picture updated.')         
-                
+            sweetify.success(request, 'Profile Picture updated.')         
+            return redirect('editprofile')   
+    
     context = {
         
         'profile_image_url': profile_image_url, 
@@ -348,20 +366,20 @@ def changePassword(request):
 
 
             if not request.user.check_password(current_password):
-                messages.error(request, 'Current password is incorrect.')
+                sweetify.error(request, 'Current password is incorrect.')
 
 
             else:
                 # If password doesnt match display error messaage
                 if new_password != confirm_new_password:
-                    messages.error(request, 'New password and confirm password do not match.')
+                    sweetify.error(request, 'New password and confirm password do not match.')
 
 
                 else:
                     # Change the password
                     request.user.set_password(new_password)
                     request.user.save()
-                    messages.success(request, 'Password Changed')
+                    sweetify.success(request, 'Password Changed')
                     
                     # Updating the session to prevent logout
                     update_session_auth_hash(request, request.user)

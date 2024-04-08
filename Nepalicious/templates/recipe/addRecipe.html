@@ -12,7 +12,7 @@
     {% block content %}
     <div class="container bg-gray-100 ">
         {% comment %} formstart {% endcomment %}
-        <form action="" method="post" enctype="multipart/form-data">
+        <form id="recipeForm" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- buttons -->
             <div class="shadow-sm bg-white p-2 flex justify-between rounded-xl">
@@ -54,6 +54,27 @@
                             var imageHeading = document.getElementById('product-img-heading');
                             imageHeading.style.display = 'block';
                         }
+
+                        function buttondisabledimage() {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Please upload exactly 3 images.',
+                                icon: 'error',
+                                confirmButtonText: 'Ok'
+                            });
+                        }
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var submitButton = document.querySelector('button[type="submit"]');
+                            var imageInput = document.getElementById('product-image');
+                    
+                            submitButton.addEventListener('click', function (event) {
+                                var files = imageInput.files;
+                                if (files.length !== 3) {
+                                    event.preventDefault(); // Prevent form submission if the number of images is not 3
+                                    buttondisabledimage(); // Call the error function
+                                }
+                            });
+                        });
                     </script>
 
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
@@ -113,45 +134,33 @@
 
                         <script>
                             // Function to handle file input change for both images and documents
-
-
-
                             document.getElementById("product-image").addEventListener('change', function (event) {
-
                                 const container = document.getElementById("image-container");
-
                                 const files = event.target.files;
-
-                                document.getElementById('product-img-heading').style.display = "none";
-
-                                for (i = 0; i <= 3; i++) {
-
-
-
+                                const numFiles = files.length;
+                        
+                                // Clear existing images
+                                container.innerHTML = '';
+                        
+                                // Display the heading if there are no files
+                                if (numFiles === 0) {
+                                    document.getElementById('product-img-heading').style.display = "block";
+                                } else {
+                                    document.getElementById('product-img-heading').style.display = "none";
+                                }
+                        
+                                // Loop through the selected files and add new images
+                                for (let i = 0; i < Math.min(numFiles, 3); i++) {
                                     const file = files[i];
-                                    const fileURL = URL.createObjectURL(file)
-
+                                    const fileURL = URL.createObjectURL(file);
                                     const imgDiv = document.createElement("div");
-
                                     imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
-                                    imgDiv.innerHTML =
-                                        ` 
-                                            <img src="${fileURL}"
-                                                class="w-full h-full rounded-xl obejct-cover" alt="" />
-                                           
-                                            `
-
-                                    console.log(container.childNodes.length <= 3);
-                                    if (container.childNodes.length <= 3) {
-
-                                        container.appendChild(imgDiv)
-                                    }
-
+                                    imgDiv.innerHTML = `
+                                        <img src="${fileURL}" class="w-full h-full rounded-xl obejct-cover" alt="" />
+                                    `;
+                                    container.appendChild(imgDiv);
                                 }
                             });
-
-
-
                         </script>
 
                     </div>
@@ -393,6 +402,33 @@
                             </div>
                         </div>
                     </div>
+                    <script>
+                        document.getElementById('recipeForm').addEventListener('submit', function(event) {
+                            // Prevent the form from submitting by default
+                            event.preventDefault();
+                    
+                            // Check if at least one checkbox is checked
+                            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                            var atLeastOneChecked = false;
+                            checkboxes.forEach(function(checkbox) {
+                                if (checkbox.checked) {
+                                    atLeastOneChecked = true;
+                                }
+                            });
+                    
+                            // If at least one checkbox is not checked, display a SweetAlert message
+                            if (!atLeastOneChecked) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Please select at least one checkbox!',
+                                });
+                            } else {
+                                // If at least one checkbox is checked, submit the form
+                                event.target.submit();
+                            }
+                        });
+                    </script>
                     <br>
                 </div>
 
