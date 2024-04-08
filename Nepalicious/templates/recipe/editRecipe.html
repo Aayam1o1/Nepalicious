@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Recipe</title>
+</head>
+
+<body class="bg-gray-100">
+    {% extends '../profiles/navigationSidebar/profilebase.html' %}
+    {% block content %}
+    <div class="container bg-gray-100 ">
+        {% comment %} formstart {% endcomment %}
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- buttons -->
+            <div class="shadow-sm bg-white p-2 flex justify-between rounded-xl">
+                <div class="p-4">
+                    <h1 class="text-3xl font-semibold">Edit Recipe</h1>
+
+                    <!-- for dispalying errors -->
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Error!</strong> Please correct the following errors:
+                        <ul>
+                            {% for error in form.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+
+                </div>
+                <div class="flex justify-between mt-5 mr-5">
+                    <button type="button" onclick="discardChanges()"
+                        class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
+                        <span class="text-red-600">Discard Changes</span>
+                    </button>
+
+                    {% comment %} script for discard {% endcomment %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var imageInput = document.getElementById('product-image') || [];
+
+                            // Get the URLs of existing images
+                            var existingImages = document.querySelectorAll('.product-image');
+                            
+                            console.log(existingImages.length);
+                            // Function to handle change in the image input
+                            imageInput.addEventListener('change', function (event) {
+                                var files = event.target.files;
+                                var container = document.getElementById("image-container");
+                                document.getElementById('product-img-heading').style.display = "none";
+                                
+                                // Clear existing images
+                                container.innerHTML = '';
+                                
+                                
+                                // Display uploaded images
+                                for (let i = 0; i < Math.min(files.length, 3); i++) {
+                                    const file = files[i];
+                                    const fileURL = URL.createObjectURL(file);
+                                    
+                                    const imgDiv = document.createElement("div");
+                                    imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
+                                    imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
+                                    
+                                    container.appendChild(imgDiv);
+                                }
+
+                            });
+                        });
+                        function discardChanges() {
+                            // Get the form element and reset it
+                            var form = document.querySelector('form');
+                            form.reset();
+                    
+                            // Remove uploaded images
+                            var imageContainer = document.getElementById('image-container');
+                            imageContainer.innerHTML = '';
+                    
+                            // Reset the image heading
+                            var imageHeading = document.getElementById('product-img-heading');
+                            imageHeading.style.display = 'block';
+                        }
+                        function buttondisabledimage() {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Please upload exactly 3 images.',
+                                icon: 'error',
+                                confirmButtonText: 'Ok'
+                            });
+                        }
+                    
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var submitButton = document.querySelector('button[type="submit"]');
+                            var imageInput = document.getElementById('product-image');
+                            var existingImages = document.querySelectorAll('.product-image');
+
+                            
+                            // Function to handle submit button click
+                            submitButton.addEventListener('click', function (event) {
+                                var files = imageInput.files;
+                                if (files.length !== 3 || existingImages.length !== 3) {
+                                    event.preventDefault(); // Prevent form submission if the number of images is not 3
+                                    buttondisabledimage(); // Call the error function
+                                }
+                            });
+                    
+                            // Function to handle change in the image input
+                            imageInput.addEventListener('change', function (event) {
+                                var files = event.target.files;
+                                if (files.length === 3) {
+                                    submitButton.disabled = false; // Enable submit button if exactly 3 images are uploaded
+                                } else {
+                                    buttondisabledimage(); // Disable submit button if the number of images is not 3
+                                }
+                            });
+                        });
+                    </script>
+
+                    <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
+                        <span class="text-white">Make Changes</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- adding gap -->
+            <div class="bg-gray-100">
+                <br>
+
+            </div>
+            <div class="flex justify-between">
+                <!-- general informations -->
+                <div class="container2 shadow-sm bg-white rounded-xl w-[48%] h-[57.5vh] mb-5">
+                    <!-- Recipe name -->
+                    <div class="flex justify-between">
+                        <div class="p-5">
+                            <h1 class="text-2xl mb-5 font-bold">General Infromation</h1>
+
+                            <label class="text-xl">Recipe Name</label><br>
+                            {{ form.recipeName }}<br>
+
+                            <Label class="text-xl">Recipe Description</Label><br>
+                            <!-- <textarea class="border-2 border-gray-400 rounded-xl p-1 mt-2 w-[25rem] bg-gray-100"
+                                name="productDescription" rows="5" cols="20"></textarea> -->
+                            {{ form.recipeDescription }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-[50%] mr-4">
+                    <!-- add image of recipe -->
+                    <div class="shadow-sm bg-white rounded-xl h-[57.5vh] w-[100%]">
+                        <div class="p-4">
+
+                            <h1 class="text-2xl font-bold ">Add Image of the food</h1>
+                            <p>(All existing images will be replaced upon editing the product.)</p>
+                        </div>
+                            <div class="pt-2 pl-24 md:pr-[40px]"></div>
+
+                        <!-- Container for displaying uploaded recipe images -->
+
+                        <h1 class="text-center px-5" id="product-img-heading">images Will be uploded here Add Upto 3
+                            images</h1>
+
+                        <div id="image-container" class="grid grid-cols-3 gap-3 ml-7">
+                            <!-- Display existing images -->
+                        {% for image in recipe_instance.images.all %}
+                        
+                        <div class="w-[10rem] h-[10rem] rounded-xl">
+                            <img src="{{ image.image.url }}" class="product-image w-full h-full rounded-xl object-cover" alt="sure" />
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <!--HERE IMAGE WILL BE DISPLAYED-->
+
+                        <div class="flex justify-center mt-[5rem]">
+                            <label required for="recipe-image-input"
+                                class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex justify-center w-[15rem] px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
+                                <span>Add image</span>
+                                <input id="product-image" name="recipeImage" type="file" accept="image/*"
+                                    multiple class="absolute block opacity-0 w-full h-full cursor-pointer" required />
+                            </label>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <!-- steps -->
+                <div class="container4 bg-gray-100 rounded-xl w-[48%] rounded-xl">
+                    {% comment %} Steps {% endcomment %}
+                    <div class="rounded-xl bg-white">
+                        <div class="flex justify-between rounded-xl">
+                            <div class="p-5 rounded-xl">
+                                <h1 class="text-2xl mb-5 font-bold">Steps for the recipe</h1>
+                                <div class="pb-10 flex">
+                                    <input type="text" name="recipeInput" id="recipeInput" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100" placeholder="Enter Steps and press add">
+                                    <button type="button" onclick="addStep()" class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
+                                </div>
+                                <div class="mt-4 w-full md:w-[62%] text-gray-400">
+ 
+                                </div>
+                                <div id="recipeContainerWrapper">
+                                    <div id="recipeContainer" class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
+                                        <h1 class="text-2xl font-semibold pb-5 ">Steps for the Recipe</h1>
+                                        <div class=" w-full md:w-[62%] text-gray-400" id="stepsContainer">
+                                            <p class="text-l font-small  ">
+                                                {% for step in recipeSteps %}
+                                                <div class="step"> 
+
+                                                    {% if '.' in step %}
+                                                <p style="margin-bottom: 10px;" class="">{{ step|linebreaksbr|safe }}</p>
+                                                {% else %}
+                                                <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
+                                                {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>     
+                        </div>
+                    </div>
+                    <script>
+                        // Function to initialize the step counter based on the existing steps
+                        function initializeStepCounter() {
+                            var existingSteps = document.querySelectorAll(".step");
+                            if (existingSteps.length > 0) {
+                                var lastStepNumber = parseInt(existingSteps[existingSteps.length - 1].textContent.split('.')[0]);
+                                stepCounter = lastStepNumber + 1;
+                            } else {
+                                stepCounter = 1;
+                            }
+                    
+                            // Print the existing steps to the console
+                            console.log("Existing Steps:");
+                            existingSteps.forEach(function(step) {
+                                console.log(step.textContent);
+                            });
+                        }
+                    
+                        // Call the function to initialize the step counter
+                        initializeStepCounter();
+                    
+                        function addStep() {
+                            var recipeInput = document.getElementById("recipeInput");
+                            var stepValue = recipeInput.value.trim();
+                            
+                            if (stepValue === "") {
+                                alert("Step cannot be empty");
+                                return;
+                            }
+                            
+                            // Remove any full stops in the middle of the step
+                            stepValue = stepValue.replace(/\./g, '');
+                            
+                            // Add a full stop at the end of the step if it doesn't already have one
+                            if (!stepValue.endsWith('.')) {
+                                stepValue += '.';
+                            }
+                            
+                            // Append new step to the existing steps container
+                            var stepsContainer = document.getElementById("stepsContainer");
+                            var stepElement = document.createElement("div");
+                            stepElement.classList.add("step"); // Add the "step" class to the step element
+                            stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
+                            stepsContainer.appendChild(stepElement);
+                            
+                            updateHiddenStepsInput();
+                            
+                            stepCounter++; // Increment the step counter
+                        }s
+                        
+                        function updateHiddenStepsInput() {
+                            var stepsContainer = document.getElementById("stepsContainer");
+                            var steps = stepsContainer.querySelectorAll(".step");
+                            var hiddenStepInput = document.getElementById("hiddenStepInput");
+                            var stepsText = [];
+                        
+                            steps.forEach(function(step) {
+                                stepsText.push(step.textContent);
+                            });
+                        
+                            hiddenStepInput.value = stepsText.join(", ");
+                        }
+                    </script>
+
+                </div>
+                <!-- for ingredients -->
+                <div class="container4 bg-gray-100 rounded-xl w-[50%] mr-4 rounded-xl">
+                    {% comment %} Steps {% endcomment %}
+                    <div class="rounded-xl bg-white">
+                        <div class="flex justify-between rounded-xl">
+                            <div class="p-5 rounded-xl">
+                                <h1 class="text-2xl mb-5 font-bold">List of the ingredients</h1>
+                                <div class="pb-10 flex">
+                                    <input type="text" id="ingredientsInput"
+                                        class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100"
+                                        placeholder="Enter Ingredients and press add">
+                                    <button type="button" onclick="addIngredient()"
+                                        class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
+                                </div>
+                                <div id="ingredientsContainerWrapper" style="display: none;">
+                                    <div id="ingredientsContainer"
+                                        class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
+                                        <h1 class="text-2xl font-semibold pb-5 ">List of ingredients</h1>
+                                        <!-- Steps will be dynamically added here -->
+                                        <input type="hidden" id="hiddenIngredientsInput" name="ingredients" value=""
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--FOR ingredients-->
+                        <script>
+                            var ingredientCounter = 1; // Counter for numbering ingredients
+
+                            function addIngredient() {
+                                var ingredientsInput = document.getElementById("ingredientsInput");
+                                var ingredientValue = ingredientsInput.value.trim();
+
+                                if (ingredientValue === "") {
+                                    alert("Ingredient cannot be empty");
+                                    return;
+                                }
+
+                                var ingredientsContainerWrapper = document.getElementById("ingredientsContainerWrapper");
+                                ingredientsContainerWrapper.style.display = "block";
+
+                                var ingredientsContainer = document.getElementById("ingredientsContainer");
+                                var ingredientElement = document.createElement("div");
+                                ingredientElement.textContent = ingredientCounter + ". " + ingredientValue; // Include numbering
+                                ingredientsContainer.appendChild(ingredientElement);
+
+                                ingredientsInput.value = ""; // Clear input field after adding ingredient
+                                updateHiddenIngredientsInput();
+
+                                ingredientCounter++; // Increment the ingredient counter
+                            }
+
+                            function updateHiddenIngredientsInput() {
+                                var ingredientsContainer = document.getElementById("ingredientsContainer");
+                                var ingredients = ingredientsContainer.querySelectorAll("div");
+                                var hiddenIngredientsInput = document.getElementById("hiddenIngredientsInput");
+                                var ingredientsText = [];
+
+                                ingredients.forEach(function (ingredient) {
+                                    ingredientsText.push(ingredient.textContent);
+                                });
+
+                                hiddenIngredientsInput.value = ingredientsText.join(", ");
+                            }
+                        </script>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="flex mt-5 gap-2">
+
+                <!-- add cuisine type -->
+                <div class="shadow-sm bg-white rounded-xl w-[48%] p-4 h-auto pl-[2rem]">
+                    <h2 class="text-2xl font-bold mb-4">Cuisine Type</h2>
+
+                    <div class="relative inline-block text-gray-700">
+                        {{ form.cuisineType }}
+
+                    </div>
+
+                    <br>
+                </div>
+
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var cuisineTypeToggle = document.getElementById('cuisineTypeToggle');
+                        var cuisineTypeContent = document.getElementById('cuisineTypeContent');
+
+                        var checkboxes = document.querySelectorAll('input[name="cuisineType"]');
+
+                        cuisineTypeToggle.addEventListener('click', function () {
+                            cuisineTypeContent.classList.toggle('hidden');
+                        });
+
+                        // Add event listener to update the selected cuisine type
+                        checkboxes.forEach(function (checkbox) {
+                            checkbox.addEventListener('change', function () {
+                                // Get the checked checkboxes
+                                var selectedCuisineTypes = Array.from(checkboxes)
+                                    .filter(checkbox => checkbox.checked)
+                                    .map(checkbox => checkbox.value);
+
+                                // Update button text with selected cuisine types
+                                cuisineTypeToggle.textContent = selectedCuisineTypes.join(', ');
+                            });
+                        });
+
+                        // Close dropdowns when clicking outside
+                        document.addEventListener('click', function (event) {
+                            var isClickInsideCuisineType = cuisineTypeToggle.contains(event.target) ||
+                                cuisineTypeContent.contains(event.target);
+                            if (!isClickInsideCuisineType) {
+                                cuisineTypeContent.classList.add('hidden');
+                            }
+
+                        });
+                    });
+                </script>
+                
+
+
+                <!-- add cuisine tag -->
+                <div class="shadow-sm bg-white rounded-xl w-[48%] p-4 h-auto pl-[2rem]">
+                    <h2 class="text-2xl font-bold mb-4">Recipe Tags for Product</h2>
+
+                    <div class="relative inline-block text-gray-700">                        
+                        <div class="">
+                            <div>
+                                <input class="mr-2 leading-tight" type="checkbox" id="reicpeTag1" name="reicpeTag1" value="spicesFood">
+                                <span>
+                                    Spices and Food
+                                </span>
+                            </div>
+                            <div>
+                                <input class="mr-2 leading-tight" type="checkbox" id="reicpeTag2" name="reicpeTag2" value="pansPots">
+                                <span>
+                                    Pans and Pots
+                                </span>
+                            </div>
+                            <div>
+                                <input class="mr-2 leading-tight" type="checkbox" id="reicpeTag3" name="reicpeTag3" value="knifes">
+                                <span>
+                                    Knifes
+                                </span>
+                            </div>
+                            <div>
+                                <input class="mr-2 leading-tight" type="checkbox" id="reicpeTag4" name="reicpeTag4" value="electricAppliance">
+                                <span>
+                                    Electric Appliance
+                                </span>
+                            </div>
+                            <div>
+                                <input class="mr-2 leading-tight" type="checkbox" id="reicpeTag5" name="reicpeTag5" value="cleaningAppliance">
+                                <span>
+                                    Cleaning Appliance
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+
+
+            </div>
+        </form>
+    </div>
+    <form id="editStepForm" style="display: none;" method="post">
+        {% csrf_token %}
+        <input type="hidden" id="stepIndex" name="stepIndex" value="">
+        <textarea id="stepText" name="stepText" rows="3"></textarea>
+        <button type="submit" id="saveStepBtn">Save</button>
+    </form>
+    {% endblock %}
+</body>
+
+</html>

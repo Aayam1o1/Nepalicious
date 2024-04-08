@@ -148,7 +148,14 @@ def productDetail(request, product_id):
     
     return render(request, 'marketplace/productDetail.html', context)
 
+
 def your_product(request):
+    if request.method == 'POST':
+        if "edit" in request.POST:
+            product_id = request.POST.get("product_id")
+            
+            return redirect("edit_product", product_id)
+            
     user = request.user
     productList = addProducts.objects.filter(user=user, isdeleted = False)
     
@@ -219,13 +226,13 @@ def edit_product(request, product_id):
             
             # Handle product images
             if new_images:
+                print("print1")
                 for old_image in old_images:
                     if old_image.image not in new_images:
                         old_image.delete()
-
+                        
                 for uploaded_file in new_images:
                     productImage.objects.create(addProducts=product_instance, image=uploaded_file)
-            
             messages.success(request, "Successfully edited product")
             return redirect('productDetail', product_id=product_instance.id)
     else:

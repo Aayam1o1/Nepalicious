@@ -235,6 +235,118 @@ def recipeDetail(request, recipe_id):
     
     return render(request, 'recipe/recipeDetail.html', context)
 
+
+def your_recipe(request):
+    if request.method == 'POST':
+        if "edit" in request.POST:
+            recipe_id = request.POST.get("recipe_id")
+            
+            return redirect("edit_recipe", recipe_id)
+        
+        
+    user = request.user
+    latest_recipe = addRecipe.objects.filter(user=user)
+    
+    items_per_page = 4
+    
+    page = request.GET.get('page', 1)
+    
+    
+     # Create a Paginator object
+    paginator = Paginator(latest_recipe, items_per_page)
+
+    try:
+        # Get the current page
+        latest_recipe = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        latest_recipe = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        latest_recipe = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
+    
+
+    
+    context = {
+        'latest_recipe': latest_recipe,
+    }
+
+    
+    return render(request, 'recipe/yourRecipe.html', context)
+
+def delete_recipe(request, recipe_id):
+    url  = request.META.get('HTTP_REFERER')
+    recipe = addRecipe.objects.get(id=recipe_id)
+    if request.method == 'POST':
+        try:
+            recipe.delete()
+            sweetify.success(request, "Recipe has been deleted successfully", timer=3000)
+            return redirect(url)
+        except Exception as e:
+            messages.error(request, f"Error deleting Recipe: {str(e)}")
+            return redirect(url)
+    return redirect(url)
+
+    
+def edit_recipe(request, recipe_id):
+    recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
+    
+    recipeStepsString = recipe_instance.recipeSteps
+
+    recipeSteps = [step.strip() for step in recipeStepsString.split(',') if step.strip()]
+    
+    # Ensure recipe steps is always a string, even if it's empty
+    if request.method == 'POST':
+        # If it's a POST request, process the form data
+        form = editRecipeForm(request.POST, instance=recipe_instance)
+        new_step_text = request.POST.get('recipeInput').strip()
+        print("newstep", new_step_text)
+        if form.is_valid():
+            form.save()
+
+           # Process the added step
+            
+            print("newstep", new_step_text)
+            
+            if new_step_text:
+                # Append the new step to the existing steps
+                recipeSteps.append(new_step_text)
+                print("recipeSteps after adding new step:", recipeSteps)
+            recipe_instance.recipeSteps = ", ".join(recipeSteps)
+            
+            print("recipe::", recipe_instance.recipeSteps)
+            recipe_instance.save()
+                
+                
+            new_images = request.FILES.getlist('recipeImage')
+            
+            # Get the list of existing images
+            old_images = recipe_instance.images.all()
+                        
+            # Handle product images
+            if new_images:
+                for old_image in old_images:
+                    if old_image.image not in new_images:
+                        old_image.delete()
+
+                for uploaded_file in new_images:
+                    recipeImage.objects.create(addRecipe=recipe_instance, image=uploaded_file)
+            
+            sweetify.success(request, "Successfully edited Recipe")
+            return redirect('recipeDetail', recipe_id=recipe_instance.id)
+    else:
+        # If it's not a POST request, populate the form with instance data
+        form = editRecipeForm(instance=recipe_instance)
+    
+    context = {
+        'form': form,
+        'recipe_instance': recipe_instance,
+        'recipeSteps': recipeSteps,  
+    }    
+    
+    return render(request, 'recipe/editRecipe.html', context)
 #submt review
 def submit_review_recipe(request, recipe_id):
     # getting the url fort the same webpage

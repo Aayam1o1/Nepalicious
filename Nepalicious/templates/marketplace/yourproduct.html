@@ -95,7 +95,7 @@
 </head>
 
 
-<body class="bg-gray-100" onload="reloadPageOnLoad()">
+<body class="bg-gray-100">
     {% extends '../profiles/navigationSidebar/profilebase.html' %}
     {% block content %}
     {% load static %}
@@ -142,9 +142,10 @@
                 <p id="rating-message" class="mt-2 text-gray-600"></p>
                 <div class="flex gap-2 justify-between mt-5">
                     <div class="w-full">
-                        <form method="POST" action="{% url 'edit_product' product.id %}">
+                        <form method="POST" action="">
                             {% csrf_token %}
-                            <button type="submit" class="bg-blue-400 text-white p-2 rounded-xl w-full"> Edit </button>
+                            <input type="hidden" name = "product_id" value = "{{product.id}}">
+                            <button type="submit" name="edit" class="bg-blue-400 text-white p-2 rounded-xl w-full"> Edit </button>
                         </form>
                     </div>
                     <!-- reload pages -->

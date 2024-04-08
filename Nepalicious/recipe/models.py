@@ -23,7 +23,8 @@ class addRecipe(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipeProductTags = models.TextField(blank=False)
 
-    
+    def __str__(self):
+        return f"{self.recipeName}"
     
 class recipeImage(models.Model):
     addRecipe = models.ForeignKey(addRecipe, related_name ='images', on_delete=models.CASCADE)

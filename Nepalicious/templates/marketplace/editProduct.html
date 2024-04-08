@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Product</title>
-
-
-
     
 </head>
 
 <body class="bg-gray-100" >
     {% extends '../profiles/navigationSidebar/profilebase.html' %}
     {% block content %}
+    {% load static %}
+    <script>
+        
+    </script>
     <div class="container bg-gray-100 ">
         {% comment %} formstart {% endcomment %}
         <form action="" method="post" enctype="multipart/form-data">
@@ -42,6 +43,37 @@
 
                     {% comment %} script for discard {% endcomment %}
                     <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var imageInput = document.getElementById('product-image') || [];
+
+                            // Get the URLs of existing images
+                            var existingImages = document.querySelectorAll('.product-image');
+                            
+                            console.log(existingImages.length);
+                            // Function to handle change in the image input
+                            imageInput.addEventListener('change', function (event) {
+                                var files = event.target.files;
+                                var container = document.getElementById("image-container");
+                                document.getElementById('product-img-heading').style.display = "none";
+                                
+                                // Clear existing images
+                                container.innerHTML = '';
+                                
+                                
+                                // Display uploaded images
+                                for (let i = 0; i < Math.min(files.length, 3); i++) {
+                                    const file = files[i];
+                                    const fileURL = URL.createObjectURL(file);
+                                    
+                                    const imgDiv = document.createElement("div");
+                                    imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
+                                    imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
+                                    
+                                    container.appendChild(imgDiv);
+                                }
+
+                            });
+                        });
                         function discardChanges() {
                             // Get the form element and reset it
                             var form = document.querySelector('form');
@@ -67,11 +99,13 @@
                         document.addEventListener("DOMContentLoaded", function () {
                             var submitButton = document.querySelector('button[type="submit"]');
                             var imageInput = document.getElementById('product-image');
-                    
+                            var existingImages = document.querySelectorAll('.product-image');
+
+                            
                             // Function to handle submit button click
                             submitButton.addEventListener('click', function (event) {
                                 var files = imageInput.files;
-                                if (files.length !== 3) {
+                                if (files.length !== 3 || existingImages.length !== 3) {
                                     event.preventDefault(); // Prevent form submission if the number of images is not 3
                                     buttondisabledimage(); // Call the error function
                                 }
@@ -88,9 +122,8 @@
                             });
                         });
                     </script>
-
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
-                        <span class="text-white">Edit Product</span>
+                        <span class="text-white">Change Product</span>
                     </button>
                 </div>
             </div>
@@ -106,24 +139,18 @@
                     <!-- product name -->
                     <div class="flex justify-between">
                         <div class="p-5">
-                            <h1 class="text-2xl mb-5 font-bold">General Infromation</h1>
+                            <h1 class="text-2xl mb-5 font-bold">General Information</h1>
                             
                             <Label class="text-xl">Product Name</Label><br>
-                            <!-- <input type="text" placeholder="Product Name" name="productName"
-                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100">-->
                             {{ form.productName }}<br>
 
 
                             <Label class="text-xl">Product Brand</Label><br>
-                            <!-- <input type="text" placeholder="Product Brand" name="producBrand"
-                                class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
-                                {{ form.productBrand }}<br>
+                            {{ form.productBrand }}<br>
 
 
                             <Label class="text-xl">Product Description</Label><br>
-                            <!-- <textarea class="border-2 border-gray-400 rounded-xl p-1 mt-2 w-[25rem] bg-gray-100"
-                                name="productDescription" rows="5" cols="20"></textarea> -->
-                                {{ form.productDescription }}
+                            {{ form.productDescription }}
                         </div>
                     </div>
                 </div>
@@ -140,13 +167,14 @@
 
                     <!-- Container for displaying uploaded product images -->
                     
-                    <h1 class="text-center px-5" id="product-img-heading">Images Will be uploded here Add Upto 3 images</h1>
+                    <h1 class="text-center px-5" id="product-img-heading">Images Will be uploaded here Add Up to 3 images</h1>
                     
                     <div id="image-container" class="grid grid-cols-3 gap-3 ml-3">
                         <!-- Display existing images -->
                         {% for image in product_instance.images.all %}
+                        
                         <div class="w-[10rem] h-[10rem] rounded-xl">
-                            <img src="{{ image.url }}" class="w-full h-full rounded-xl object-cover" alt="sure" />
+                            <img src="{{ image.image.url }}" class="product-image w-full h-full rounded-xl object-cover" alt="sure" />
                         </div>
                         {% endfor %}
                     </div>
@@ -160,28 +188,9 @@
                     </div>
                     
                     <script>
-                        document.getElementById("product-image").addEventListener('change', function (event) {
-                            const container = document.getElementById("image-container");
-                            const files = event.target.files;
-                            document.getElementById('product-img-heading').style.display = "none";
-                            
-                            // Clear existing images
-                            container.innerHTML = '';
-                    
-                            // Display uploaded images
-                            for (let i = 0; i < Math.min(files.length, 3); i++) {
-                                const file = files[i];
-                                const fileURL = URL.createObjectURL(file);
-                                
-                                const imgDiv = document.createElement("div");
-                                imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
-                                imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
-                                
-                                container.appendChild(imgDiv);
-                            }
-                        });
+                        
                     </script>
-
+                    
                     </div>
                 </div>
             </div>
@@ -194,9 +203,7 @@
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Price</h1>
                                 <Label class="text-xl">Product Price</Label><br>
-                                <!-- <input type="text" placeholder="Product Price" name="productPrice"
-                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
-                                    {{ form.productPrice }}<br>
+                                {{ form.productPrice }}<br>
                             </div>
                         </div>
                     </div>
@@ -210,9 +217,7 @@
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Stock</h1>
                                 <Label class="text-xl">Product Stock</Label><br>
-                                <!-- <input type="text" placeholder="Product Stock" name="productStock"
-                                    class="border-2 border-gray-400 rounded-xl p-1 mt-2 mb-5 w-[25rem] bg-gray-100"> -->
-                                    {{ form.productStock }}<br>
+                                {{ form.productStock }}<br>
                             </div>
                         </div>
                     </div>
@@ -234,45 +239,6 @@
                     <br>
                 </div>
 
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        var categoryDropdownToggle = document.getElementById('categoryDropdownToggle');
-                        var categoryDropdownContent = document.getElementById('categoryDropdownContent');
-                        
-                        var checkboxes = document.querySelectorAll('input[name="category"]');
-                        
-                        categoryDropdownToggle.addEventListener('click', function () {
-                            categoryDropdownContent.classList.toggle('hidden');
-                        });
-
-                        // Add event listener to update the selected category
-                        checkboxes.forEach(function (checkbox) {
-                            checkbox.addEventListener('change', function () {
-                                // Get the checked checkboxes
-                                var selectedCategories = Array.from(checkboxes)
-                                    .filter(checkbox => checkbox.checked)
-                                    .map(checkbox => checkbox.value);
-
-                                // Update button text with selected categories
-                                categoryDropdownToggle.textContent = selectedCategories.join(', ');
-                            });
-                        });
-
-                     
-
-                        // Close dropdowns when clicking outside
-                        document.addEventListener('click', function (event) {
-                            var isClickInsideCategory = categoryDropdownToggle.contains(event.target) ||
-                                categoryDropdownContent.contains(event.target);
-                            if (!isClickInsideCategory) {
-                                categoryDropdownContent.classList.add('hidden');
-                            }
-
-                        });
-                    });
-                </script>
-
             </div>
         </form>
     </div>
@@ -281,8 +247,5 @@
     
 
 </body>
-
-
-    
 
 </html>
