@@ -226,52 +226,55 @@
                 <h1 class="text-3xl font-bold mb-2">Similar Restaurant</h1>
             </div>
             <div class="grid grid-cols-4 ml-[4rem] ">
-
+                {% if category_restaurants  %}
                 {% for restaurant in category_restaurants %}
                 <div class="w-[18rem] py-4">
-
+                    
                     <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
                         <!-- Carousel wrapper -->
-
+                        
                         <div class="relative h-[15rem] w-[15rem] overflow-hidden rounded-lg">
                             {% for image in restaurant.images.all %}
                             <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                <a href="#"><img src="{{ image.image.url }}" alt="" class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover" /></a>
+                                <a href="{% url 'view_details' restaurant.id %}"><img src="{{ image.image.url }}" alt="" class="rounded-md md:aspect-auto w-full h-full rounded-lg object-cover" /></a>
                             </div>
                             {% endfor %}
                         </div>
-
+                        
                     </div>
-
-
+                    
+                    
                     <!-- display other data -->
                     <div class="">
-
+                        
                         <h1 class="text-lg font-medium mt-4">{{ restaurant.user.usersdetail.restaurant_name }}</h1>
                         
-
+                        
                         <p class="rating-stars" class="">
                             <!-- Display average rating as stars -->
                             {% if restaurant.avg_rating %}
                             {% for i in "12345" %}
                             {% if i|add:0 <= restaurant.avg_rating %} <span class="star filled">&#9733;</span>
-                                {% else %}
-                                <span class="star">&#9733;</span>
-                                {% endif %}
-                                {% endfor %}
-                                {% else %}
-                                <p class="text-sm mt-1">
-                                    No reviews yet
-                                </p>
-                                {% endif %}
+                            {% else %}
+                            <span class="star">&#9733;</span>
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            <p class="text-sm mt-1">
+                                No reviews yet
+                            </p>
+                            {% endif %}
                         </p>
                         <p id="rating-message" class="mt-2 text-gray-600"></p>
-
+                        
                     </div>
                 </div>
-
+                
                 {% endfor %}
+                {% else %}
+                No Similar Restaurant
+                {% endif %}
 
             </div>
         </div>

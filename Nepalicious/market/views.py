@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
-from django.db.models import Sum, F, Avg
+from django.db.models import Sum, F, Avg, Q
 import json
 import requests
 from django.http import HttpResponse
@@ -12,36 +12,68 @@ from django.core.mail import send_mail
 import random
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import re
 
 
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
-    items_per_page = 8
-    page = request.GET.get('page', 1)
-    
-    
-     # Create a Paginator object
-    paginator = Paginator(productList, items_per_page)
+    #PAGINATION
+    # items_per_page = 8
+    # page = request.GET.get('page', 1)
+    #  # Create a Paginator object
+    # paginator = Paginator(productList, items_per_page)
+    # try:
+    #     # Get the current page
+    #     productList = paginator.page(page)
+    # except PageNotAnInteger:
+    #     # If page is not an integer, delivering the first page
+    #     productList = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range, delivering the last page of results
+    #     productList = paginator.page(paginator.num_pages)
+    # # Get the current page number from the request's GET parameters
+    # page = request.GET.get('page', 1)
 
-    try:
-        # Get the current page
-        productList = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
-        productList = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, delivering the last page of results
-        productList = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
-    
-    
     for product in productList:
         # Calculate average rating for each product
         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    
+    category = request.GET.get("category")
+    print("category", category)
+    
+    pricerange = request.GET.get("pricerange") 
+    ratingrange = request.GET.get("rating")
+    
+    
+    if pricerange is not None:
+        productList = productList.filter(Q(productPrice__lte=pricerange))
+        print("productList==", productList)
         
+    if ratingrange is not None:
+        rating = float(ratingrange)
+        print("ratingsssssssssssssssssssssssssss", rating)
+        productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
+            # Calculate average rating for each product
+        avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        product.avg_rating = avg_rating  
+        print("productList==", productList)
+        
+    if category:
+        # Assuming 'productList' is your queryset of products
+        productList = addProducts.objects.filter(productCategory=category)
+        print("productListproductListproductListproductListproductListproductListproductList", productList)
+
+    
+    
+    # ratingrange = request.GET.get("rating")
+    
+    print("range", pricerange)
+    print("rating", ratingrange)
+        
+
+    
     context = {
         'productList': productList,
         
@@ -574,11 +606,14 @@ def checkout(request):
         # if user_cart.products.exists():
         new_address = request.POST.get('address')
         new_number = request.POST.get('phone_number')
-        
+        if not re.match(r'^(98|97)\d{8}$', new_number):
+                    sweetify.error(request,"Invalid contact number")
+                    return redirect('cart')
         # Update the address and number in the cart
         user_cart.new_address = new_address
         user_cart.new_number = new_number
         user_cart.save()
+        sweetify.success(request, "The details have been updated successfully")
         return redirect('cart')
        
         

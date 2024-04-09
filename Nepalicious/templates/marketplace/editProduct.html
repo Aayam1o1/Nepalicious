@@ -105,7 +105,9 @@
                             // Function to handle submit button click
                             submitButton.addEventListener('click', function (event) {
                                 var files = imageInput.files;
-                                if (files.length !== 3 || existingImages.length !== 3) {
+                                if(existingImages.length === 3) return;
+
+                                if (files.length !== 3) {
                                     event.preventDefault(); // Prevent form submission if the number of images is not 3
                                     buttondisabledimage(); // Call the error function
                                 }

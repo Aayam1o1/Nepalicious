@@ -100,51 +100,131 @@
     <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
         <div class="w-[20%] pl-[3rem] mt-3" id="container2">
             <div class="flex-col justify-around items-center w-[15rem]  ">
-                <div id="category" class="py-3">
-                    <div>
-                        <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
+                    <form action="{% url 'marketplace' %}" role="search">
+                        {% csrf_token %}
+
+
+
+                        <input type="radio" name="category" value="spicesFood" id="SpicesFood">
+                        <label for="spicesFood">Spices and Food</label><br>
+                    
+                        <input type="radio" name="category" value="pansPots" id="pansPots">
+                        <label for="pansPots">Pans and Pots</label><br>
+                    
+                        <input type="radio" name="category" value="knifes" id="Knifes">
+                        <label for="Knifes">Knifes</label><br>
+                    
+
+
+
+
+
+                        
+                        <div id="category" class="py-3">
+                        <div>
+                            <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
+                        </div>
+                        <div class="relative inline-block text-gray-700">                        
+                            <div class="">
+                                <div>
+                                    <input class="mr-2 leading-tight" type="checkbox" id="category1" name="category1" value="spicesFood">
+                                    <span>
+                                        Spices and Food
+                                    </span>
+                                </div>
+                                <div>
+                                    <input class="mr-2 leading-tight" type="checkbox" id="category2" name="category2" value="pansPots">
+                                    <span>
+                                        Pans and Pots
+                                    </span>
+                                </div>
+                                <div>
+                                    <input class="mr-2 leading-tight" type="checkbox" id="category3" name="category3" value="knifes">
+                                    <span>
+                                        Knifes
+                                    </span>
+                                </div>
+                                <div>
+                                    <input class="mr-2 leading-tight" type="checkbox" id="category4" name="category4" value="electricAppliance">
+                                    <span>
+                                        Electric Appliance
+                                    </span>
+                                </div>
+                                <div>
+                                    <input class="mr-2 leading-tight" type="checkbox" id="category5" name="category5" value="cleaningAppliance">
+                                    <span>
+                                        Cleaning Appliance
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="text-xl ml-[1rem] mt-6">Price</h1>
+
+                        <div class="max-w-md mx-auto">
+                            <input
+                                type="range"
+                                min="0"
+                                max="20000"
+                                step="1"
+                                value="0"
+                                class="w-[80%] mt-2"
+                                id="valueSlider"
+                                name="pricerange"
+                            >
+                            <div class="relative mt-2">
+                                <div id="valuePopup" class="absolute bg-gray-800 text-white text-xs px-2 py-1 rounded-md">
+                                    Rs0
+                                </div>
+                            </div>
+                        </div>
+
+                    <script>
+                        // Custom function to display and keep the value in a tooltip
+                        function updateValue() {
+                            const valueSlider = document.getElementById('valueSlider');
+                            const valuePopup = document.getElementById('valuePopup');
+                            const value = valueSlider.value;
+                            valuePopup.textContent = `Rs${value}`;
+                            valuePopup.style.left = `${(value / 20000) * 100}%`;        }
+
+                        // Attach the custom function to the input event
+                        const valueSlider = document.getElementById('valueSlider');
+                        valueSlider.addEventListener('input', updateValue);
+
+                        // Display the tooltip initially when the page loads
+                        window.addEventListener('DOMContentLoaded', updateValue);
+                    </script>
+
+    
                     </div>
-                    <div class="w-90% ml-[1rem] text-[#B6B6B6]">
-                        <tr>
-                            <td>
-                                <p class="hover:text-[#FFC061] pt-1">Spices and foods</p>
-                            <td>
-                        <tr>
-                        <tr>
-                            <td>
-                                <p class="hover:text-[#FFC061] pt-1">Pans and Pots</p>
-                            <td>
-                        <tr>
-                        <tr>
-                            <td>
-                                <p class="hover:text-[#FFC061] pt-1">Knifes</p>
-                            <td>
-                        <tr>
-                        <tr>
-                            <td>
-                                <p class="hover:text-[#FFC061] pt-1 ">Electric Appliance</p>
-                            <td>
-                        <tr>
-                        <tr>
-                            <td>
-                                <p class="hover:text-[#FFC061] pt-1">Cleaning appliance</p>
-                            <td>
-                        <tr>
-                    </div>
-                    <div>
-                        <h1 class="text-xl ml-[1rem] mt-6">Price</h1>
-                        <p>Scale</p>
-                    </div>
-                    <div>
-                        <h1 class="text-xl ml-[1rem] mt-6">Rating</h1>
-                        <p>Scale</p>
+                    <h1 class="text-xl ml-[1rem] mt-10">Rating</h1>
+                    <div class="rate">
+                        <input type="radio" name="rating" id="rating10" value="5"  /><label
+                            for="rating10" title="5"></label>
+                        <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
+                        <input type="radio" name="rating" id="rating8" value="4"  /><label
+                            for="rating8" title="4"></label>
+                        <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
+                        <input type="radio" name="rating" id="rating6" value="3"  /><label
+                            for="rating6" title="3"></label>
+                        <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
+                        <input type="radio" name="rating" id="rating4" value="2"  /><label
+                            for="rating4" title="2"></label>
+                        <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
+                        <input type="radio" name="rating" id="rating2" value="1"  /><label
+                            for="rating2" title="1"></label>
+                        <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
                     </div>
                 </div>
             </div>
             <div class="pb-[2rem] flex justify-between mt-4 mr-10" id="rating-product price-product">
                 <button id="reset" class="bg-[#61A0FF] text-white p-2 rounded-xl h-10 w-[40rem]">Reset</button>
-                <button id="apply" class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
+
+                    <button id="apply" type="submit" name="searchbycategory" class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
             </div>
+        </form>
+
         </div>
 
         <!-- display products -->

@@ -30,103 +30,96 @@
     </script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 ">
     {% extends '../profiles/navigationSidebar/profilebase.html' %}
     {% block content %}
     {% load custom_tags %}
-
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <!-- For changing profile -->
-        <div>
-            <div class="border border-[#B6B6B6] rounded-full h-[10rem] w-[10rem] ml-[6rem]" id="profileImageField">
-                <img id="edit-image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
-                    class="h-[100%] w-[100%] object-cover rounded-full" />
-            </div>
-        <!-- change profile -->
-            <div class="flex justify-center ">
-                <label for="image-input"
-                    class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex items-center px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
-                    <span>Change profile</span>
-                    <input id="image-input" name="img" type="file" accept="image/png, image/jpeg" multiple
-                        class="absolute block opacity-0 w-full h-full cursor-pointer" />
-                </label>
-            </div>
-        <!-- save and remove button -->
-            <input type="hidden" name="user" value="{{request.user}}">
-            <div class="w-[380px] flex gap gap-10">
-                <div class="pt-4">
-                    <button name="saveImage" class="bg-[#FFC061] rounded-xl p-2 pl-5 pr-5 text-white">Save</button>
+    <!-- For changing profile -->
+    <div class="flex items-center justify-between w-[75%]">
+        <div class="flex items-center justify-between gap-4 p-12">
+            <div class="flex items-center flex-col gap-2">
+                <div class="border border-[#B6B6B6] rounded-full h-[8rem] w-[8rem]"
+                    id="profileImageField">
+                    <img id="edit-image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
+                        class="h-[100%] w-[100%] object-cover rounded-full" />
+                </div>
+                <!-- change profile -->
+                <div class="flex justify-center ">
+                    <label for="image-input" class="">
+                        <span class="cursor-pointer hover:text-blue-700 hover:underline hover:underline-offset-2">Change
+                            profile</span>
+                        <input id="image-input" name="img" type="file" accept="image/png, image/jpeg" multiple
+                            class="absolute block opacity-0  cursor-pointer" />
+                    </label>
                 </div>
 
-                <!-- Remove button -->
-                <div class="pt-4">
-                    <button name="deleteImage"
-                        class="text-white rounded-xl bg-red-800 focus:outline-none border border-gray-400 p-2 pl-5 pr-5 ">Remove</button>
+                <!-- save and remove button -->
+                <input type="hidden" name="user" value="{{request.user}}">
+                <div class="flex items-center gap-5">
+                    <div class="pt-4">
+                        <button name="saveImage" class="bg-[#FFC061] rounded-xl p-2 pl-5 pr-5 text-white">Save</button>
+                    </div>
+
+                    <!-- Remove button -->
+                    <div class="pt-4">
+                        <button name="deleteImage"
+                            class="text-white rounded-xl bg-red-800 focus:outline-none border border-gray-400 p-2  ">Remove</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- For changing other details -->
-        <div class="mt-5">
-            <div class="p-2 pl-16 grid gap-6 md:grid-cols-2 ">
+
+
+        <!--  -->
+        <div class="mt-10">
+            <div class=" space-y-8 ">
                 {% if request.user.is_authenticated and  request.user|has_group:"restaurant" %}
                 <div>
-                    <label for="restaurant_name" class="block mb-2 text-xl font-semibold text-gray-900 ">Restaurant name</label>
+                    <label for="restaurant_name" >Restaurant name</label>
                     <input name="restaurant_name" value="{{request.user.usersdetail.restaurant_name}}" type="first_name"
-                        class="focus:outline-none  text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                        placeholder="Your First Name">
+                        class="ml-[40px] pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1"
+                        placeholder="Your Restaurant Name">
                 </div>
                 {% else %}
-                <div>
-                    <label for="first_name" class="block mb-2 text-xl font-semibold text-gray-900 ">First name</label>
-                    <input name="first_name" value="{{request.user.first_name}}" type="first_name"
-                        class="focus:outline-none  text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                        placeholder="Your First Name">
+                <div class=" justify-between flex ">
+                    <label for="">First Name</label>
+                    <input name="first_name"  value="{{request.user.first_name}}" type="first_name"
+                        class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
-                <div>
-                    <label for="last_name" class="block mb-2 text-xl font-semibold text-gray-900 ">Last name</label>
-                    <input name="last_name" value="{{request.user.last_name}}" type="last_name"
-                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                        placeholder="Your last Name">
+
+                <div class=" justify-between flex ">
+                    <label for="">Last name</label>
+                    <input name="last_name"  value="{{request.user.last_name}}" type="last_name"
+                        class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
                 {% endif %}
-            </div>
-
-            <div class="p-2 pt-6 pl-16 grid gap-6 md:grid-cols-2 ">
-                <div class="pt-3">
-                    <label for="address" class="block mb-2 text-xl font-semibold text-gray-900 ">Address</label>
-                    <input name="address" type="address" value="{{request.user.usersdetail.address}}"
-                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                        placeholder="Your Email">
+                <div class=" justify-between flex ">
+                    <label for="">Contact number</label>
+                    <input name="phone_number"  type="phone_number"
+                        value="{{request.user.usersdetail.phone_number}}"
+                        class="ml-[40px] pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
 
-                <div class="pt-3">
-                    <label for="phone_number" class="block mb-2 text-xl font-semibold text-gray-900 ">Contact
-                        Number</label>
-                    <input name="phone_number" type="phone_number" value="{{request.user.usersdetail.phone_number}}"
-                        class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                        placeholder="Contact Number">
+                <div class=" justify-between flex ">
+                    <label for="">Address</label>
+                    <input name="address"  type="address" value="{{request.user.usersdetail.address}}"
+                        class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
-            </div>
-            <div class="p-2 pt-6 pl-16 ">
-                <label for="email" class="block mb-2 text-xl font-semibold text-gray-900 ">Email</label>
-                <input name="email" type="email" value="{{request.user.email}}"
-                    class="focus:outline-none text-gray-600 border border-2 border-[#85858] py-3 pl-2 rounded-[4px] w-full"
-                    placeholder="Your Email">
-            </div>
 
-            <div>
-
-                <input type="hidden" name="user" value="{{request.user}}">
+                
             </div>
-
-            <div class="p-4 mb-2 pl-16 w-56">
+            <div class=" mt-10 mb-2 w-40">
                 <button type=submit name="update"
                     class="bg-[#FFC061] rounded-[3px] w-full py-2 text-white rounded-xl">Update</button>
             </div>
+            </form>
         </div>
-    </form> <!-- FORM End -->
+    </div>
+
+    <!--  -->
 
     {% endblock %}
 

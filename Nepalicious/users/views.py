@@ -305,13 +305,15 @@ def editprofile(request):
             # UPDATING USER MODEL
             user.first_name = request.POST.get('first_name', '')
             user.last_name = request.POST.get('last_name', '')
-            user.email = request.POST.get('email')
             #saving the updated data
             user.save()
             
             # UPDATING userdetail MODEL
             user.usersdetail = user.usersdetail
             user.usersdetail.phone_number = request.POST.get('phone_number')
+            if not re.match(r'^(98|97)\d{8}$', user.usersdetail.phone_number):
+                    sweetify.error(request,"Invalid contact number")
+                    return redirect('editprofile')
             user.usersdetail.address = request.POST.get('address')
             user.usersdetail.restaurant_name = request.POST.get('restaurant_name', '')
             
