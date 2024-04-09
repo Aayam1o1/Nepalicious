@@ -10,6 +10,7 @@
 <body class="bg-gray-100">
     {% extends '../profiles/navigationSidebar/profilebase.html' %}
     {% block content %}
+    {% load embed_video_tags %}
     <div class="container bg-gray-100 ">
         {% comment %} formstart {% endcomment %}
         <form id="recipeForm" action="" method="post" enctype="multipart/form-data">
@@ -20,40 +21,16 @@
                     <h1 class="text-3xl font-semibold">Add Recipe</h1>
 
                     <!-- for dispalying errors -->
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <strong>Error!</strong> Please correct the following errors:
-                        <ul>
-                            {% for error in form.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
+                    
 
 
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
-                    <button type="button" onclick="discardChanges()"
-                        class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
-                        <span class="text-red-600">Discard Changes</span>
-                    </button>
+                    
 
                     {% comment %} script for discard {% endcomment %}
                     <script>
-                        function discardChanges() {
-                            // Get the form element and reset it
-                            var form = document.querySelector('form');
-                            form.reset();
-
-                            // Remove uploaded images
-                            var imageContainer = document.getElementById('image-container');
-                            imageContainer.innerHTML = '';
-
-                            // Reset the image heading
-                            var imageHeading = document.getElementById('product-img-heading');
-                            imageHeading.style.display = 'block';
-                        }
+                       
 
                         function buttondisabledimage() {
                             Swal.fire({
@@ -116,8 +93,8 @@
 
                         <!-- Container for displaying uploaded recipe images -->
 
-                        <h1 class="text-center px-5" id="product-img-heading">images Will be uploded here Add Upto 3
-                            images</h1>
+                        <h1 class="text-center px-5 text-l font-meduium" id="product-img-heading">(Add Upto 3 images)
+                            </h1>
 
                         <div id="image-container" class="grid grid-cols-3 gap-3 ml-7">
                         </div>
@@ -321,7 +298,10 @@
                         {{ form.cuisineType }}
 
                     </div>
-
+                    <h2 class="text-2xl font-bold mt-2 mb-2">Add Video URL</h2>
+                    <div>
+                        {{ form.video }}
+                    </div>
                     <br>
                 </div>
 
@@ -420,7 +400,7 @@
                             if (!atLeastOneChecked) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Oops...',
+                                    title: 'Select Tags for the Recipe',
                                     text: 'Please select at least one checkbox!',
                                 });
                             } else {

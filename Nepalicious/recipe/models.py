@@ -1,7 +1,7 @@
 from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
-
+from embed_video.fields import EmbedVideoField
 
  #Category choices
 cuisine = (
@@ -22,6 +22,7 @@ class addRecipe(models.Model):
     recipeSteps = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipeProductTags = models.TextField(blank=False)
+    video = EmbedVideoField(blank = True)
 
     def __str__(self):
         return f"{self.recipeName}"

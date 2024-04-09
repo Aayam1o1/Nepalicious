@@ -39,51 +39,60 @@
             height: 100%;
             object-fit: cover;
         }
+
         /* for stars */
-        .rate > input{
+        .rate>input {
             display: none;
         }
-        .rate{
+
+        .rate {
             display: inline-block;
             border: 0;
             font-size: 20px;
         }
+
         .rate .star {
-            font-size: inherit; /* Ensure that the font size remains consistent */
+            font-size: inherit;
+            /* Ensure that the font size remains consistent */
         }
-        .rate > label{
+
+        .rate>label {
             float: right;
         }
 
         /* for showing stars */
-        .rate > label:before{
+        .rate>label:before {
             display: inline-block;
             font-size: 1.1rem;
             font-family: FontAwesome;
             content: "\f005";
-            margin:0;
-            padding:0.3rem .2rem;
+            margin: 0;
+            padding: 0.3rem .2rem;
             cursor: pointer;
         }
 
         /* for half stars */
-        .rate .half:before{
+        .rate .half:before {
             content: "\f089";
             position: absolute;
             padding-right: 0;
-        
+
         }
 
         /* click and hover */
-        input:checked ~ label, label:hover ~ label{
+        input:checked~label,
+        label:hover~label {
             color: #ffb503;
         }
 
         /* hover highlight stars */
-        input:checked  + label:hover, input:checked ~ label:hover, input:checked ~ label:hover ~ label,
-        label:hover ~ input:checked ~ label{
+        input:checked+label:hover,
+        input:checked~label:hover,
+        input:checked~label:hover~label,
+        label:hover~input:checked~label {
             color: #cc9000;
         }
+
         .stars {
             color: #ddd;
             /* Default color of stars */
@@ -102,12 +111,14 @@
     {% block content %}
     {% load static %}
     {% load custom_tags %}
+    {% load embed_video_tags %}
 
     <!--  for recipe name and other details -->
     <div class="container-1 w-[80%] m-auto">
         <div class="flex justify-between mt-[4rem]">
             <div class="">
-                <h1 class="text-[#F89500] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{{recipeDetail.recipeName}}</h1>
+                <h1 class="text-[#F89500] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                    {{recipeDetail.recipeName}}</h1>
                 <div class="  flex justify-between text-l mb-2 w-[20rem] font-medium">
                     <div>
                         <h2>By: <span class="text-gray-400">{{ recipeDetail.user.username }} </span> </h2>
@@ -137,9 +148,9 @@
                 </div>
             </button>
             {% else %}
-            <!-- show if not saved -->                            
-            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
-            
+            <!-- show if not saved -->
+            {% if request.user|has_group:" " or request.user|has_group:"user" %}
+
             <form method="POST" action="{% url 'savedRecipe' recipeDetail.id %}">
                 {% csrf_token %}
                 <div>
@@ -168,10 +179,21 @@
             {% if recipe_image.exists %}
             {% comment %} w-[450px] sm:w-[650px] md:w-[750px] xl:w-[830px] xl:h-[31.5rem] {% endcomment %}
             <div class="">
-                <div
-                    class="w-[400px]    sm:w-[500px]  md:w-[600px] xl:w-[830px] xl:h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left  ">
+                <!-- Display video if available -->
+                {% if videos %}
+                <div style="width: 100%; height: 100%;">
+                    {% for video_url in videos %}
+                        {% video video_url '830x495' %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Display image if no videos -->
+                {% if not videos %}
+                <div class="w-[400px] sm:w-[500px] md:w-[600px] xl:w-[830px] xl:h-[31.5rem] flex rounded-xl bg-blue-400 justify-left items-left text-left">
                     <img src="{{ recipe_image.first.image.url }}" class="w-full h-full object-cover" alt="">
                 </div>
+                {% endif %}
             </div>
 
             <div class="flex flex-col gap-6 mr-3 hidden xl:block">
@@ -296,21 +318,20 @@
                 <!-- Give Feedback Button -->
                 <div class="my-[3rem]">
                     <div class="flex gap-[25rem]">
-                        {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+                        {% if request.user|has_group:" " or request.user|has_group:"user" %}
 
                         <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
                             class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
                             <span class="text-white">Give Feedback</span>
                         </button>
                         {% else %}
-                        <button onclick="error()"
-                            class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
+                        <button onclick="error()" class="rounded-xl w-[10rem] h-10 bg-[#FFC061] ml-5" type="button">
                             <span class="text-white">Give Feedback</span>
                         </button>
                         {% endif %}
 
                         <div class="flex gap-4">
-                            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+                            {% if request.user|has_group:" " or request.user|has_group:"user" %}
 
                             <form action="{% url 'like_recipe' recipeDetail.id %}" method="POST">
                                 {% csrf_token %}
@@ -333,7 +354,7 @@
 
                             {% endif %}
 
-                            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+                            {% if request.user|has_group:" " or request.user|has_group:"user" %}
 
                             <form action="{% url 'dislike_recipe' recipeDetail.id %}" method="POST">
                                 {% csrf_token %}
@@ -484,36 +505,34 @@
             </p>
             {% for product in selected_products %}
             <div class="grid grid-row-2 w-[90%] mx-auto">
-                
 
-                    <div class="py-4 flex">
-                        <!-- displaying product picture -->
-                        <div id="gallery" class="relative w-full" data-carousel="slide">
-                            <!-- Carousel wrapper -->
 
-                            <div class="relative h-[12rem] w-[12rem] overflow-hidden rounded-lg">
-                                {% for image in product.images.all %}
-                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}"
-                                            alt=""
-                                            class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
-                                </div>
-                                {% endfor %}
+                <div class="py-4 flex">
+                    <!-- displaying product picture -->
+                    <div id="gallery" class="relative w-full" data-carousel="slide">
+                        <!-- Carousel wrapper -->
+
+                        <div class="relative h-[12rem] w-[12rem] overflow-hidden rounded-lg">
+                            {% for image in product.images.all %}
+                            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                                <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}" alt=""
+                                        class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
                             </div>
-
+                            {% endfor %}
                         </div>
 
+                    </div>
 
-                        <!-- display other data -->
-                        <div class="w-full mt-10">
-                            <h1 class="text-lg font-medium  ">{{ product.productName }}</h1>
-                            <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
-                            <p class="rating-stars">
-                                <!-- Display average rating as stars -->
-                                {% if product.avg_rating %}
-                                {% for i in "12345" %}
-                                {% if i|add:0 <= product.avg_rating %}
-                                <span class="star filled">&#9733;</span>
+
+                    <!-- display other data -->
+                    <div class="w-full mt-10">
+                        <h1 class="text-lg font-medium  ">{{ product.productName }}</h1>
+                        <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
+                        <p class="rating-stars">
+                            <!-- Display average rating as stars -->
+                            {% if product.avg_rating %}
+                            {% for i in "12345" %}
+                            {% if i|add:0 <= product.avg_rating %} <span class="star filled">&#9733;</span>
                                 {% else %}
                                 <span class="star">&#9733;</span>
                                 {% endif %}
@@ -523,14 +542,14 @@
                                     No reviews yet
                                 </p>
                                 {% endif %}
-                            </p>
-                            <p id="rating-message" class="mt-2 text-gray-600"></p>
+                        </p>
+                        <p id="rating-message" class="mt-2 text-gray-600"></p>
 
 
-                        </div>
                     </div>
+                </div>
 
-                
+
                 <!-- Add more details as needed -->
             </div>
             {% endfor %}

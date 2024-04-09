@@ -103,8 +103,10 @@ def add_Recipe(request):
             return redirect('recipe')
         
         else:
-            print(form.errors)
-            sweetify(request, forms.errors)
+            errors = form.errors.as_data()
+            for field, error_list in errors.items():
+                for error in error_list:
+                    sweetify.error(request, f"{field}: {error}")
             
     else:
         form = addRecipeForm()
@@ -157,24 +159,6 @@ def recipeDetail(request, recipe_id):
 
     recipe_image = recipeImage.objects.filter(addRecipe = recipedetailForImage)
     
-    # for feedback
-    # if request.method == 'POST':
-    #     feedback_form = FeedbackForm(request.POST)
-
-    #     if feedback_form.is_valid():
-    #         new_feedback = feedback_form.save(commit=False)
-    #         new_feedback.recipe = recipeDetail
-    #         if request.user.is_authenticated:
-    #             new_feedback.user = request.user
-    #         else:
-    #             new_feedback.user = None
-    #         # Create a new feedback object and associate it with the current recipe and user
-    #         new_feedback.save()
-
-    #         # Redirect to the same recipe detail page after submitting feedback
-    #         return redirect('recipeDetail', recipe_id=recipe_id)
-    # else:
-    #     feedback_form = FeedbackForm()
     
     if request.user.is_authenticated:
         saved_recipe = savedRecipe.objects.filter(user=request.user, recipe=recipeDetail).first()
@@ -219,6 +203,7 @@ def recipeDetail(request, recipe_id):
         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
     
+    videos = [recipeDetail.video] if recipeDetail.video else []
     
     context = {
         'recipetList': recipetList,
@@ -234,7 +219,8 @@ def recipeDetail(request, recipe_id):
         'total_likes': total_likes,
         'selected_products': selected_products,
         'similar_recipes': similar_recipes,
-        'avg_rating': avg_rating
+        'avg_rating': avg_rating,
+        'videos': videos
     }
     
     return render(request, 'recipe/recipeDetail.html', context)

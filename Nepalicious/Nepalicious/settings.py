@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'recipe',
     'market',
     'restaurant',
-    'sweetify'
+    'sweetify',
+    'embed_video'
 ]
 
 MIDDLEWARE = [

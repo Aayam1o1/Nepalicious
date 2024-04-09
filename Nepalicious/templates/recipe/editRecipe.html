@@ -34,12 +34,7 @@
 
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
-                    <button type="button" onclick="discardChanges()"
-                        class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
-                        <span class="text-red-600">Discard Changes</span>
-                    </button>
-
-                    {% comment %} script for discard {% endcomment %}
+                    
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
                             var imageInput = document.getElementById('product-image') || [];
@@ -72,19 +67,7 @@
 
                             });
                         });
-                        function discardChanges() {
-                            // Get the form element and reset it
-                            var form = document.querySelector('form');
-                            form.reset();
-                    
-                            // Remove uploaded images
-                            var imageContainer = document.getElementById('image-container');
-                            imageContainer.innerHTML = '';
-                    
-                            // Reset the image heading
-                            var imageHeading = document.getElementById('product-img-heading');
-                            imageHeading.style.display = 'block';
-                        }
+                        
                         function buttondisabledimage() {
                             Swal.fire({
                                 title: 'Error',
@@ -157,15 +140,13 @@
                         <div class="p-4">
 
                             <h1 class="text-2xl font-bold ">Add Image of the food</h1>
-                            <p>(All existing images will be replaced upon editing the product.)</p>
+                            <p>(All existing images will be replaced upon editing the recipe image.)</p>
                         </div>
                             <div class="pt-2 pl-24 md:pr-[40px]"></div>
 
                         <!-- Container for displaying uploaded recipe images -->
 
-                        <h1 class="text-center px-5" id="product-img-heading">images Will be uploded here Add Upto 3
-                            images</h1>
-
+                        
                         <div id="image-container" class="grid grid-cols-3 gap-3 ml-7">
                             <!-- Display existing images -->
                         {% for image in recipe_instance.images.all %}
