@@ -169,16 +169,35 @@ def adminDashboard(request):
             username = request.POST.get("username")
             user = User.objects.get(username=username)
             userDetail = usersDetail.objects.get(user=user)
+            UserEmail = request.POST.get("email")
+            print("EMAIL" , UserEmail)
             userDetail.hasBlockedUser = True
             print("BLOCKED", userDetail.hasBlockedUser)
             userDetail.save()
+            
+            send_mail(
+                "Account Blocked",
+                "Your account has been blocked. Please contact your admin for more information :(",
+                "nepalicious.webapp@gmail.com",
+                [UserEmail],
+                fail_silently=False,
+                )
             sweetify.success(request, 'User Blocked successfully')
         
         elif "unblock" in request.POST:
             username = request.POST.get("username")
             user = User.objects.get(username=username)
             userDetail = usersDetail.objects.get(user=user)
+            UserEmail = request.POST.get("email")
             userDetail.hasBlockedUser = False
+            
+            send_mail(
+                "Account Unblocked",
+                "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)",
+                "nepalicious.webapp@gmail.com",
+                [UserEmail],
+                fail_silently=False,
+                )
             userDetail.save()
             sweetify.success(request, 'User Unblocked successfully')
     

@@ -111,15 +111,15 @@
           <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
             <form method="post" action="">
               {% csrf_token %}
-              
+              <input type="hidden" name="email" value="{{user_detail.email}}">
               <input type="hidden" name="username" value="{{user_detail}}">
               {% if user_detail.usersdetail.hasBlockedUser %}
-              <button type="submit" name="unblock" class="text-gray-700">
+              <button type="submit" name="unblock" class="text-green-700 mr-2">
                 Unblock
               </button>
               
               {% else %}
-              <button class="border border-[#FF3131] rounded mr-7" name="block">
+              <button class="text-red-700 rounded mr-7" name="block">
                 Block
                 
               </button>
