@@ -19,22 +19,7 @@ import re
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
     
-    #PAGINATION
-    # items_per_page = 8
-    # page = request.GET.get('page', 1)
-    #  # Create a Paginator object
-    # paginator = Paginator(productList, items_per_page)
-    # try:
-    #     # Get the current page
-    #     productList = paginator.page(page)
-    # except PageNotAnInteger:
-    #     # If page is not an integer, delivering the first page
-    #     productList = paginator.page(1)
-    # except EmptyPage:
-    #     # If page is out of range, delivering the last page of results
-    #     productList = paginator.page(paginator.num_pages)
-    # # Get the current page number from the request's GET parameters
-    # page = request.GET.get('page', 1)
+    
 
     for product in productList:
         # Calculate average rating for each product
@@ -91,7 +76,22 @@ def marketplace(request):
     print("productList", productList)
     # ratingrange = request.GET.get("rating")
 
-    
+    # PAGINATION
+    items_per_page = 4
+    page = request.GET.get('page', 1)
+     # Create a Paginator object
+    paginator = Paginator(productList, items_per_page)
+    try:
+        # Get the current page
+        productList = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        productList = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        productList = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
     context = {
         'productList': productList,
         

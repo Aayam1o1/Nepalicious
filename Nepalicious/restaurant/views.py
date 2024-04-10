@@ -8,6 +8,7 @@ from django.db.models import Sum, F, Avg, Q
 import random
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import sweetify
+import re
 
 # Create your views here.
 def restaurant(request):
@@ -230,13 +231,66 @@ def delete_comment_restaurant(request, comment_id):
     # Redirect back to the page where the comment was deleted from
     return redirect(url)
 
+
 def edit_restaurant(request, restaurant_id):
+    url  = request.META.get('HTTP_REFERER')
     try:
         restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+        new_location = Location.objects.get(restaurant=restaurant)
+        
+        
+        restaurant_location = Location.objects.filter(restaurant=restaurant).first()
+
+        
+        if restaurant_location:
+                # Create a map centered at the restaurant's location
+                maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
+                
+                # Add a marker for the restaurant's location
+                marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
+                folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
+                        tooltip='Click for details', 
+                        popup=marker_popup, max_width=400).add_to(maps)
+                
+                # Get the HTML representation of the map
+                maps = maps._repr_html_()
+                
+        else:
+                # If no location is available, provide a default map centered at a specific location
+            maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
+            
+            
         if request.method == 'POST':
             form = editRestaurantForm(request.POST, instance=restaurant)
+            restaurant_name = request.POST.get('restaurant_name')
+            restaurant_address = request.POST.get('restaurant_address')
+            restaurant_number = request.POST.get('phone_number')
+            latitude = request.POST.get('latitude')
+            longitude = request.POST.get('longitude')
+            
+            
+            
+            if latitude != '' and longitude != '':
+                print('lat:', latitude)
+                print('long:', longitude)
+                new_location.latitude = latitude
+                new_location.longitude = longitude
+                new_location.save()
+            
+            
+            if not re.match(r'^(98|97)\d{8}$', restaurant_number):
+                    sweetify.error(request,"Invalid contact number")
+                    return redirect(url)
+            print('name', restaurant_name)
+            print('address', restaurant_address)
+            print('number', restaurant_number)
             if form.is_valid():
                 form.save()
+                restaurant.user.usersdetail.restaurant_name = restaurant_name
+                restaurant.user.usersdetail.address = restaurant_address
+                restaurant.user.usersdetail.phone_number = restaurant_number
+                restaurant.user.usersdetail.save()                
+
                 new_images = request.FILES.getlist('restaurantImage')
             
                 # Get the list of existing images
@@ -251,7 +305,9 @@ def edit_restaurant(request, restaurant_id):
                             old_image.delete()
                             
                     for uploaded_file in new_images:
-                        restaurant.objects.create(addRestaurant=restaurant, image=uploaded_file)
+                        restaurantImage.objects.create(addRestaurant=restaurant, image=uploaded_file)
+                sweetify.success(request, "Resturant details updated successfully")
+                return redirect('restaurant_detail', restaurant_id=restaurant.id)
         else:
             form = editRestaurantForm(instance=restaurant)
             
@@ -261,7 +317,9 @@ def edit_restaurant(request, restaurant_id):
     context = {
         'form':form,
         'restaurant': restaurant, 
+        'maps': maps,
+
     }
     
     
-    return render(request, 'profiles/editRestaurant.html', context)
+    return render(request, 'restaurant/editRestaurant.html', context)

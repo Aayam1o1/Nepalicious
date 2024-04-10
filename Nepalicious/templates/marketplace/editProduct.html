@@ -45,7 +45,9 @@
                                 
                                 // Clear existing images
                                 container.innerHTML = '';
-                                
+                                console.log("images", imageInput); // Log the image input element itself
+                                console.log("Selected files:", files); // Log the selected files
+                                console.log("Number of selected files:", files.length);
                                 
                                 // Display uploaded images
                                 for (let i = 0; i < Math.min(files.length, 3); i++) {
@@ -58,7 +60,11 @@
                                     
                                     container.appendChild(imgDiv);
                                 }
-
+                                if (files.length === 3) {
+                                    document.querySelector('button[type="submit"]').disabled = false;
+                                } else {
+                                    document.querySelector('button[type="submit"]').disabled = true;
+                                }
                             });
                         });
                         function buttondisabledimage() {
@@ -74,11 +80,14 @@
                             var submitButton = document.querySelector('button[type="submit"]');
                             var imageInput = document.getElementById('product-image');
                             var existingImages = document.querySelectorAll('.product-image');
+                            var maxImages = 3;
 
                             
                             // Function to handle submit button click
                             submitButton.addEventListener('click', function (event) {
                                 var files = imageInput.files;
+                                var totalImages = existingImages.length + files.length;
+
                                 if(existingImages.length === 3) return;
 
                                 if (files.length !== 3) {
@@ -86,7 +95,7 @@
                                     buttondisabledimage(); // Call the error function
                                 }
                             });
-                    
+                            
                             // Function to handle change in the image input
                             imageInput.addEventListener('change', function (event) {
                                 var files = event.target.files;

@@ -225,16 +225,24 @@
                 <div class=" px-4 pt-4">
                     <h2 class="text-2xl font-bold mb-4">Restaurant Type</h2>
                 </div>
+                <div class="text-3xl font-semibold">
+                    Old Map
+                </div>
+                <div id="old_map" class="w-[430px] mt-3">
+                    <!-- Display the HTML representation of the old map -->
+                    {{ maps|safe }}
+                </div>
                 <div id="clickedLocationInfo" class="px-4 pb-4">
                     Click a location on the map.
                     
                 </div> <!-- Placeholder for displaying clicked location info -->
-                <input type="hidden" name="latitude" id="latitude" value="">
-                <input type="hidden" name="longitude" id="longitude" value="">
+                <input type="hidden" name="latitude" id="latitude" value="" required>
+                <input type="hidden" name="longitude" id="longitude" value="" required>
             
                 <div id="folium_map_id" class="w-[80%] mx-auto" style="height: 400px;">
                     <!-- {% comment %} {{ maps|safe }} {% endcomment %} -->
                 </div>
+
             </div>
 
 

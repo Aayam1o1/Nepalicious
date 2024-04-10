@@ -52,7 +52,11 @@
                                     
                                     container.appendChild(imgDiv);
                                 }
-
+                                if (files.length === 3) {
+                                    document.querySelector('button[type="submit"]').disabled = false;
+                                } else {
+                                    document.querySelector('button[type="submit"]').disabled = true;
+                                }
                             });
                         });
                         function buttondisabledimage() {
@@ -169,14 +173,13 @@
                         <div class="flex justify-between rounded-xl">
                             <div class="p-5 rounded-xl">
                                 <h1 class="text-2xl mb-5 font-bold">Steps for the recipe</h1>
-                                <div class="pb-10 flex">
+                                <div class=" flex">
                                     <input type="text" name="recipeInput" id="recipeInput" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100" placeholder="Enter Steps and press add">
                                     <button type="button" onclick="addStep()" class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
                                 </div>
                                 <div class="mt-4 w-full md:w-[62%] text-gray-400">
  
                                 </div>
-                                
 
                                 <div id="recipeContainerWrapper";>
                                     <div id="recipeContainer" class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
@@ -202,36 +205,33 @@
                         function addStep() {
                             var recipeInput = document.getElementById("recipeInput");
                             var stepValue = recipeInput.value.trim();
-
+                        
                             if (stepValue === "") {
                                 alert("Step cannot be empty");
                                 return;
                             }
-
+                        
                             // Remove any full stops in the middle of the step
                             stepValue = stepValue.replace(/\./g, '');
-
+                        
                             // Add a full stop at the end of the step if it doesn't already have one
                             if (!stepValue.endsWith('.')) {
                                 stepValue += '.';
                             }
-
+                        
                             var recipeContainer = document.getElementById("recipeContainer");
-
-                            // Remove existing steps only if they haven't been removed yet
-                            if (stepCounter === 1) {
-                                recipeContainer.innerHTML = ''; // Clear existing steps
-                            }
-
+                        
+                            // Clear existing steps
+                            recipeContainer.innerHTML = '';
                             var stepElement = document.createElement("div");
                             stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
                             recipeContainer.appendChild(stepElement);
-
+                        
                             recipeInput.value = ""; // Clear input field after adding step
                             updateHiddenStepsInput();
-
+                        
                             stepCounter++; // Increment the step counter
-                        }   
+                        }
                         
                     
                         function updateHiddenStepsInput() {
