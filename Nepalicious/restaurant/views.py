@@ -4,7 +4,7 @@ from .models import *
 from .forms import *
 import folium
 import geocoder
-from django.db.models import Sum, F, Avg
+from django.db.models import Sum, F, Avg, Q
 import random
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import sweetify
@@ -12,31 +12,53 @@ import sweetify
 # Create your views here.
 def restaurant(request):
     restaurant_list = addRestaurant.objects.all()
-    items_per_page = 4
     
-    page = request.GET.get('page', 1)
+    search = request.GET.get('search_for')
+    cuisineType = request.GET.get('cuisineType')
+    print("search", search)
+    
+    if search:
+        if search:
+            restaurant_list = restaurant_list.filter(
+                Q(user__usersdetail__restaurant_name__icontains=search) |
+                Q(user__usersdetail__address__icontains=search)
+            ).distinct()
+        print("restaurant_list", restaurant_list)
+        print("Search results count:", restaurant_list.count())  # Check the count of search results
+    elif cuisineType:
+        restaurant_list = restaurant_list.filter(Q(restaurantType__icontains=cuisineType))
+    else:
+        restaurant_list = addRestaurant.objects.all()
+        print("No search query provided.")
+        
+    print("Final restaurant_list count:", restaurant_list.count()) 
+    # items_per_page = 4
+    
+    # page = request.GET.get('page', 1)
     
     
-     # Create a Paginator object
-    paginator = Paginator(restaurant_list, items_per_page)
+    #  # Create a Paginator object
+    # paginator = Paginator(restaurant_list, items_per_page)
 
-    try:
-        # Get the current page
-        restaurant_list = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
-        restaurant_list = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, delivering the last page of results
-        restaurant_list = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
+    # try:
+    #     # Get the current page
+    #     restaurant_list = paginator.page(page)
+    # except PageNotAnInteger:
+    #     # If page is not an integer, delivering the first page
+    #     restaurant_list = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range, delivering the last page of results
+    #     restaurant_list = paginator.page(paginator.num_pages)
+    # # Get the current page number from the request's GET parameters
+    # page = request.GET.get('page', 1)
     
     
-    for restaurant in restaurant_list:
-        # Calculate average rating for each product
-        avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
-        restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    # for restaurant in restaurant_list:
+    #     # Calculate average rating for each product
+    #     avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
+    #     restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    
+    
        
         
     context = {
@@ -124,7 +146,7 @@ def restaurant_detail(request, restaurant_id):
         maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
         
          # Add a marker for the restaurant's location
-        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br>{restaurant.user.usersdetail.address}</div>"
+        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
         folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
                   tooltip='Click for details', 
                   popup=marker_popup, max_width=400).add_to(maps)
@@ -207,3 +229,39 @@ def delete_comment_restaurant(request, comment_id):
 
     # Redirect back to the page where the comment was deleted from
     return redirect(url)
+
+def edit_restaurant(request, restaurant_id):
+    try:
+        restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+        if request.method == 'POST':
+            form = editRestaurantForm(request.POST, instance=restaurant)
+            if form.is_valid():
+                form.save()
+                new_images = request.FILES.getlist('restaurantImage')
+            
+                # Get the list of existing images
+                old_images = restaurant.images.all()
+                
+                # Delete old images not included in the new se
+                # Handle restaurant images
+                if new_images:
+                    print("print1")
+                    for old_image in old_images:
+                        if old_image.image not in new_images:
+                            old_image.delete()
+                            
+                    for uploaded_file in new_images:
+                        restaurant.objects.create(addRestaurant=restaurant, image=uploaded_file)
+        else:
+            form = editRestaurantForm(instance=restaurant)
+            
+    except addRestaurant.DoesNotExist:
+        pass    
+    
+    context = {
+        'form':form,
+        'restaurant': restaurant, 
+    }
+    
+    
+    return render(request, 'profiles/editRestaurant.html', context)

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
-from django.db.models import Count
+from django.db.models import Count, Q
 from market.models import *
 import random
 from django.db.models import Sum, F, Avg
@@ -15,7 +15,30 @@ def recipe(request):
     top_four_recipe = addRecipe.objects.annotate(num_likes=Count('likedislikerecipe', filter=models.Q(likedislikerecipe__choice='like'))).order_by('-num_likes')[:4]
     latest_recipe = addRecipe.objects.all().order_by('-id')
     
-    items_per_page = 11
+    
+    search = request.GET.get('search_for')
+    cuisineType = request.GET.get('cuisineType')
+    print("cuisineType", cuisineType)
+    print("search", search)
+    
+    if search and cuisineType == "Cuisine Type":
+        if search:
+            latest_recipe = latest_recipe.filter(
+                Q(recipeName__icontains=search) |
+                Q(user__username__icontains=search)  # Filter by username
+            ).distinct()
+    elif cuisineType != "Cuisine Type" and search == "":
+        latest_recipe = latest_recipe.filter(Q(cuisineType__icontains=cuisineType))
+    elif search and cuisineType:
+        latest_recipe = latest_recipe.filter(
+                Q(recipeName__icontains=search) and
+                Q(user__username__icontains=search)  # Filter by username
+            ).distinct()
+    else:
+        latest_recipe = addRecipe.objects.all()
+        print("No search query provided.")
+        
+    items_per_page = 2
     
     page = request.GET.get('page', 1)
     
@@ -285,29 +308,36 @@ def edit_recipe(request, recipe_id):
     
     recipeStepsString = recipe_instance.recipeSteps
 
-    recipeSteps = [step.strip() for step in recipeStepsString.split(',') if step.strip()]
-    
+    recipeSteps = []
+    current_step = ""
+    for step in recipeStepsString.split(','):
+        current_step += step.strip()
+        if current_step.endswith('.'):
+            recipeSteps.append(current_step)
+            current_step = ""
+        else:
+            current_step += ', '    
+                    
     # Ensure recipe steps is always a string, even if it's empty
     if request.method == 'POST':
         # If it's a POST request, process the form data
         form = editRecipeForm(request.POST, instance=recipe_instance)
-        new_step_text = request.POST.get('recipeInput').strip()
-        print("newstep", new_step_text)
+          
+        
         if form.is_valid():
             form.save()
 
-           # Process the added step
+            # if 'recipeInput' in request.POST:
+            #     new_steps_string = request.POST.get('steps')
+            #     recipeSteps = []
+            #     recipe_instance.save()
+            #     print('steps ar', recipeSteps)
+                
+            #     steps = new_steps_string.split(", ")
+            #     recipe_instance.recipeSteps = ", ".join(steps) 
             
-            print("newstep", new_step_text)
-            
-            if new_step_text:
-                # Append the new step to the existing steps
-                recipeSteps.append(new_step_text)
-                print("recipeSteps after adding new step:", recipeSteps)
-            recipe_instance.recipeSteps = ", ".join(recipeSteps)
-            
-            print("recipe::", recipe_instance.recipeSteps)
-            recipe_instance.save()
+            #     print("recipe::", recipe_instance.recipeSteps)
+            #     recipe_instance.save()
                 
                 
             new_images = request.FILES.getlist('recipeImage')

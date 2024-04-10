@@ -23,23 +23,10 @@
             <div class="shadow-sm bg-white p-2 flex justify-between rounded-xl">
                 <div class="p-4">
                     <h1 class="text-3xl font-semibold">Edit Product</h1>
-                    {% if form.errors and form.is_bound %}
-                    <div class="alert alert-danger">
-                        <strong>Error!</strong> Please correct the following errors:
-                        <ul>
-                            {% for field, error in form.errors.items %}
-                            <li>{{ field|title }}: {{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}             
-
 
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
-                    <button type="button" onclick="discardChanges()" class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
-                        <span class="text-red-600">Discard Changes</span>
-                    </button>
+                
 
                     {% comment %} script for discard {% endcomment %}
                     <script>
@@ -74,19 +61,6 @@
 
                             });
                         });
-                        function discardChanges() {
-                            // Get the form element and reset it
-                            var form = document.querySelector('form');
-                            form.reset();
-                    
-                            // Remove uploaded images
-                            var imageContainer = document.getElementById('image-container');
-                            imageContainer.innerHTML = '';
-                    
-                            // Reset the image heading
-                            var imageHeading = document.getElementById('product-img-heading');
-                            imageHeading.style.display = 'block';
-                        }
                         function buttondisabledimage() {
                             Swal.fire({
                                 title: 'Error',
@@ -185,7 +159,7 @@
                     <div class="flex justify-center mt-[5rem]">
                         <label required for="product-image-input" class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex justify-center w-[15rem] px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
                             <span>Add image</span>
-                            <input id="product-image" name="productImage" type="file" accept="image/png, image/jpeg" multiple class="absolute block opacity-0 w-full h-full cursor-pointer"/>
+                            <input id="product-image" name="productImage" type="file" accept="image/*" multiple class="absolute block opacity-0 w-full h-full cursor-pointer"/>
                         </label>
                     </div>
                     

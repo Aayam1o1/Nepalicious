@@ -103,7 +103,9 @@
                     <form action="{% url 'marketplace' %}" role="search">
                         {% csrf_token %}
 
-
+                        <div>
+                            <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
+                        </div>
 
                         <input type="radio" name="category" value="spicesFood" id="SpicesFood">
                         <label for="spicesFood">Spices and Food</label><br>
@@ -113,46 +115,15 @@
                     
                         <input type="radio" name="category" value="knifes" id="Knifes">
                         <label for="Knifes">Knifes</label><br>
+
+                        <input type="radio" name="category" value="electricAppliance" id="electricAppliance">
+                        <label for="Knifes">Electric Appliance</label><br>
+
+                        <input type="radio" name="category" value="cleaningAppliance" id="cleaningAppliance">
+                        <label for="Knifes">Cleaning Appliance</label><br>
                     
                         
-                        <div id="category" class="py-3">
-                        <div>
-                            <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
-                        </div>
-                        <div class="relative inline-block text-gray-700">                        
-                            <div class="">
-                                <div>
-                                    <input class="mr-2 leading-tight" type="checkbox" id="category1" name="category1" value="spicesFood">
-                                    <span>
-                                        Spices and Food
-                                    </span>
-                                </div>
-                                <div>
-                                    <input class="mr-2 leading-tight" type="checkbox" id="category2" name="category2" value="pansPots">
-                                    <span>
-                                        Pans and Pots
-                                    </span>
-                                </div>
-                                <div>
-                                    <input class="mr-2 leading-tight" type="checkbox" id="category3" name="category3" value="knifes">
-                                    <span>
-                                        Knifes
-                                    </span>
-                                </div>
-                                <div>
-                                    <input class="mr-2 leading-tight" type="checkbox" id="category4" name="category4" value="electricAppliance">
-                                    <span>
-                                        Electric Appliance
-                                    </span>
-                                </div>
-                                <div>
-                                    <input class="mr-2 leading-tight" type="checkbox" id="category5" name="category5" value="cleaningAppliance">
-                                    <span>
-                                        Cleaning Appliance
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        <div id="main" class="py-3">
                         <div>
                             <h1 class="text-xl ml-[1rem] mt-6">Price</h1>
 

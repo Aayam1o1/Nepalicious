@@ -7,13 +7,13 @@ from users.models import *
 types = (
     ('Thakali', 'Thakali'),
     ('Newari', 'Newari'),
-    ('Sherpa', 'Sherpa'),
+    ('Newari', 'Sherpa'),
     ('Tamang', 'Tamang'),
     ('Nepali ', 'Nepali')
 )
 
 class addRestaurant(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     restaurantDescription = models.TextField()
     restaurantType = models.CharField(max_length=100, choices=types)
     

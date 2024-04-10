@@ -102,7 +102,13 @@
                         value="{{request.user.usersdetail.phone_number}}"
                         class="ml-[40px] pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
-
+                <div class="justify-between flex">
+                    <label for="email" >Email</label>
+                    <input name="email" type="email" value="{{request.user.email}}"
+                        class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1"
+                        placeholder="Your Email">
+                </div>
+    
                 <div class=" justify-between flex ">
                     <label for="">Address</label>
                     <input name="address"  type="address" value="{{request.user.usersdetail.address}}"

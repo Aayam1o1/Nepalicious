@@ -6,6 +6,7 @@ from django.contrib import messages
 #update_auth_hass used to change password
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from users.models import *
+from restaurant.models import *
 from django.db import transaction
 from django.contrib.auth.models import User,Group
 import sweetify
@@ -297,12 +298,19 @@ def profile(request):
         profile_image_url = request.user.userprofilepicture.profileImage.url
     except UserProfilePicture.DoesNotExist:
         pass
-
+    
+    # restaurant = None
+    # if request.user.is_authenticated and request.user.groups.filter(name='restaurant').exists():
+    #     try:
+    #         restaurant = addRestaurant.objects.get(user=request.user)
+    #     except addRestaurant.DoesNotExist:
+    #         pass    
     context = {
         
-        'profile_image_url': profile_image_url, 
+        'profile_image_url': profile_image_url,
+        # 'restaurant': restaurant, 
     }
-    return render(request, 'profiles/profile.html')
+    return render(request, 'profiles/profile.html', context)
 
 
 #edit profile page
@@ -324,11 +332,17 @@ def editprofile(request):
             # UPDATING USER MODEL
             user.first_name = request.POST.get('first_name', '')
             user.last_name = request.POST.get('last_name', '')
+            user.email = request.POST.get('email')
+            if User.objects.filter(email=request.POST.get('email')).exists():
+                sweetify.error(request, "Email already registered!")
+                return redirect('editprofile')
             #saving the updated data
             user.save()
             
             # UPDATING userdetail MODEL
             user.usersdetail = user.usersdetail
+
+            
             user.usersdetail.phone_number = request.POST.get('phone_number')
             if not re.match(r'^(98|97)\d{8}$', user.usersdetail.phone_number):
                     sweetify.error(request,"Invalid contact number")
@@ -416,3 +430,30 @@ def pendingRequests(request):
     } 
     
     return render(request, 'admin/pendingRequests.html', context)
+
+
+def contact_us(request):
+    if request.method == 'POST':
+        sender_email = request.POST.get('email')
+        message = request.POST.get('message')
+        subject = f'{sender_email}: {request.POST.get("subject")}' 
+
+        print("email", sender_email)
+        print("subject", subject)
+        print("mess", message)
+        
+        try:
+            send_mail(
+                subject,
+                message,
+                sender_email,  # Set sender's email 
+                ['nepalicious.webapp@gmail.com'],  # Set recipient's email
+                fail_silently=False,
+                
+            )
+            sweetify.success(request, 'Email sent successfully!')
+            return redirect('contact_us')
+        except Exception as e:
+            sweetify.error(request, 'Failed to send email.')
+            return redirect('contact_us')    
+    return render(request, 'contact/contactus.html')

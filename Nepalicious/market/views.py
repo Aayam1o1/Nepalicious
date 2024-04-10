@@ -18,6 +18,7 @@ import re
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
+    
     #PAGINATION
     # items_per_page = 8
     # page = request.GET.get('page', 1)
@@ -44,34 +45,51 @@ def marketplace(request):
     print("category", category)
     
     pricerange = request.GET.get("pricerange") 
+    print("pricerangepricerangepricerange", pricerange)
     ratingrange = request.GET.get("rating")
+    print("ratingrangeratingrangeratingrange", ratingrange)
     
-    
-    if pricerange is not None:
-        productList = productList.filter(Q(productPrice__lte=pricerange))
-        print("productList==", productList)
         
-    if ratingrange is not None:
-        rating = float(ratingrange)
-        print("ratingsssssssssssssssssssssssssss", rating)
-        productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
-            # Calculate average rating for each product
-        avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-        product.avg_rating = avg_rating  
-        print("productList==", productList)
-        
-    if category:
-        # Assuming 'productList' is your queryset of products
-        productList = addProducts.objects.filter(productCategory=category)
-        print("productListproductListproductListproductListproductListproductListproductList", productList)
-
-    
-    
-    # ratingrange = request.GET.get("rating")
-    
     print("range", pricerange)
     print("rating", ratingrange)
+    
+    # Search by category and price range 
+    if category:
+        if  ratingrange is None:
+            print("only category")
+            productList = addProducts.objects.filter(productCategory=category)
+            for product in productList:
+                # Calculate average rating for each product
+                avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+                product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    
+        else:
+            print("cat and price")
+            productList = addProducts.objects.filter(productCategory=category, productPrice__lte=pricerange)
+            for product in productList:
+                # Calculate average rating for each product
+                avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+                product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+                
+    elif category is None and ratingrange is not None:
+        rating = float(ratingrange)
+        # print("aaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbb", rating)
+        productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
+        for product in productList:
+            # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
         
+    if category is not None and ratingrange is not None:
+        rating = float(ratingrange)
+        productList = addProducts.objects.filter(productCategory=category, productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
+        for product in productList:
+            # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+
+    print("productList", productList)
+    # ratingrange = request.GET.get("rating")
 
     
     context = {
@@ -264,7 +282,7 @@ def edit_product(request, product_id):
                         
                 for uploaded_file in new_images:
                     productImage.objects.create(addProducts=product_instance, image=uploaded_file)
-            messages.success(request, "Successfully edited product")
+            sweetify.success(request, "Successfully edited product")
             return redirect('productDetail', product_id=product_instance.id)
     else:
         # If it's not a POST request, populate the form with instance data

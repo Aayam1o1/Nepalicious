@@ -19,18 +19,6 @@
                 <div class="p-4">
                     <h1 class="text-3xl font-semibold">Edit Recipe</h1>
 
-                    <!-- for dispalying errors -->
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <strong>Error!</strong> Please correct the following errors:
-                        <ul>
-                            {% for error in form.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
-
 
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
@@ -67,7 +55,6 @@
 
                             });
                         });
-                        
                         function buttondisabledimage() {
                             Swal.fire({
                                 title: 'Error',
@@ -86,7 +73,9 @@
                             // Function to handle submit button click
                             submitButton.addEventListener('click', function (event) {
                                 var files = imageInput.files;
-                                if (files.length !== 3 || existingImages.length !== 3) {
+                                if(existingImages.length === 3) return;
+
+                                if (files.length !== 3) {
                                     event.preventDefault(); // Prevent form submission if the number of images is not 3
                                     buttondisabledimage(); // Call the error function
                                 }
@@ -146,7 +135,8 @@
 
                         <!-- Container for displaying uploaded recipe images -->
 
-                        
+                        <h1 class="text-center px-5" id="product-img-heading">Images Will be uploaded here Add Up to 3 images</h1>
+
                         <div id="image-container" class="grid grid-cols-3 gap-3 ml-7">
                             <!-- Display existing images -->
                         {% for image in recipe_instance.images.all %}
@@ -159,11 +149,11 @@
                         <!--HERE IMAGE WILL BE DISPLAYED-->
 
                         <div class="flex justify-center mt-[5rem]">
-                            <label required for="recipe-image-input"
+                            <label required for="product-image-input"
                                 class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex justify-center w-[15rem] px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
                                 <span>Add image</span>
                                 <input id="product-image" name="recipeImage" type="file" accept="image/*"
-                                    multiple class="absolute block opacity-0 w-full h-full cursor-pointer" required />
+                                    multiple class="absolute block opacity-0 w-full h-full cursor-pointer" />
                             </label>
                         </div>
 
@@ -186,91 +176,78 @@
                                 <div class="mt-4 w-full md:w-[62%] text-gray-400">
  
                                 </div>
-                                <div id="recipeContainerWrapper">
+                                
+
+                                <div id="recipeContainerWrapper";>
                                     <div id="recipeContainer" class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
                                         <h1 class="text-2xl font-semibold pb-5 ">Steps for the Recipe</h1>
-                                        <div class=" w-full md:w-[62%] text-gray-400" id="stepsContainer">
-                                            <p class="text-l font-small  ">
-                                                {% for step in recipeSteps %}
-                                                <div class="step"> 
-
-                                                    {% if '.' in step %}
-                                                <p style="margin-bottom: 10px;" class="">{{ step|linebreaksbr|safe }}</p>
-                                                {% else %}
-                                                <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
-                                                {% endif %}
-                                                </div>
-                                            {% endfor %}
-                                            </p>
-                                        </div>
+                                        <input type="hidden" id="hiddenStepInput" name="steps" value="">
+                                        <p class="text-l font-small italic ">
+                                            {% for step in recipeSteps %}
+                                            {% if '.' in step %}
+                                        <p style="margin-bottom: 10px;" class="italic">{{ step|linebreaksbr|safe }}</p>
+                                        {% else %}
+                                        <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
+                                        {% endif %}
+                                        {% endfor %}
+                                        </p>
                                     </div>
                                 </div>
                             </div>     
                         </div>
                     </div>
                     <script>
-                        // Function to initialize the step counter based on the existing steps
-                        function initializeStepCounter() {
-                            var existingSteps = document.querySelectorAll(".step");
-                            if (existingSteps.length > 0) {
-                                var lastStepNumber = parseInt(existingSteps[existingSteps.length - 1].textContent.split('.')[0]);
-                                stepCounter = lastStepNumber + 1;
-                            } else {
-                                stepCounter = 1;
-                            }
-                    
-                            // Print the existing steps to the console
-                            console.log("Existing Steps:");
-                            existingSteps.forEach(function(step) {
-                                console.log(step.textContent);
-                            });
-                        }
-                    
-                        // Call the function to initialize the step counter
-                        initializeStepCounter();
-                    
+                        var stepCounter = 1; // Counter for numbering steps
+
                         function addStep() {
                             var recipeInput = document.getElementById("recipeInput");
                             var stepValue = recipeInput.value.trim();
-                            
+
                             if (stepValue === "") {
                                 alert("Step cannot be empty");
                                 return;
                             }
-                            
+
                             // Remove any full stops in the middle of the step
                             stepValue = stepValue.replace(/\./g, '');
-                            
+
                             // Add a full stop at the end of the step if it doesn't already have one
                             if (!stepValue.endsWith('.')) {
                                 stepValue += '.';
                             }
-                            
-                            // Append new step to the existing steps container
-                            var stepsContainer = document.getElementById("stepsContainer");
+
+                            var recipeContainer = document.getElementById("recipeContainer");
+
+                            // Remove existing steps only if they haven't been removed yet
+                            if (stepCounter === 1) {
+                                recipeContainer.innerHTML = ''; // Clear existing steps
+                            }
+
                             var stepElement = document.createElement("div");
-                            stepElement.classList.add("step"); // Add the "step" class to the step element
                             stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
-                            stepsContainer.appendChild(stepElement);
-                            
+                            recipeContainer.appendChild(stepElement);
+
+                            recipeInput.value = ""; // Clear input field after adding step
                             updateHiddenStepsInput();
-                            
+
                             stepCounter++; // Increment the step counter
-                        }s
+                        }   
                         
+                    
                         function updateHiddenStepsInput() {
-                            var stepsContainer = document.getElementById("stepsContainer");
-                            var steps = stepsContainer.querySelectorAll(".step");
+                            var recipeContainer = document.getElementById("recipeContainer");
+                            var steps = recipeContainer.querySelectorAll("div");
                             var hiddenStepInput = document.getElementById("hiddenStepInput");
                             var stepsText = [];
-                        
-                            steps.forEach(function(step) {
+                    
+                            steps.forEach(function (step) {
                                 stepsText.push(step.textContent);
                             });
-                        
+                    
                             hiddenStepInput.value = stepsText.join(", ");
                         }
                     </script>
+
 
                 </div>
                 <!-- for ingredients -->
