@@ -1,7 +1,8 @@
-from django.forms import ModelForm, ChoiceField, Select, MultipleChoiceField
+from django.forms import ModelForm, ChoiceField, Select
 from django.contrib.auth.forms import User
 from django import forms
 from .models import *
+from django.core.validators import MaxValueValidator
 
 
 
@@ -19,11 +20,12 @@ class addProductForm(ModelForm):
     
     productPrice = forms.FloatField(
         label='Product Price',
+        validators=[MaxValueValidator(20000)],
         widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 0, 'step': 0.1})    )
     
     productDescription = forms.CharField(
         label = 'Productr Description',
-        max_length = 100,
+        max_length = 500,
         widget=forms.Textarea(attrs={'placeholder': 'Product Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'rows': 4, 'cols': 40})    )
     
     productStock = forms.IntegerField(
@@ -69,11 +71,12 @@ class editProductForm(ModelForm):
     
     productPrice = forms.FloatField(
         label='Product Price',
+        validators=[MaxValueValidator(20000)],
         widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 0, 'step': 0.1})    )
     
     productDescription = forms.CharField(
         label = 'Productr Description',
-        max_length = 100,
+        max_length = 500,
         widget=forms.Textarea(attrs={'placeholder': 'Product Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'rows': 4, 'cols': 40})    )
     
     productStock = forms.IntegerField(

@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Recipe</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
 </head>
 
 <body class="bg-gray-100">
@@ -21,80 +23,53 @@
 
 
                 </div>
-                <div class="flex justify-between mt-5 mr-5">
-                    
+                <div class="flex justify-between mt-5 mr-5">                 
                     <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var imageInput = document.getElementById('product-image') || [];
-
-                            // Get the URLs of existing images
-                            var existingImages = document.querySelectorAll('.product-image');
-                            
-                            console.log(existingImages.length);
-                            // Function to handle change in the image input
-                            imageInput.addEventListener('change', function (event) {
-                                var files = event.target.files;
-                                var container = document.getElementById("image-container");
-                                document.getElementById('product-img-heading').style.display = "none";
-                                
-                                // Clear existing images
-                                container.innerHTML = '';
-                                
-                                
-                                // Display uploaded images
-                                for (let i = 0; i < Math.min(files.length, 3); i++) {
-                                    const file = files[i];
-                                    const fileURL = URL.createObjectURL(file);
-                                    
-                                    const imgDiv = document.createElement("div");
-                                    imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
-                                    imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
-                                    
-                                    container.appendChild(imgDiv);
-                                }
-                                if (files.length === 3) {
-                                    document.querySelector('button[type="submit"]').disabled = false;
-                                } else {
-                                    document.querySelector('button[type="submit"]').disabled = true;
-                                }
-                            });
-                        });
-                        function buttondisabledimage() {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Please upload exactly 3 images.',
-                                icon: 'error',
-                                confirmButtonText: 'Ok'
-                            });
+                        var stepCounter = 1; // Counter for numbering steps
+                    
+                        function addStep() {
+                            var recipeInput = document.getElementById("recipeInput");
+                            var stepValue = recipeInput.value.trim();
+                        
+                            if (stepValue === "") {
+                                alert("Step cannot be empty");
+                                return;
+                            }
+                        
+                            // Remove any full stops in the middle of the step
+                            stepValue = stepValue.replace(/\./g, '');
+                        
+                            // Add a full stop at the end of the step if it doesn't already have one
+                            if (!stepValue.endsWith('.')) {
+                                stepValue += '.';
+                            }
+                        
+                            var recipeContainerWrapper = document.getElementById("recipeContainerWrapper");
+                            recipeContainerWrapper.style.display = "block";
+                        
+                            var recipeContainer = document.getElementById("recipeContainer");
+                            var stepElement = document.createElement("div");
+                            stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
+                            recipeContainer.appendChild(stepElement);
+                        
+                            recipeInput.value = ""; // Clear input field after adding step
+                            updateHiddenStepsInput();
+                        
+                            stepCounter++; // Increment the step counter
                         }
                     
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var submitButton = document.querySelector('button[type="submit"]');
-                            var imageInput = document.getElementById('product-image');
-                            var existingImages = document.querySelectorAll('.product-image');
-
-                            
-                            // Function to handle submit button click
-                            submitButton.addEventListener('click', function (event) {
-                                var files = imageInput.files;
-                                if(existingImages.length === 3) return;
-
-                                if (files.length !== 3) {
-                                    event.preventDefault(); // Prevent form submission if the number of images is not 3
-                                    buttondisabledimage(); // Call the error function
-                                }
+                        function updateHiddenStepsInput() {
+                            var recipeContainer = document.getElementById("recipeContainer");
+                            var steps = recipeContainer.querySelectorAll("div");
+                            var hiddenStepInput = document.getElementById("hiddenStepInput");
+                            var stepsText = [];
+                    
+                            steps.forEach(function (step) {
+                                stepsText.push(step.textContent);
                             });
                     
-                            // Function to handle change in the image input
-                            imageInput.addEventListener('change', function (event) {
-                                var files = event.target.files;
-                                if (files.length === 3) {
-                                    submitButton.disabled = false; // Enable submit button if exactly 3 images are uploaded
-                                } else {
-                                    buttondisabledimage(); // Disable submit button if the number of images is not 3
-                                }
-                            });
-                        });
+                            hiddenStepInput.value = stepsText.join(", ");
+                        }
                     </script>
 
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
@@ -139,7 +114,7 @@
 
                         <!-- Container for displaying uploaded recipe images -->
 
-                        <h1 class="text-center px-5" id="product-img-heading">Images Will be uploaded here Add Up to 3 images</h1>
+                        <h1 class="text-center px-5" id="product-img-heading"></h1>
 
                         <div id="image-container" class="grid grid-cols-3 gap-3 ml-7">
                             <!-- Display existing images -->
@@ -170,41 +145,89 @@
                 <div class="container4 bg-gray-100 rounded-xl w-[48%] rounded-xl">
                     {% comment %} Steps {% endcomment %}
                     <div class="rounded-xl bg-white">
-                        <div class="flex justify-between rounded-xl">
-                            <div class="p-5 rounded-xl">
-                                <h1 class="text-2xl mb-5 font-bold">Steps for the recipe</h1>
-                                <div class=" flex">
-                                    <input type="text" name="recipeInput" id="recipeInput" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100" placeholder="Enter Steps and press add">
-                                    <button type="button" onclick="addStep()" class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
+                        <div class="flex flex-col rounded-xl">
+                            <div class="px-4 py-2" id="recipie-wrapper">
+                                <H1 class="font-semibold text-xl py-2">Steps for the recipe</H1>
+                                <input type="hidden" id="hiddenStepInput" name="steps"  required>
+
+                                <p class="text-l font-small" id="old-recipie-container">
+                                    {% for step in recipeSteps %}
+                                    {% if '.' in step %}
+                                    <p style="margin-bottom: 10px;" class="">{{ step|linebreaksbr|safe }}</p>
+                                    {% else %}
+                                    <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
+                                    {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                            <div class="px-5 rounded-xl">
+                                <div class="flex gap-7">
+                                    <h1 class="text-2xl mb-5 font-bold">Want to add new steps</h1>
+                                    <div class="flex">
                                 </div>
-                                <div class="mt-4 w-full md:w-[62%] text-gray-400">
- 
+                                    <button type="button" data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="bg-[#61A0FF] text-white  h-10 rounded-xl px-8">Add new steps</button>
                                 </div>
 
-                                <div id="recipeContainerWrapper";>
-                                    <div id="recipeContainer" class="pt-5 p-5 w-[25rem] border-2  border-gray-400 rounded-xl">
-                                        <h1 class="text-2xl font-semibold pb-5 ">Steps for the Recipe</h1>
-                                        <input type="hidden" id="hiddenStepInput" name="steps" value="">
-                                        <p class="text-l font-small italic ">
-                                            {% for step in recipeSteps %}
-                                            {% if '.' in step %}
-                                        <p style="margin-bottom: 10px;" class="italic">{{ step|linebreaksbr|safe }}</p>
-                                        {% else %}
-                                        <span style="margin-left: 20px; margin-bottom: 10px;">{{ step|linebreaksbr }} </span>
-                                        {% endif %}
-                                        {% endfor %}
-                                        </p>
-                                    </div>
+                                <!-- modal start -->
+                                <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-[25-rem] md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                    <div class="relative p-4 w-full max-w-md max-h-full">
+                                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                            <!-- Modal header -->
+                                            <div
+                                                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                                <!-- add steps -->
+                                                <div class=" flex">
+                                                    <input type="text" name="recipeInput" id="recipeInput" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w- bg-gray-100" placeholder="Enter Steps and press add">
+                                                    <button type="button" onclick="addStep()" class="bg-[#61A0FF] text-white ml-5 mt-2 h-10 rounded-xl px-8">Add</button>
+                                                </div>
+                                                <button type="button"
+                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                                    data-modal-toggle="crud-modal">
+                                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none" viewBox="0 0 14 14">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                                    </svg>
+                                                    <span class="sr-only">Close modal</span>
+                                                </button>
+                                            </div>
+                                            <!-- Modal body -->
+            
+                                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                                <div class="col-span-2 p-4 md:p-5">
+                                                    <div id="recipeContainerWrapper" class="mt-5">
+                                                        <div id="recipeContainer" class="px-5 w-full border-2  border-gray-400 rounded-xl">
+                                                            <h1 class="text-2xl font-semibold pb-5 ">Steps for the Recipe</h1>
+                                                            <input type="hidden" id="hiddenStepInput" name="steps" value="">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div>
+                                                <button type="button" id="replace-new-recipies">Changes Steps</button>
+                                            </div>
+                                        </div> 
+                                
+                                <div class="mt-4 w-full md:w-[62%] text-gray-400">
+                                    </div></div>
+ 
                                 </div>
+                                
+                                
                             </div>     
                         </div>
                     </div>
                     <script>
                         var stepCounter = 1; // Counter for numbering steps
-
+                        const newRecipies = []
+                        
                         function addStep() {
                             var recipeInput = document.getElementById("recipeInput");
                             var stepValue = recipeInput.value.trim();
+
                         
                             if (stepValue === "") {
                                 alert("Step cannot be empty");
@@ -218,11 +241,16 @@
                             if (!stepValue.endsWith('.')) {
                                 stepValue += '.';
                             }
+
+                            newRecipies.push(stepValue)
+
+                            console.log(newRecipies);
+
+                        
+                            var recipeContainerWrapper = document.getElementById("recipeContainerWrapper");
+                            recipeContainerWrapper.style.display = "block";
                         
                             var recipeContainer = document.getElementById("recipeContainer");
-                        
-                            // Clear existing steps
-                            recipeContainer.innerHTML = '';
                             var stepElement = document.createElement("div");
                             stepElement.textContent = stepCounter + ". " + stepValue; // Include numbering
                             recipeContainer.appendChild(stepElement);
@@ -232,7 +260,27 @@
                         
                             stepCounter++; // Increment the step counter
                         }
+                    
+                        function addIngredient() {
+                            var ingredientInput = document.getElementById("ingredientsInput");
+                            var ingredientValue = ingredientInput.value.trim();
                         
+                            if (ingredientValue === "") {
+                                alert("Ingredient cannot be empty");
+                                return;
+                            }
+                        
+                            var ingredientsContainerWrapper = document.getElementById("ingredientsContainerWrapper");
+                            ingredientsContainerWrapper.style.display = "block";
+                        
+                            var ingredientsContainer = document.getElementById("ingredientsContainer");
+                            var ingredientElement = document.createElement("div");
+                            ingredientElement.textContent = ingredientValue; 
+                            ingredientsContainer.appendChild(ingredientElement);
+                        
+                            ingredientInput.value = ""; // Clear input field after adding ingredient
+                            updateHiddenIngredientsInput();
+                        }
                     
                         function updateHiddenStepsInput() {
                             var recipeContainer = document.getElementById("recipeContainer");
@@ -246,6 +294,43 @@
                     
                             hiddenStepInput.value = stepsText.join(", ");
                         }
+                    
+                        function updateHiddenIngredientsInput() {
+                            var ingredientsContainer = document.getElementById("ingredientsContainer");
+                            var ingredients = ingredientsContainer.querySelectorAll("div");
+                            var hiddenIngredientsInput = document.getElementById("hiddenIngredientsInput");
+                            var ingredientsText = [];
+                    
+                            ingredients.forEach(function (ingredient) {
+                                ingredientsText.push(ingredient.textContent);
+                            });
+                    
+                            hiddenIngredientsInput.value = ingredientsText.join(", ");
+                        }
+                    
+                        document.getElementById("replace-new-recipies")?.addEventListener("click", function(){
+
+                            document.getElementById("old-recipie-container").style.display = "none";
+
+                            const newRecipiesContainer = document.createElement("div");
+
+                            document.getElementById("recipie-wrapper").appendChild(newRecipiesContainer);
+
+
+                            newRecipies.forEach((item, index) => {
+
+                                const element = document.createElement("p");
+                                element.style.marginBottom = "10px";
+                                element.textContent = `${index + 1} ${item}`;
+
+                               newRecipiesContainer.appendChild(element);
+
+                            })
+
+
+                            document.getElementById("hiddenStepInput").value = newRecipies.join();
+
+                        });
                     </script>
 
 
@@ -276,46 +361,7 @@
                             </div>
                         </div>
                         <!--FOR ingredients-->
-                        <script>
-                            var ingredientCounter = 1; // Counter for numbering ingredients
-
-                            function addIngredient() {
-                                var ingredientsInput = document.getElementById("ingredientsInput");
-                                var ingredientValue = ingredientsInput.value.trim();
-
-                                if (ingredientValue === "") {
-                                    alert("Ingredient cannot be empty");
-                                    return;
-                                }
-
-                                var ingredientsContainerWrapper = document.getElementById("ingredientsContainerWrapper");
-                                ingredientsContainerWrapper.style.display = "block";
-
-                                var ingredientsContainer = document.getElementById("ingredientsContainer");
-                                var ingredientElement = document.createElement("div");
-                                ingredientElement.textContent = ingredientCounter + ". " + ingredientValue; // Include numbering
-                                ingredientsContainer.appendChild(ingredientElement);
-
-                                ingredientsInput.value = ""; // Clear input field after adding ingredient
-                                updateHiddenIngredientsInput();
-
-                                ingredientCounter++; // Increment the ingredient counter
-                            }
-
-                            function updateHiddenIngredientsInput() {
-                                var ingredientsContainer = document.getElementById("ingredientsContainer");
-                                var ingredients = ingredientsContainer.querySelectorAll("div");
-                                var hiddenIngredientsInput = document.getElementById("hiddenIngredientsInput");
-                                var ingredientsText = [];
-
-                                ingredients.forEach(function (ingredient) {
-                                    ingredientsText.push(ingredient.textContent);
-                                });
-
-                                hiddenIngredientsInput.value = ingredientsText.join(", ");
-                            }
-                        </script>
-
+                       
 
                     </div>
 

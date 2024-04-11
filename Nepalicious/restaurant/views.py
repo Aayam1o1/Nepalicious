@@ -9,6 +9,8 @@ import random
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import sweetify
 import re
+from django.http import Http404
+from django.contrib.auth.decorators import user_passes_test, login_required
 
 # Create your views here.
 def restaurant(request):
@@ -33,25 +35,25 @@ def restaurant(request):
         print("No search query provided.")
         
     print("Final restaurant_list count:", restaurant_list.count()) 
-    # items_per_page = 4
+    items_per_page = 4
     
-    # page = request.GET.get('page', 1)
+    page = request.GET.get('page', 1)
     
     
-    #  # Create a Paginator object
-    # paginator = Paginator(restaurant_list, items_per_page)
+     # Create a Paginator object
+    paginator = Paginator(restaurant_list, items_per_page)
 
-    # try:
-    #     # Get the current page
-    #     restaurant_list = paginator.page(page)
-    # except PageNotAnInteger:
-    #     # If page is not an integer, delivering the first page
-    #     restaurant_list = paginator.page(1)
-    # except EmptyPage:
-    #     # If page is out of range, delivering the last page of results
-    #     restaurant_list = paginator.page(paginator.num_pages)
-    # # Get the current page number from the request's GET parameters
-    # page = request.GET.get('page', 1)
+    try:
+        # Get the current page
+        restaurant_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, delivering the first page
+        restaurant_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, delivering the last page of results
+        restaurant_list = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
     
     
     # for restaurant in restaurant_list:
@@ -126,9 +128,15 @@ def view_details(request, restaurant_id):
     return redirect('restaurant_detail', restaurant_id=restaurant_id)
     
 def restaurant_detail(request, restaurant_id):
-    
     # Retrieve the restaurant object
-    restaurant = addRestaurant.objects.get(pk=restaurant_id)
+    # restaurant = addRestaurant.objects.get(pk=restaurant_id)
+    restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+    
+    if not restaurant:
+        if not (request.user.is_superuser or request.user.id == restaurant.user_id):
+            raise Http404("Restaurant not found")
+        restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+
     # Access the related images
     restaurant_images = restaurant.images.all()
     
@@ -232,85 +240,98 @@ def delete_comment_restaurant(request, comment_id):
     return redirect(url)
 
 
+def is_user(user):
+    return user.groups.filter(name = 'restaurant').exists()
+
+@login_required
+@user_passes_test(is_user)
 def edit_restaurant(request, restaurant_id):
     url  = request.META.get('HTTP_REFERER')
     try:
         restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
-        new_location = Location.objects.get(restaurant=restaurant)
-        
-        
-        restaurant_location = Location.objects.filter(restaurant=restaurant).first()
+        if request.user == restaurant.user:
+            if not restaurant:
 
-        
-        if restaurant_location:
-                # Create a map centered at the restaurant's location
-                maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
-                
-                # Add a marker for the restaurant's location
-                marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
-                folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
-                        tooltip='Click for details', 
-                        popup=marker_popup, max_width=400).add_to(maps)
-                
-                # Get the HTML representation of the map
-                maps = maps._repr_html_()
-                
-        else:
-                # If no location is available, provide a default map centered at a specific location
-            maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
-            
-            
-        if request.method == 'POST':
-            form = editRestaurantForm(request.POST, instance=restaurant)
-            restaurant_name = request.POST.get('restaurant_name')
-            restaurant_address = request.POST.get('restaurant_address')
-            restaurant_number = request.POST.get('phone_number')
-            latitude = request.POST.get('latitude')
-            longitude = request.POST.get('longitude')
-            
-            
-            
-            if latitude != '' and longitude != '':
-                print('lat:', latitude)
-                print('long:', longitude)
-                new_location.latitude = latitude
-                new_location.longitude = longitude
-                new_location.save()
-            
-            
-            if not re.match(r'^(98|97)\d{8}$', restaurant_number):
-                    sweetify.error(request,"Invalid contact number")
-                    return redirect(url)
-            print('name', restaurant_name)
-            print('address', restaurant_address)
-            print('number', restaurant_number)
-            if form.is_valid():
-                form.save()
-                restaurant.user.usersdetail.restaurant_name = restaurant_name
-                restaurant.user.usersdetail.address = restaurant_address
-                restaurant.user.usersdetail.phone_number = restaurant_number
-                restaurant.user.usersdetail.save()                
+                if not (request.user.is_superuser or request.user == restaurant.user):
+                    raise Http404("Room not found")
 
-                new_images = request.FILES.getlist('restaurantImage')
+            restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+            new_location = Location.objects.get(restaurant=restaurant)
             
-                # Get the list of existing images
-                old_images = restaurant.images.all()
+            
+            restaurant_location = Location.objects.filter(restaurant=restaurant).first()
+
+            
+            if restaurant_location:
+                    # Create a map centered at the restaurant's location
+                    maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
+                    
+                    # Add a marker for the restaurant's location
+                    marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
+                    folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
+                            tooltip='Click for details', 
+                            popup=marker_popup, max_width=400).add_to(maps)
+                    
+                    # Get the HTML representation of the map
+                    maps = maps._repr_html_()
+                    
+            else:
+                    # If no location is available, provide a default map centered at a specific location
+                maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
                 
-                # Delete old images not included in the new se
-                # Handle restaurant images
-                if new_images:
-                    print("print1")
-                    for old_image in old_images:
-                        if old_image.image not in new_images:
-                            old_image.delete()
-                            
-                    for uploaded_file in new_images:
-                        restaurantImage.objects.create(addRestaurant=restaurant, image=uploaded_file)
-                sweetify.success(request, "Resturant details updated successfully")
-                return redirect('restaurant_detail', restaurant_id=restaurant.id)
+                
+            if request.method == 'POST':
+                form = editRestaurantForm(request.POST, instance=restaurant)
+                restaurant_name = request.POST.get('restaurant_name')
+                restaurant_address = request.POST.get('restaurant_address')
+                restaurant_number = request.POST.get('phone_number')
+                latitude = request.POST.get('latitude')
+                longitude = request.POST.get('longitude')
+                
+                
+                
+                if latitude != '' and longitude != '':
+                    print('lat:', latitude)
+                    print('long:', longitude)
+                    new_location.latitude = latitude
+                    new_location.longitude = longitude
+                    new_location.save()
+                
+                
+                if not re.match(r'^(98|97)\d{8}$', restaurant_number):
+                        sweetify.error(request,"Invalid contact number")
+                        return redirect(url)
+                print('name', restaurant_name)
+                print('address', restaurant_address)
+                print('number', restaurant_number)
+                if form.is_valid():
+                    form.save()
+                    restaurant.user.usersdetail.restaurant_name = restaurant_name
+                    restaurant.user.usersdetail.address = restaurant_address
+                    restaurant.user.usersdetail.phone_number = restaurant_number
+                    restaurant.user.usersdetail.save()                
+
+                    new_images = request.FILES.getlist('restaurantImage')
+                
+                    # Get the list of existing images
+                    old_images = restaurant.images.all()
+                    
+                    # Delete old images not included in the new se
+                    # Handle restaurant images
+                    if new_images:
+                        print("print1")
+                        for old_image in old_images:
+                            if old_image.image not in new_images:
+                                old_image.delete()
+                                
+                        for uploaded_file in new_images:
+                            restaurantImage.objects.create(addRestaurant=restaurant, image=uploaded_file)
+                    sweetify.success(request, "Resturant details updated successfully")
+                    return redirect('restaurant_detail', restaurant_id=restaurant.id)
+            else:
+                form = editRestaurantForm(instance=restaurant)
         else:
-            form = editRestaurantForm(instance=restaurant)
-            
+            return render(request, '404.html')
     except addRestaurant.DoesNotExist:
         pass    
     

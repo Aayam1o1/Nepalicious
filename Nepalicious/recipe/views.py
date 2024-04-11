@@ -8,7 +8,7 @@ import random
 from django.db.models import Sum, F, Avg
 import sweetify
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.http import Http404
 
 def recipe(request):
     recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
@@ -29,34 +29,27 @@ def recipe(request):
             ).distinct()
     elif cuisineType != "Cuisine Type" and search == "":
         latest_recipe = latest_recipe.filter(Q(cuisineType__icontains=cuisineType))
-    elif search and cuisineType:
+    elif (search != "" and search is not None) and (cuisineType != "Cuisine Type" or cuisineType is not None):
         latest_recipe = latest_recipe.filter(
-                Q(recipeName__icontains=search) and
-                Q(user__username__icontains=search)  # Filter by username
+                (Q(recipeName__icontains=search) |
+                Q(user__username__icontains=search)) and Q(cuisineType__icontains=cuisineType)  # Filter by username
             ).distinct()
     else:
         latest_recipe = addRecipe.objects.all()
         print("No search query provided.")
-        
-    items_per_page = 2
-    
-    page = request.GET.get('page', 1)
     
     
-     # Create a Paginator object
-    paginator = Paginator(latest_recipe, items_per_page)
-
+    paginator = Paginator(latest_recipe, 10)  # 10 recipes per page
+    page = request.GET.get('page')
     try:
-        # Get the current page
         latest_recipe = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
+        # If page is not an integer, deliver first page.
         latest_recipe = paginator.page(1)
     except EmptyPage:
-        # If page is out of range, delivering the last page of results
+        # If page is out of range (e.g. 9999), deliver last page of results.
         latest_recipe = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
+    
     
     filtered_recipe = list(addRecipe.objects.all())
     random.shuffle(filtered_recipe)
@@ -146,7 +139,12 @@ def add_Recipe(request):
 def recipeDetail(request, recipe_id):
     
     recipetList = addRecipe.objects.all()
+    if not recipetList:
 
+        if not (request.user.is_superuser or request.user == recipetList.user):
+            raise Http404("Room not found")
+
+        recipetList = get_object_or_404(addRecipe, pk=recipe_id)
     # to get the details of the product
     recipeDetail = get_object_or_404(addRecipe, id=recipe_id)
     saved_recipe = False 
@@ -305,7 +303,12 @@ def delete_recipe(request, recipe_id):
     
 def edit_recipe(request, recipe_id):
     recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
-    
+    if not recipe_instance:
+
+        if not (request.user.is_superuser or request.user == recipe_instance.user):
+            raise Http404("Room not found")
+
+        recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
     recipeStepsString = recipe_instance.recipeSteps
 
     recipeSteps = []

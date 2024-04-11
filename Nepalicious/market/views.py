@@ -13,13 +13,11 @@ import random
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
-
+from django.http import Http404
 
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
-    
-    
 
     for product in productList:
         # Calculate average rating for each product
@@ -28,70 +26,128 @@ def marketplace(request):
     
     category = request.GET.get("category")
     print("category", category)
-    
+    checkPriceRange = None
     pricerange = request.GET.get("pricerange") 
-    print("pricerangepricerangepricerange", pricerange)
     ratingrange = request.GET.get("rating")
-    print("ratingrangeratingrangeratingrange", ratingrange)
+    
+    if pricerange is None or pricerange != 0:
+        checkPriceRange = None
+    else:
+        checkPriceRange = pricerange
     
         
     print("range", pricerange)
     print("rating", ratingrange)
+    print("category", category)
+
+
+    
+    if category is not None and ratingrange is not None and (pricerange is not None and pricerange != 0):
+        productList = productList.filter(
+                Q(productCategory__icontains=category) &
+                Q(productPrice__lt=pricerange) &
+                Q(productfeedback__rating=ratingrange, isdeleted = False, productStock__gt = 0)).distinct()
+        
+
+
+    elif category is None and ratingrange is None and (pricerange is not None and pricerange != 0):
+        productList = productList.filter(
+                Q(productPrice__lt=pricerange))
+        
+    elif category is not None:
+        productList = productList.filter(
+                Q(productCategory__icontains=category))
+        
+        
+    elif category is not None and pricerange is not None and pricerange != 0 : # if category and price is provided
+        print("ya cahi ako xa")
+        productList = productList.filter(
+                Q(productCategory__icontains=category) and
+                Q(productPrice__lt=pricerange)).distinct()
+        
+        
+            
+    # if category:
+    #     productList = productList.filter(
+    #             Q(productCategory__icontains=category)).distinct()
+    # if pricerange is not None and pricerange != 0:
+    #     productList = productList.filter(
+    #             Q(productPrice__lt=pricerange)).distinct()
+    # if ratingrange is not None:
+    #     print("yah")
+    #     if ratingrange != 0:
+    #         float_range = float(ratingrange)
+    #         print("float_range", float_range)
+    #         productList = productList.filter(
+    #                 Q(productfeedback__rating=float_range)).distinct()
+
+    
+    
     
     # Search by category and price range 
-    if category:
-        if  ratingrange is None:
-            print("only category")
-            productList = addProducts.objects.filter(productCategory=category)
-            for product in productList:
-                # Calculate average rating for each product
-                avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-                product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-    
-        else:
-            print("cat and price")
-            productList = addProducts.objects.filter(productCategory=category, productPrice__lte=pricerange)
-            for product in productList:
-                # Calculate average rating for each product
-                avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-                product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    # if category:
+    #     print("a")
+    #     if  ratingrange is None:
+    #         print("b")
+            
+    #         print("only category")
+    #         productList = addProducts.objects.filter(productCategory=category)
+    #         for product in productList:
+    #             print("c")
                 
-    elif category is None and ratingrange is not None:
-        rating = float(ratingrange)
-        # print("aaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbb", rating)
-        productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
-        for product in productList:
-            # Calculate average rating for each product
-            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    #             # Calculate average rating for each product
+    #             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+    #             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    
+    #     else:
+    #         print("d")
+            
+    #         print("cat and price")
+    #         productList = addProducts.objects.filter(productCategory=category, productPrice__lt=pricerange)
+    #         for product in productList:
+    #             print("e")
+                
+    #             # Calculate average rating for each product
+    #             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+    #             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+                
+    # elif category is None and ratingrange is not None and ratingrange != 0:
+    #     print("f")
         
-    if category is not None and ratingrange is not None:
-        rating = float(ratingrange)
-        productList = addProducts.objects.filter(productCategory=category, productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
-        for product in productList:
-            # Calculate average rating for each product
-            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    #     rating = float(ratingrange)
+    #     print("aaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbb", rating)
+    #     productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
+    #     for product in productList:
+    #         print("g")
+            
+    #         # Calculate average rating for each product
+    #         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+    #         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+        
+    # if category is not None and ratingrange is not None:
+    #     print("h")
+    #     rating = float(ratingrange)
+    #     productList = addProducts.objects.filter(productCategory=category, productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
+    #     for product in productList:
+    #         print("i")
+    #         # Calculate average rating for each product
+    #         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+    #         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
 
     print("productList", productList)
     # ratingrange = request.GET.get("rating")
 
     # PAGINATION
-    items_per_page = 4
-    page = request.GET.get('page', 1)
-     # Create a Paginator object
-    paginator = Paginator(productList, items_per_page)
+    paginator = Paginator(productList, 8)  # 10 recipes per page
+    page = request.GET.get('page')
     try:
-        # Get the current page
         productList = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
+        # If page is not an integer, deliver first page.
         productList = paginator.page(1)
     except EmptyPage:
-        # If page is out of range, delivering the last page of results
+        # If page is out of range (e.g. 9999), deliver last page of results.
         productList = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
     context = {
         'productList': productList,
         
@@ -128,8 +184,14 @@ def addProduct(request):
             # Redirect to a page or route after successfully adding a product
             return redirect('marketplace') 
         else:
-            print("please")
-            print(form.errors)
+             # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    error_messages.append(f"{field}: {error}")
+            # Display error messages
+            for error in error_messages:
+                sweetify.error(request, error)
         
     else:
         form = addProductForm()
@@ -150,7 +212,12 @@ def productDetail(request, product_id):
     
     # to get the details of the product
     productDetail = get_object_or_404(addProducts, id=product_id)
-    
+    if not productDetail:
+
+        if not (request.user.is_superuser or request.user == productDetail.user):
+            raise Http404("Room not found")
+
+        productDetail = get_object_or_404(addProducts, pk=product_id)
     
     #to get the image of the product
     productdetailForImage = get_object_or_404(addProducts, id=product_id)
@@ -252,14 +319,20 @@ def delete_product(request, product_id):
             sweetify.success(request, "Product has been deleted successfully", button='OK', timer=3000)
             return redirect(url)  
         except Exception as e:
-            messages.error(request, f"Error deleting product: {str(e)}")
+            sweetify.error(request, f"Error deleting product: {str(e)}")
             return redirect(url)
     return redirect(url)
 
 def edit_product(request, product_id):
+    url  = request.META.get('HTTP_REFERER')
     # Retrieve the product instance
     product_instance = get_object_or_404(addProducts, pk=product_id)
-    
+    if not product_instance:
+
+        if not (request.user.is_superuser or request.user == product_instance.user):
+            raise Http404("Room not found")
+
+        product_instance = get_object_or_404(addProducts, pk=product_id)
     if request.method == 'POST':
         # If it's a POST request, process the form data
         form = editProductForm(request.POST, instance=product_instance)
@@ -284,9 +357,19 @@ def edit_product(request, product_id):
                     productImage.objects.create(addProducts=product_instance, image=uploaded_file)
             sweetify.success(request, "Successfully edited product")
             return redirect('productDetail', product_id=product_instance.id)
+        else:
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    error_messages.append(f"{field}: {error}")
+            # Display error messages
+            for error in error_messages:
+                sweetify.error(request, error)
+            return redirect(url)
     else:
         # If it's not a POST request, populate the form with instance data
         form = editProductForm(instance=product_instance)
+        
     
     context = {
         'form': form,
@@ -392,6 +475,7 @@ def is_user(user):
     return user.groups.filter(name = ' ').exists() or user.groups.filter(name= 'user').exists()
 
 @login_required
+
 def cart_view(request):
     
     user_cart = Cart.objects.filter(user=request.user).first()

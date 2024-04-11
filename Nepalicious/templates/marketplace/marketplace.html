@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,63 +26,72 @@
             height: 100%;
             object-fit: cover;
         }
+
         /* for stars */
-        .rate > input{
+        .rate>input {
             display: none;
         }
-        .rate{
+
+        .rate {
             display: inline-block;
             border: 0;
             font-size: 20px;
         }
+
         .rate .star {
-            font-size: inherit; /* Ensure that the font size remains consistent */
+            font-size: inherit;
+            /* Ensure that the font size remains consistent */
         }
-        .rate > label{
+
+        .rate>label {
             float: right;
         }
 
         /* for showing stars */
-        .rate > label:before{
+        .rate>label:before {
             display: inline-block;
             font-size: 1.1rem;
             font-family: FontAwesome;
             content: "\f005";
-            margin:0;
-            padding:0.3rem .2rem;
+            margin: 0;
+            padding: 0.3rem .2rem;
             cursor: pointer;
         }
 
         /* for half stars */
-        .rate .half:before{
+        .rate .half:before {
             content: "\f089";
             position: absolute;
             padding-right: 0;
-        
+
         }
 
         /* click and hover */
-        input:checked ~ label, label:hover ~ label{
+        .rating-stars input:checked~label,
+        .rating-stars label:hover~label {
             color: #ffb503;
         }
 
-        /* hover highlight stars */
-        input:checked  + label:hover, input:checked ~ label:hover, input:checked ~ label:hover ~ label,
-        label:hover ~ input:checked ~ label{
+        /* CSS for stars */
+        .rating-stars input:checked+label:hover,
+        .rating-stars input:checked~label:hover,
+        .rating-stars input:checked~label:hover~label,
+        .rating-stars label:hover~input:checked~label {
             color: #cc9000;
         }
-        .stars {
+
+        .rating-stars .stars {
             color: #ddd;
-            /* Default color of stars */
         }
 
-
-        .filled {
+        .rating-stars .filled {
             color: orange;
-            /* Color for filled stars */
         }
 
-
+        /* CSS for category labels */
+        .category-radio input:checked+label {
+            color: #ffb503;
+        }
     </style>
 </head>
 
@@ -93,191 +101,192 @@
     {% load static %}
     {% load custom_tags %}
     <!-- <div class="bg-gray-200 h-[7rem] w-full">
-        <img class="w-full h-full" src="../../static/images/marketplace/banner.jpg" alt="">    
-    </div> -->
+            <img class="w-full h-full" src="../../static/images/marketplace/banner.jpg" alt="">    
+        </div> -->
 
     <!-- filter -->
     <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
         <div class="w-[20%] pl-[3rem] mt-3" id="container2">
             <div class="flex-col justify-around items-center w-[15rem]  ">
-                    <form action="{% url 'marketplace' %}" role="search">
-                        {% csrf_token %}
+                <form action="{% url 'marketplace' %}" role="search">
+                    {% csrf_token %}
 
-                        <div>
-                            <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
-                        </div>
+                    <div>
+                        <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
+                    </div>
+                    <div class="category-radio">
+
 
                         <input type="radio" name="category" value="spicesFood" id="SpicesFood">
-                        <label for="spicesFood">Spices and Food</label><br>
-                    
+                        <label for="SpicesFood">Spices and Food</label><br>
+
                         <input type="radio" name="category" value="pansPots" id="pansPots">
                         <label for="pansPots">Pans and Pots</label><br>
-                    
+
                         <input type="radio" name="category" value="knifes" id="Knifes">
                         <label for="Knifes">Knifes</label><br>
 
                         <input type="radio" name="category" value="electricAppliance" id="electricAppliance">
-                        <label for="Knifes">Electric Appliance</label><br>
+                        <label for="electricAppliance">Electric Appliance</label><br>
 
                         <input type="radio" name="category" value="cleaningAppliance" id="cleaningAppliance">
-                        <label for="Knifes">Cleaning Appliance</label><br>
-                    
-                        
-                        <div id="main" class="py-3">
+                        <label for="cleaningAppliance">Cleaning Appliance</label><br>
+
+                    </div>
+
+                    <div id="main" class="py-3">
                         <div>
                             <h1 class="text-xl ml-[1rem] mt-6">Price</h1>
 
-                        <div class="max-w-md mx-auto">
-                            <input
-                                type="range"
-                                min="0"
-                                max="20000"
-                                step="1"
-                                value="0"
-                                class="w-[80%] mt-2"
-                                id="valueSlider"
-                                name="pricerange"
-                            >
-                            <div class="relative mt-2">
-                                <div id="valuePopup" class="absolute bg-gray-800 text-white text-xs px-2 py-1 rounded-md">
-                                    Rs0
+                            <div class="max-w-md mx-auto">
+                                <input type="range" min="0" max="20000" step="1" value="0" class="w-[80%] mt-2"
+                                    id="valueSlider" name="pricerange">
+                                <div class="relative mt-2">
+                                    <div id="valuePopup"
+                                        class="absolute bg-gray-800 text-white text-xs px-2 py-1 rounded-md">
+                                        Rs0
+                                    </div>
                                 </div>
                             </div>
+
+                            <script>
+                                // Custom function to display and keep the value in a tooltip
+                                function updateValue() {
+                                    const valueSlider = document.getElementById('valueSlider');
+                                    const valuePopup = document.getElementById('valuePopup');
+                                    const value = valueSlider.value;
+                                    valuePopup.textContent = `Rs${value}`;
+                                    valuePopup.style.left = `${(value / 20000) * 100}%`;
+                                }
+
+                                // Attach the custom function to the input event
+                                const valueSlider = document.getElementById('valueSlider');
+                                valueSlider.addEventListener('input', updateValue);
+
+                                // Display the tooltip initially when the page loads
+                                window.addEventListener('DOMContentLoaded', updateValue);
+                            </script>
+
+
                         </div>
-
-                    <script>
-                        // Custom function to display and keep the value in a tooltip
-                        function updateValue() {
-                            const valueSlider = document.getElementById('valueSlider');
-                            const valuePopup = document.getElementById('valuePopup');
-                            const value = valueSlider.value;
-                            valuePopup.textContent = `Rs${value}`;
-                            valuePopup.style.left = `${(value / 20000) * 100}%`;        }
-
-                        // Attach the custom function to the input event
-                        const valueSlider = document.getElementById('valueSlider');
-                        valueSlider.addEventListener('input', updateValue);
-
-                        // Display the tooltip initially when the page loads
-                        window.addEventListener('DOMContentLoaded', updateValue);
-                    </script>
-
-    
+                        <h1 class="text-xl ml-[1rem] mt-10">Rating</h1>
+                        <div class="rate rating-stars">
+                            <input type="radio" name="rating" id="rating10" value="5" /><label for="rating10"
+                                title="5"></label>
+                            <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
+                            <input type="radio" name="rating" id="rating8" value="4" /><label for="rating8"
+                                title="4"></label>
+                            <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
+                            <input type="radio" name="rating" id="rating6" value="3" /><label for="rating6"
+                                title="3"></label>
+                            <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
+                            <input type="radio" name="rating" id="rating4" value="2" /><label for="rating4"
+                                title="2"></label>
+                            <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
+                            <input type="radio" name="rating" id="rating2" value="1" /><label for="rating2"
+                                title="1"></label>
+                            <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
+                        </div>
                     </div>
-                    <h1 class="text-xl ml-[1rem] mt-10">Rating</h1>
-                    <div class="rate">
-                        <input type="radio" name="rating" id="rating10" value="5"  /><label
-                            for="rating10" title="5"></label>
-                        <!-- <input type="radio" name="rating" id="rating9"  value="4.5" required/><label for="rating9" title="4.5" class="half"></label> -->
-                        <input type="radio" name="rating" id="rating8" value="4"  /><label
-                            for="rating8" title="4"></label>
-                        <!-- <input type="radio" name="rating" id="rating7"  value="3.5" required/><label for="rating7" title="3.5" class="half"></label> -->
-                        <input type="radio" name="rating" id="rating6" value="3"  /><label
-                            for="rating6" title="3"></label>
-                        <!-- <input type="radio" name="rating" id="rating5"  value="2.5" required/><label for="rating5" title="2.5" class="half"></label> -->
-                        <input type="radio" name="rating" id="rating4" value="2"  /><label
-                            for="rating4" title="2"></label>
-                        <!-- <input type="radio" name="rating" id="rating3"  value="1.5" required/><label for="rating3" title="1.5" class="half"></label> -->
-                        <input type="radio" name="rating" id="rating2" value="1"  /><label
-                            for="rating2" title="1"></label>
-                        <!-- <input type="radio" name="rating" id="rating1"  value="0.5" required/><label for="rating1" title="0.5" class="half"></label> -->
-                    </div>
-                </div>
             </div>
             <div class="pb-[2rem] flex justify-between mt-4 mr-10" id="rating-product price-product">
                 <button id="reset" class="bg-[#61A0FF] text-white p-2 rounded-xl h-10 w-[40rem]">Reset</button>
 
-                    <button id="apply" type="submit" name="searchbycategory" class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
+                <button id="apply" type="submit" name="searchbycategory"
+                    class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
             </div>
-        </form>
+            </form>
 
         </div>
 
         <!-- display products -->
         {% if productList %}
         <div class="w-[100%] grid grid-cols-4 gap-3">
-        
+
             {% for product in productList %}
 
-                <div class="w-[18rem] p-4">    
+            <div class="w-[18rem] p-4">
 
-                    <!-- displaying product picture -->
-                    <div id="gallery" class="relative w-full" data-carousel="slide">
-                        <!-- Carousel wrapper -->
-                        
-                        <div class="relative h-56 overflow-hidden rounded-lg">
-                            {% for image in product.images.all %}
-                                <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                    <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}" alt=""
+                <!-- displaying product picture -->
+                <div id="gallery" class="relative w-full" data-carousel="slide">
+                    <!-- Carousel wrapper -->
+
+                    <div class="relative h-56 overflow-hidden rounded-lg">
+                        {% for image in product.images.all %}
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                            <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}" alt=""
                                     class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
-                               </div>
-                            {% endfor %}
                         </div>
-                        
+                        {% endfor %}
                     </div>
-                      
 
-                    <!-- display other data -->
-                    <div class="">
-                        <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
-                        <p class="mt-2 text-sm">{{ product.productBrand }}</p>
-                        <p class="mt-2 text-sm">Stock ({{ product.productStock }})</p>
-                        <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
-                        <p class="rating-stars" class="">
-                            <!-- Display average rating as stars -->
-                            {% if product.avg_rating %}
-                                {% for i in "12345" %}
-                                    {% if i|add:0 <= product.avg_rating %}
-                                        <span class="star filled">&#9733;</span>
-                                    {% else %}
-                                        <span class="star">&#9733;</span>
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                <p class="text-sm mt-1">
-                                    No reviews yet
-                                </p>
-                            {% endif %}
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-                    
-                        <div class="">
-                            {% if not request.user.is_authenticated %}
-                            <button type="submit" onclick="loginrequired()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
-                                Add to Cart
-                            </button>
-                            {% else %}
-                            <!-- Pass the plant ID to the addtocart() function -->
-                            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
-                            <form method="POST" action="{% url 'add_to_cart' product.id %}">
-                                {% csrf_token %}
-                                
-                                <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
-                                    Add to Cart
-                                </button>
-                            </form>
-                            {% else %}
-                            <button type="submit" onclick="error()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
-                                Add to Cart
-                            </button>
-                            {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
                 </div>
 
 
-                {% endfor %}  
-        </div>
-        
+                <!-- display other data -->
+                <div class="">
+                    <h1 class="text-lg font-medium mt-4">{{ product.productName }}</h1>
+                    <p class="mt-2 text-sm">{{ product.productBrand }}</p>
+                    <p class="mt-2 text-sm">Stock ({{ product.productStock }})</p>
+                    <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
+                    <p class="mt-2 text-sm"> {{ product.productCategory }}</p>
 
-        
+                    <p class="rating-stars" class="">
+                        <!-- Display average rating as stars -->
+                        {% if product.avg_rating %}
+                        {% for i in "12345" %}
+                        {% if i|add:0 <= product.avg_rating %} <span class="star filled">&#9733;</span>
+                            {% else %}
+                            <span class="star">&#9733;</span>
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            <p class="text-sm mt-1">
+                                No reviews yet
+                            </p>
+                            {% endif %}
+                    </p>
+                    <p id="rating-message" class="mt-2 text-gray-600"></p>
+
+                    <div class="">
+                        {% if not request.user.is_authenticated %}
+                        <button type="submit" onclick="loginrequired()"
+                            class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                            Add to Cart
+                        </button>
+                        {% else %}
+                        <!-- Pass the plant ID to the addtocart() function -->
+                        {% if request.user|has_group:" " or request.user|has_group:"user" %}
+                        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+
+                            <button type="submit" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                                Add to Cart
+                            </button>
+                        </form>
+                        {% else %}
+                        <button type="submit" onclick="error()" class="bg-[#61A0FF] text-white p-2 rounded-xl w-full">
+                            Add to Cart
+                        </button>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+            {% endfor %}
+        </div>
+
+
+
         {% else %}
 
         <div class=" w-[40%] mx-auto flex jusitfy-center">
             <div class="flex flex-col">
 
-                <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-10 flex justify-center">Products Not available.</p>
+                <p class=" text-2xl text-gray-500 font-bold w-full ml-2 mt-10 flex justify-center">Products Not
+                    available.</p>
                 <img src="../../static/images/marketplace/marketnotfound.svg" class="h-[25rem] w-[25rem] ml-10" alt="">
             </div>
         </div>
@@ -285,29 +294,28 @@
     </div>
     {% comment %} pagination {% endcomment %}
     <div class="flex flex-col xs:flex-row ml-[17rem] jusity-center items-center xs:justify-between">
-        <div class="inline-flex mt-2 xs:mt-0 gap-4 ">
-            <!-- Pagination Next and Previous -->
-            {% if productList.has_previous %}
-                <a href="?page={{ productList.previous_page_number }}"
-                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
-                    Prev
-                </a>
-            {% else %}
-                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
-                    Prev
-                </button>
-            {% endif %}
-
-            {% if productList.has_next %}
-                <a href="?page={{ productList.next_page_number }}"
-                class="text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 rounded">
-                    Next
-                </a>
-            {% else %}
-                <button class="text-sm bg-gray-300 text-gray-500 font-semibold py-2 px-4 rounded" disabled>
-                    Next
-                </button>
-            {% endif %}
+        <div class="flex flex-col xs:flex-row ml-[17rem] justify-center items-center xs:justify-between">
+            <div class="flex justify-center mt-4">
+                <ul class="flex gap-2">
+                    {% if productList.has_previous %}
+                        <li><a href="?page=1">&laquo; First</a></li>
+                        <li><a href="?page={{ latest_recipe.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+            
+                    {% for i in productList.paginator.page_range %}
+                        {% if productList.number == i %}
+                            <li><span class="font-semibold">{{ i }}</span></li>
+                        {% else %}
+                            <li><a href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% if productList.has_next %}
+                        <li><a href="?page={{ latest_recipe.next_page_number }}">Next</a></li>
+                        <li><a href="?page={{ latest_recipe.paginator.num_pages }}">Last &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 
