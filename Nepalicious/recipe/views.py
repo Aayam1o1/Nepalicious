@@ -168,7 +168,7 @@ def recipeDetail(request, recipe_id):
      
     # for ingredients
     
-    # STEP 4: Add Rules for your room
+    
     recipeIngredientString = recipeDetail.recipeIngredient
             
     # Split the rules string into individual rules and append them to the list
@@ -251,9 +251,7 @@ def your_recipe(request):
     if request.method == 'POST':
         if "edit" in request.POST:
             recipe_id = request.POST.get("recipe_id")
-            
             return redirect("edit_recipe", recipe_id)
-        
         
     user = request.user
     latest_recipe = addRecipe.objects.filter(user=user)
@@ -262,28 +260,22 @@ def your_recipe(request):
     
     page = request.GET.get('page', 1)
     
-    
-     # Create a Paginator object
+    # Create a Paginator object
     paginator = Paginator(latest_recipe, items_per_page)
 
     try:
         # Get the current page
         latest_recipe = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
+        # If page is not an integer, deliver the first page
         latest_recipe = paginator.page(1)
     except EmptyPage:
-        # If page is out of range, delivering the last page of results
+        # If page is out of range, deliver the last page of results
         latest_recipe = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
-    
-
     
     context = {
         'latest_recipe': latest_recipe,
     }
-
     
     return render(request, 'recipe/yourRecipe.html', context)
 
@@ -309,8 +301,9 @@ def edit_recipe(request, recipe_id):
             raise Http404("Room not found")
 
         recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
+    else:
+        pass
     recipeStepsString = recipe_instance.recipeSteps
-
     recipeSteps = []
     current_step = ""
     for step in recipeStepsString.split(','):
@@ -320,35 +313,52 @@ def edit_recipe(request, recipe_id):
             current_step = ""
         else:
             current_step += ', '    
-                    
-    # Ensure recipe steps is always a string, even if it's empty
+            
+    recipeIngredientString = recipe_instance.recipeIngredient     
+    # Split the rules string into individual rules and append them to the list
+    recipeIngredient = recipeIngredientString.split(", ")   
+                 
     if request.method == 'POST':
         # If it's a POST request, process the form data
         form = editRecipeForm(request.POST, instance=recipe_instance)
-          
+  
         
         if form.is_valid():
             form.save()
+            steps_string = request.POST.get('steps', '')
+            ingredients_string = request.POST.get('ingredients', '')
+            
+            print('steps:::', steps_string)
+            print('ingree', ingredients_string)
+            
+            if steps_string:
+                print('steps', steps_string)
+                
+                steps = steps_string.split(", ")
+                recipe_instance.recipeSteps = ", ".join(steps)            
+        
+                # Save the instance again to update the fields
+                recipe_instance.save()
+            else:
+                sweetify.error(request, 'There was an error adding the recipe steps')
+                
+            
+            if ingredients_string:
+                #step4: Add ingredients for the recipe
+                ingredients = ingredients_string.split(", ")
+                recipe_instance.recipeIngredient = ", ".join(ingredients)
+                recipe_instance.save()
 
-            # if 'recipeInput' in request.POST:
-            #     new_steps_string = request.POST.get('steps')
-            #     recipeSteps = []
-            #     recipe_instance.save()
-            #     print('steps ar', recipeSteps)
                 
-            #     steps = new_steps_string.split(", ")
-            #     recipe_instance.recipeSteps = ", ".join(steps) 
-            
-            #     print("recipe::", recipe_instance.recipeSteps)
-            #     recipe_instance.save()
+            else:
+                sweetify.error(request, 'There was an error adding the recipe ingredients')
                 
-                
+            #for image
             new_images = request.FILES.getlist('recipeImage')
-            
+
             # Get the list of existing images
             old_images = recipe_instance.images.all()
                         
-            # Handle product images
             if new_images:
                 for old_image in old_images:
                     if old_image.image not in new_images:
@@ -356,17 +366,23 @@ def edit_recipe(request, recipe_id):
 
                 for uploaded_file in new_images:
                     recipeImage.objects.create(addRecipe=recipe_instance, image=uploaded_file)
-            
+            else:
+                sweetify.error(request, 'There was an error uplodaing image.')
             sweetify.success(request, "Successfully edited Recipe")
             return redirect('recipeDetail', recipe_id=recipe_instance.id)
+        else:
+            sweetify.error(request, 'Form is not valid')
+            
     else:
         # If it's not a POST request, populate the form with instance data
         form = editRecipeForm(instance=recipe_instance)
+        
     
     context = {
         'form': form,
         'recipe_instance': recipe_instance,
         'recipeSteps': recipeSteps,  
+        'recipeIngredient': recipeIngredient
     }    
     
     return render(request, 'recipe/editRecipe.html', context)
