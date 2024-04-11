@@ -32,7 +32,7 @@ class Location(models.Model):
     restaurant = models.ForeignKey(addRestaurant, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
-
+    map_addres = models.TextField(blank=True)
     def __str__(self):
         return f"{self.restaurant.user.usersdetail.restaurant_name} - Latitude: {self.latitude}, Longitude: {self.longitude}"
     

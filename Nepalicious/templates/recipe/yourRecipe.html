@@ -14,9 +14,11 @@
     {% load static %}
     {% load custom_tags %}
     <div class="p-4">
-        <h1 class="text-3xl font-semibold">Your Recipe</h1>
+        <h1 class="text-3xl font-semibold">Your Recipes</h1>
     </div>
+    {% if latest_recipe %}
     <div class="w-full grid grid-cols-4 gap-6">
+          
         {% for recipe in latest_recipe %}
             <div class="w-full p-4">    
                 <!-- displaying product picture -->
@@ -99,7 +101,18 @@
                 </div>
             </div>  
         {% endfor %}
+        
     </div>
+    {% else %}
+
+    <div class="w-full mx-auto items-center flex justify-center">
+        <div class="flex flex-col">
+
+            <p class=" text-2xl text-gray-500 font-bold w-full mt-10 flex justify-center">No Recipes posted. Please Post some recipes.</p>
+            <img src="../../static/images/marketplace/waiting.svg" class="ml-8 h-[25rem] w-[25rem]" alt="">
+        </div>
+    </div>
+    {% endif %}
     {% comment %} pagination {% endcomment %}
     <div class="flex flex-col xs:flex-row mt-10 justify-center items-center xs:justify-between">
         <div class="inline-flex mt-2 xs:mt-0 gap-4">

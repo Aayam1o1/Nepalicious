@@ -15,6 +15,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
 from django.http import Http404
 
+def is_user(user):
+    return user.groups.filter(name = 'vendor').exists()
+
+
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
@@ -155,6 +159,8 @@ def marketplace(request):
     return render(request, 'marketplace/marketplace.html', context)
 
 # for adding products for markteplace
+@login_required
+@user_passes_test(is_user)
 def addProduct(request):
     
     # getting data from forms.py
@@ -264,7 +270,8 @@ def productDetail(request, product_id):
     
     return render(request, 'marketplace/productDetail.html', context)
 
-
+@login_required
+@user_passes_test(is_user)
 def your_product(request):
     if request.method == 'POST':
         if "edit" in request.POST:
@@ -308,6 +315,8 @@ def your_product(request):
     return render(request, 'marketplace/yourproduct.html', context)
 
 #for delete product
+@login_required
+@user_passes_test(is_user)
 def delete_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     product = addProducts.objects.get(id=product_id)
@@ -323,6 +332,9 @@ def delete_product(request, product_id):
             return redirect(url)
     return redirect(url)
 
+
+@login_required
+@user_passes_test(is_user)
 def edit_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     # Retrieve the product instance
@@ -471,11 +483,8 @@ def add_to_cart(request, product_id):
     return redirect('marketplace')
 
 
-def is_user(user):
-    return user.groups.filter(name = ' ').exists() or user.groups.filter(name= 'user').exists()
 
 @login_required
-
 def cart_view(request):
     
     user_cart = Cart.objects.filter(user=request.user).first()
@@ -745,7 +754,8 @@ def order_history(request):
     }
     return render(request, 'profiles/paymentHistory.html', context)
 
-
+@login_required
+@user_passes_test(is_user)
 def pending_orders(request):
     if request.method == 'POST' and 'Update' in request.POST:
         status =  request.POST.get("status")
@@ -824,9 +834,12 @@ def pending_orders(request):
     }
     return render(request, 'profiles/pendingOrder.html', context)
 
-
+@login_required
+@user_passes_test(is_user)
 def vendor_order(request):
-    completed_or_canceled_orders = orderDetail.objects.filter(is_completed__in=['Delivery Completed', 'Delivery Canceled']).order_by('-order_for__buy_date')
+    user = request.user
+    
+    completed_or_canceled_orders = orderDetail.objects.filter(seller = user, is_completed__in=['Delivery Completed', 'Delivery Canceled']).order_by('-order_for__buy_date')
     
     context = {
         'completed_or_canceled_orders': completed_or_canceled_orders,

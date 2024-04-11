@@ -12,6 +12,8 @@ import re
 from django.http import Http404
 from django.contrib.auth.decorators import user_passes_test, login_required
 
+def is_user(user):
+    return user.groups.filter(name = 'restaurant').exists()
 # Create your views here.
 def restaurant(request):
     restaurant_list = addRestaurant.objects.all()
@@ -70,6 +72,8 @@ def restaurant(request):
     
     return render(request, 'restaurant/restaurant.html', context)
 
+@login_required
+@user_passes_test(is_user)
 def addRestaurantdetail(request):
     if request.method == 'POST':
         form = addRestaurantForm(request.POST, request.FILES)
@@ -77,9 +81,15 @@ def addRestaurantdetail(request):
              # Save latitude and longitude
             latitude = request.POST.get('latitude')
             longitude = request.POST.get('longitude')
+            map_addres = request.POST.get('address')
+            third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
+            # Extract the substring up to the third comma
+            map_addres = map_addres[:third_comma_index]
+            
+            
             print('lat:', latitude)
             print('long:', longitude)
-            
+            print('map_addres:', map_addres)
             instance = form.save(commit=False)
             instance.user = request.user
             print('user', instance.user)
@@ -87,6 +97,7 @@ def addRestaurantdetail(request):
             # for saving restaurant type
             selected_restaurant_type = form.cleaned_data['restaurantType']
             instance.restaurantType = selected_restaurant_type
+            
             
             print('selected restarunt type:: ', selected_restaurant_type)
             instance.save()
@@ -101,10 +112,12 @@ def addRestaurantdetail(request):
             instance.save()
             
             
-            
-            location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude)
+            location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude, map_addres=map_addres)
             print(location)
             
+            user_detail = get_object_or_404(usersDetail, user=request.user)
+            user_detail.address = map_addres
+            user_detail.save()
 
             messages.success(request, "Sucessfully added Restaurant!!")   
             return redirect('restaurant') 
@@ -155,7 +168,8 @@ def restaurant_detail(request, restaurant_id):
         maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
         
          # Add a marker for the restaurant's location
-        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
+        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br><strong>Address:</strong>{restaurant_location.map_addres}</div></div>"
+        
         folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
                   tooltip='Click for details', 
                   popup=marker_popup, max_width=400).add_to(maps)
@@ -240,8 +254,7 @@ def delete_comment_restaurant(request, comment_id):
     return redirect(url)
 
 
-def is_user(user):
-    return user.groups.filter(name = 'restaurant').exists()
+
 
 @login_required
 @user_passes_test(is_user)
@@ -267,7 +280,8 @@ def edit_restaurant(request, restaurant_id):
                     maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
                     
                     # Add a marker for the restaurant's location
-                    marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}</div>"
+                    marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br><strong>Address:</strong>{restaurant_location.map_addres}</div></div>"
+
                     folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
                             tooltip='Click for details', 
                             popup=marker_popup, max_width=400).add_to(maps)
@@ -281,20 +295,26 @@ def edit_restaurant(request, restaurant_id):
                 
                 
             if request.method == 'POST':
+
                 form = editRestaurantForm(request.POST, instance=restaurant)
                 restaurant_name = request.POST.get('restaurant_name')
-                restaurant_address = request.POST.get('restaurant_address')
                 restaurant_number = request.POST.get('phone_number')
                 latitude = request.POST.get('latitude')
                 longitude = request.POST.get('longitude')
-                
-                
-                
+                map_addres = request.POST.get('address')
+                third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
+                map_addres = map_addres[:third_comma_index]
+                print("map_addres:", map_addres)
+
                 if latitude != '' and longitude != '':
                     print('lat:', latitude)
                     print('long:', longitude)
                     new_location.latitude = latitude
                     new_location.longitude = longitude
+                    new_location.map_addres = map_addres
+                    restaurant.user.usersdetail.address = map_addres
+                    restaurant.user.usersdetail.save()                
+
                     new_location.save()
                 
                 
@@ -302,12 +322,10 @@ def edit_restaurant(request, restaurant_id):
                         sweetify.error(request,"Invalid contact number")
                         return redirect(url)
                 print('name', restaurant_name)
-                print('address', restaurant_address)
                 print('number', restaurant_number)
                 if form.is_valid():
                     form.save()
                     restaurant.user.usersdetail.restaurant_name = restaurant_name
-                    restaurant.user.usersdetail.address = restaurant_address
                     restaurant.user.usersdetail.phone_number = restaurant_number
                     restaurant.user.usersdetail.save()                
 
@@ -344,3 +362,18 @@ def edit_restaurant(request, restaurant_id):
     
     
     return render(request, 'restaurant/editRestaurant.html', context)
+
+@login_required
+@user_passes_test(is_user)
+def delete_restaurant(request, restaurant_id):
+    url  = request.META.get('HTTP_REFERER')
+    restaurant = addRestaurant.objects.get(id=restaurant_id)
+    if request.method == 'POST':
+        try:
+            restaurant.delete()
+            sweetify.success(request, "Restaurant has been deleted successfully", timer=3000)
+            return redirect('restaurant')
+        except Exception as e:
+            sweetify.error(request, f"Error deleting Resturant: {str(e)}")
+            return redirect(url)
+    return redirect('restaurant')

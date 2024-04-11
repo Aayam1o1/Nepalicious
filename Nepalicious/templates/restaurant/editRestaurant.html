@@ -21,8 +21,7 @@
     {% load static %}
 
     <div class="bg-gray-100">
-        <form action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+        
 
             <div class="shadow-sm bg-white p-2 flex justify-between rounded-xl">
                 <div class="p-4">
@@ -30,86 +29,24 @@
                    
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
-                    
-
+    
                     {% comment %} script for discard {% endcomment %}
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var imageInput = document.getElementById('product-image') || [];
-
-                            // Get the URLs of existing images
-                            var existingImages = document.querySelectorAll('.product-image');
-                            
-                            console.log(existingImages.length);
-                            // Function to handle change in the image input
-                            imageInput.addEventListener('change', function (event) {
-                                var files = event.target.files;
-                                var container = document.getElementById("image-container");
-                                document.getElementById('product-img-heading').style.display = "none";
-                                
-                                // Clear existing images
-                                container.innerHTML = '';
-                                
-                                
-                                // Display uploaded images
-                                for (let i = 0; i < Math.min(files.length, 3); i++) {
-                                    const file = files[i];
-                                    const fileURL = URL.createObjectURL(file);
-                                    
-                                    const imgDiv = document.createElement("div");
-                                    imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
-                                    imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
-                                    
-                                    container.appendChild(imgDiv);
-                                }
-                                 // Check if exactly 3 images are uploaded
-                            if (files.length === 3) {
-                                document.querySelector('button[type="submit"]').disabled = false;
-                            } else {
-                                document.querySelector('button[type="submit"]').disabled = true;
-                            }
-                            });
-                        });
-                        function buttondisabledimage() {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Please upload exactly 3 images.',
-                                icon: 'error',
-                                confirmButtonText: 'Ok'
-                            });
-                        }
                     
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var submitButton = document.querySelector('button[type="submit"]');
-                            var imageInput = document.getElementById('product-image');
-                            var existingImages = document.querySelectorAll('.product-image');
+                    <form action="{% url 'delete_restaurant' restaurant_id=restaurant.id %}" method="post">
+                        {% csrf_token %}
+                        <div>
 
-                            
-                            // Function to handle submit button click
-                            submitButton.addEventListener('click', function (event) {
-                                var files = imageInput.files;
-                                if(existingImages.length === 3) return;
-
-                                if (files.length !== 3) {
-                                    event.preventDefault(); // Prevent form submission if the number of images is not 3
-                                    buttondisabledimage(); // Call the error function
-                                }
-                            });
-                    
-                            // Function to handle change in the image input
-                            imageInput.addEventListener('change', function (event) {
-                                var files = event.target.files;
-                                if (files.length === 3) {
-                                    submitButton.disabled = false; // Enable submit button if exactly 3 images are uploaded
-                                } else {
-                                    buttondisabledimage(); // Disable submit button if the number of images is not 3
-                                }
-                            });
-                        });
-                    </script>
-
+                            <input  type="submit" class=" rounded-xl w-[10rem] h-10 text-white bg-red-600 mr-5" value="Delete">
+                            <p class="text-white">
+                                <span class="text-white">Delete Restaurant</span>
+                            </p>
+                        </div>
+                        
+                    </form>
+                    <form action="{% url 'edit_restaurant' restaurant_id=restaurant.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
-                        <span class="text-white">Add Restaurant</span>
+                        <span class="text-white">Make Changes</span>
                     </button>
                 </div>
             </div>
@@ -161,24 +98,103 @@
                         <!--HERE IMAGE WILL BE DISPLAYED-->
 
                         <div class="flex justify-center mt-[5rem]">
-                            <label required for="recipe-image-input"
+                            <label required for="product-image-input"
                                 class="bg-[#FFC061] cursor-pointer text-white rounded-xl relative inline-flex justify-center w-[15rem] px-7 py-2 border border-transparent text-base leading-6 font-medium rounded-md transition duration-150 ease-in-out">
                                 <span>Add image</span>
                                 <input id="product-image" name="restaurantImage" type="file" accept="image/*" multiple
                                     class="absolute block opacity-0 w-full h-full cursor-pointer"/>
                             </label>
                         </div>
-
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                var imageInput = document.getElementById('product-image') || [];
+    
+                                // Get the URLs of existing images
+                                var existingImages = document.querySelectorAll('.product-image');
+                                
+                                console.log(existingImages.length);
+                                // Function to handle change in the image input
+                                imageInput.addEventListener('change', function (event) {
+                                    var files = event.target.files;
+                                    var container = document.getElementById("image-container");
+                                    document.getElementById('product-img-heading').style.display = "none";
+                                    
+                                    // Clear existing images
+                                    container.innerHTML = '';
+                                    console.log("images", imageInput); // Log the image input element itself
+                                    console.log("Selected files:", files); // Log the selected files
+                                    console.log("Number of selected files:", files.length);
+                                    
+                                    // Display uploaded images
+                                    for (let i = 0; i < Math.min(files.length, 3); i++) {
+                                        const file = files[i];
+                                        const fileURL = URL.createObjectURL(file);
+                                        
+                                        const imgDiv = document.createElement("div");
+                                        imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
+                                        imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
+                                        
+                                        container.appendChild(imgDiv);
+                                    }
+                                    if (files.length === 3) {
+                                        document.querySelector('button[type="submit"]').disabled = false;
+                                    } else {
+                                        document.querySelector('button[type="submit"]').disabled = true;
+                                    }
+                                });
+                            });
+                            function buttondisabledimage() {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Please upload exactly 3 images.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok'
+                                });
+                            }
+                        
+                            document.addEventListener("DOMContentLoaded", function () {
+                                var submitButton = document.querySelector('button[type="submit"]');
+                                var imageInput = document.getElementById('product-image');
+                                var existingImages = document.querySelectorAll('.product-image');
+                                var maxImages = 3;
+    
+                                
+                                // Function to handle submit button click
+                                submitButton.addEventListener('click', function (event) {
+                                    var files = imageInput.files;
+                                    var totalImages = existingImages.length + files.length;
+    
+                                    if(existingImages.length === 3) return;
+    
+                                    if (files.length !== 3) {
+                                        event.preventDefault(); // Prevent form submission if the number of images is not 3
+                                        buttondisabledimage(); // Call the error function
+                                    }
+                                });
+                                
+                                // Function to handle change in the image input
+                                imageInput.addEventListener('change', function (event) {
+                                    var files = event.target.files;
+                                    if (files.length === 3) {
+                                        submitButton.disabled = false; // Enable submit button if exactly 3 images are uploaded
+                                    } else {
+                                        buttondisabledimage(); // Disable submit button if the number of images is not 3
+                                    }
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
             <div class=" flex gap-1 container4 shadow-sm bg-gray-100 rounded-xl w-full rounded-xl">
                 <div class="rounded-xl bg-white w-[48%]">
                     <div class="flex justify-between rounded-xl">
-                        <div class="p-5 rounded-xl">
-                            <h1 class="text-2xl mb-5 font-bold">Restaurant Address</h1>
-                            <input type="" name="restaurant_address" class="border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100" value="{{ request.user.usersdetail.address }}">
-                        </div>
+                        <div class="relative inline-block text-gray-700 p-4 ">
+                            <h2 class="text-2xl font-bold mb-4">Restaurant Type</h2>
+
+                                {{ form.restaurantType }}
+
+                            </div>
                     </div>
                 </div>
                 <div class="bg-gray-100">
@@ -200,15 +216,7 @@
                     <div class="flex mb-4">
                         <!-- add Restaurant type -->
                         <div class="shadow-sm rounded-xl w-full px-2 h-auto pl-[2rem] mb-6 flex justify-between">
-                            <div class="relative inline-block text-gray-700  ">
-                            <h2 class="text-2xl font-bold mb-4">Restaurant Type</h2>
-
-                                {{ form.restaurantType }}
-
-                            </div>
-                            
-                            <div class="ml-[15rem]">
-
+                            <div class="ml-[25rem] items-center">
                                 <div>
                                     <h2 class="text-2xl font-bold mb-4">Old map</h2>
                                 </div>
@@ -217,7 +225,6 @@
                                 </div>
                             </div>
                             <br>
-
                         <script>
                             document.addEventListener("DOMContentLoaded", function () {
                                 var restaurantTypeeToggle = document.getElementById('restaurantTypeToggle');
@@ -269,6 +276,8 @@
             </div> <!-- Placeholder for displaying clicked location info -->
             <input type="hidden" name="latitude" id="latitude" value="">
             <input type="hidden" name="longitude" id="longitude" value="">
+            <input type="hidden" name="address" id="address">
+
             
             <div id="folium_map_id" class="w-[80%] mx-auto" style="height: 400px;">
                 <!-- {% comment %} {{ maps|safe }} {% endcomment %} -->
@@ -276,42 +285,64 @@
             </div>
         </div>
 
-    <script>
-        $(document).ready(function () {
-            var map = L.map('folium_map_id').setView([27.7172, 85.3240], 13);
-            console.log("Leaflet map initialized:", map);
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            // Function to handle map click event
-            function onMapClick(e) {
-                console.log("Map clicked", e.latlng);
-                console.log(e);
-                var latitude = e.latlng.lat.toFixed(6);
-                var longitude = e.latlng.lng.toFixed(6);
-                console.log("latitude is " + latitude);
-                console.log("longitude is " + longitude);
-                
-                // Update hidden input fields
-                $('#latitude').val(latitude);
-                $('#longitude').val(longitude);
-
-                // Update clicked location info
-                $('#clickedLocationInfo').text('Latitude: ' + latitude + ', Longitude: ' + longitude);
-
-                // Remove any existing marker and add a new one at the clicked location
-                if (typeof marker !== 'undefined') {
-                    map.removeLayer(marker);
+        <script>
+            $(document).ready(function () {
+                var map = L.map('folium_map_id').setView([27.7172, 85.3240], 13);
+                console.log("Leaflet map initialized:", map);
+        
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+        
+                // Declare address variable outside the success function
+                var address = "";
+        
+                // Function to handle map click event
+                function onMapClick(e) {
+                    console.log("Map clicked", e.latlng);
+                    console.log(e);
+                    var latitude = e.latlng.lat.toFixed(6);
+                    var longitude = e.latlng.lng.toFixed(6);
+                    console.log("latitude is " + latitude);
+                    console.log("longitude is " + longitude);
+        
+                    // Make an AJAX request to reverse geocoding service
+                    $.ajax({
+                        url: 'https://nominatim.openstreetmap.org/reverse',
+                        data: {
+                            format: 'json',
+                            lat: latitude,
+                            lon: longitude
+                        },
+                        success: function(response) {
+                            // Extract relevant information from the response
+                            address = response.display_name;
+        
+                            // Update clicked location info with the address
+                            $('#clickedLocationInfo').text('Latitude: ' + latitude + ', Longitude: ' + longitude + ', Address: ' + address);
+        
+                            // Update hidden input fields
+                            $('#latitude').val(latitude);
+                            $('#longitude').val(longitude);
+                            $('#address').val(address);
+                            // Update clicked location info
+                            $('#clickedLocationInfo').text('Latitude: ' + latitude + ', Longitude: ' + longitude + ', Address: ' + address);
+        
+                            // Remove any existing marker and add a new one at the clicked location
+                            if (typeof marker !== 'undefined') {
+                                map.removeLayer(marker);
+                            }
+                            marker = L.marker([latitude, longitude]).addTo(map);
+                        }
+                    });
                 }
-                marker = L.marker([latitude, longitude]).addTo(map);
-            }
-
-            // Attach click event listener to the map
-            map.on('click', onMapClick)
-
-        });
-    </script>
+        
+                // Attach click event listener to the map
+                map.on('click', onMapClick);
+            });
+        </script>
 
     </form>
 

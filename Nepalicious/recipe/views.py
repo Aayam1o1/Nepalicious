@@ -9,6 +9,10 @@ from django.db.models import Sum, F, Avg
 import sweetify
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
+from django.contrib.auth.decorators import user_passes_test, login_required
+
+def is_user(user):
+    return user.groups.filter(name = 'chef').exists()
 
 def recipe(request):
     recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
@@ -64,7 +68,8 @@ def recipe(request):
     }
     return render(request, 'recipe/recipe.html', context)
 
-
+@login_required
+@user_passes_test(is_user)
 def add_Recipe(request):
     if request.method == 'POST':
         form = addRecipeForm(request.POST, request.FILES)
@@ -246,7 +251,8 @@ def recipeDetail(request, recipe_id):
     
     return render(request, 'recipe/recipeDetail.html', context)
 
-
+@login_required
+@user_passes_test(is_user)
 def your_recipe(request):
     if request.method == 'POST':
         if "edit" in request.POST:
@@ -279,6 +285,8 @@ def your_recipe(request):
     
     return render(request, 'recipe/yourRecipe.html', context)
 
+@login_required
+@user_passes_test(is_user)
 def delete_recipe(request, recipe_id):
     url  = request.META.get('HTTP_REFERER')
     recipe = addRecipe.objects.get(id=recipe_id)
@@ -292,7 +300,8 @@ def delete_recipe(request, recipe_id):
             return redirect(url)
     return redirect(url)
 
-    
+@login_required
+@user_passes_test(is_user)
 def edit_recipe(request, recipe_id):
     recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
     if not recipe_instance:
@@ -371,7 +380,10 @@ def edit_recipe(request, recipe_id):
             sweetify.success(request, "Successfully edited Recipe")
             return redirect('recipeDetail', recipe_id=recipe_instance.id)
         else:
-            sweetify.error(request, 'Form is not valid')
+            errors = form.errors.as_data()
+            for field, error_list in errors.items():
+                for error in error_list:
+                    sweetify.error(request, f"{field}: {error}")
             
     else:
         # If it's not a POST request, populate the form with instance data

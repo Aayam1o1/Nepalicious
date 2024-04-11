@@ -12,6 +12,7 @@ urlpatterns = [
     path('submit_review_restaurant/<int:restaurant_id>/', views.submit_review_restaurant, name='submit_review_restaurant'),
     path('delete_comment_restaurant/<int:comment_id>', views.delete_comment_restaurant, name='delete_comment_restaurant'),
     path('edit_restaurant/<int:restaurant_id>/', views.edit_restaurant, name='edit_restaurant'),
+    path('delete_restaurant/<int:restaurant_id>', views.delete_restaurant, name='delete_restaurant'),
 
     
 ]

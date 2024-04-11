@@ -108,13 +108,15 @@
                         class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1"
                         placeholder="Your Email">
                 </div>
-    
+                {% if request.user.is_authenticated and  request.user|has_group:"restaurant" %}
+                    <div></div>
+                {% else %}
                 <div class=" justify-between flex ">
                     <label for="">Address</label>
                     <input name="address"  type="address" value="{{request.user.usersdetail.address}}"
                         class="pl-2 border w-[400px] border-solid border-[black] rounded-xl py-1">
                 </div>
-
+                {% endif %}
                 
             </div>
             <div class=" mt-10 mb-2 w-40">
