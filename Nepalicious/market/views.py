@@ -731,7 +731,7 @@ def error(request):
 def order_history(request):
     
     user= request.user
-    orders = order.objects.filter(buyer=user)
+    orders = order.objects.filter(buyer=user).order_by('-buy_date')
     
     #retreving order id
     order_ids = orders.values_list('id', flat=True)
@@ -813,7 +813,7 @@ def pending_orders(request):
             return redirect('vendor_order')
         
     seller = request.user
-    sold_products = orderDetail.objects.filter(seller=seller, is_completed='Delivery Pending')
+    sold_products = orderDetail.objects.filter(seller=seller, is_completed='Delivery Pending').order_by('-order_for__buy_date')
     
         
     print('soldprodi', sold_products)
@@ -826,7 +826,7 @@ def pending_orders(request):
 
 
 def vendor_order(request):
-    completed_or_canceled_orders = orderDetail.objects.filter(is_completed__in=['Delivery Completed', 'Delivery Canceled'])
+    completed_or_canceled_orders = orderDetail.objects.filter(is_completed__in=['Delivery Completed', 'Delivery Canceled']).order_by('-order_for__buy_date')
     
     context = {
         'completed_or_canceled_orders': completed_or_canceled_orders,

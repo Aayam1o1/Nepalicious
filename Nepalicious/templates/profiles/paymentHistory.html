@@ -29,6 +29,9 @@
                         <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                             <span>Seller</span>
                         </th>
+                        <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                            <span>Seller Number</span>
+                        </th>
                         <th scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                         Brand
@@ -79,6 +82,13 @@
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-900">
                                 {{ order_detail.seller }}                  
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ order_detail.seller.usersdetail.phone_number }}                  
                             </div>
                         </div>
                     </td>
