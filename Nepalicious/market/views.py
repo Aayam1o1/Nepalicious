@@ -111,17 +111,29 @@ def marketplace(request):
     print("productList", productList)
     # ratingrange = request.GET.get("rating")
 
-    # PAGINATION
-    paginator = Paginator(productList, 8)  # 10 recipes per page
-    page = request.GET.get('page')
+
+    items_per_page = 4
+    
+    
+    page = request.GET.get('page', 1)
+    
+    
+     # Create a Paginator object
+    paginator = Paginator(productList, items_per_page)
+
     try:
+        # Get the current page
         productList = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
+        # If page is not an integer, delivering the first page
         productList = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
+        # If page is out of range, delivering the last page of results
         productList = paginator.page(paginator.num_pages)
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
+    
+    
     context = {
         'productList': productList,
         
@@ -383,12 +395,11 @@ def edit_product(request, product_id):
 @login_required
 @user_passes_test(is_user_user)
 @user_passes_test(is_all_user)
-
 def submit_review_product(request, product_id):
     # getting the url fort the same webpage
     url  = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
-        if orderDetail.objects.filter(product_id=product_id, order_for__buyer=request.user).exists():
+        if orderDetail.objects.filter(product_id=product_id, order_for__buyer=request.user, is_completed = 'Delivery Completed').exists():
             try:
                 # to check if review is already submitted
                 reviews = productFeedback.objects.get(user__id=request.user.id, product__id = product_id)

@@ -57,6 +57,7 @@ def restaurant(request):
     print("Final restaurant_list count:", restaurant_list.count()) 
     items_per_page = 4
     
+    
     page = request.GET.get('page', 1)
     
     
@@ -76,10 +77,10 @@ def restaurant(request):
     page = request.GET.get('page', 1)
     
     
-    # for restaurant in restaurant_list:
-    #     # Calculate average rating for each product
-    #     avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
-    #     restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    for restaurant in restaurant_list:
+        # Calculate average rating for each product
+        avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
+        restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
     
     
        

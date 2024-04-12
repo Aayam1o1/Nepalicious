@@ -132,7 +132,7 @@
     {% if restaurantList %}
     
     <div class="w-[90%] mx-auto h-auto mt-10">
-        <div class="grid grid-cols-2 gap-[4rem]">
+        <div class="grid grid-cols-2 gap-[5rem]">
             {% for restaurant in restaurantList %}
 
             <div class="flex justify-evenly mb-10">
@@ -149,7 +149,7 @@
                 </div>
 
 
-                <div class="mt-2">
+                <div class="mt-2 w-[18rem] overflow-x-hidden">
                     <h2 class="text-2xl text-[#F89500]">{{ restaurant.user.usersdetail.restaurant_name }}</h2>
                     <h2 class="text-l mt-1">{{ restaurant.user.usersdetail.address }} </h2>
                     <p class="rating-stars mt-1" class="">
@@ -172,7 +172,7 @@
                    
                      <a href="{% url 'view_details' restaurant.id %}" >
 
-                         <button type="submit" class="mt-11 rounded-l w-[15rem] h-10 bg-[#FFC061]">
+                         <button type="submit" class="mt-11 rounded-xl w-[15rem] h-10 bg-[#FFC061]">
                              <span class="text-white">View Details</span>
                             </button>
                             
@@ -194,7 +194,7 @@
     </div>  
     {% endif %}
     {% comment %} pagination {% endcomment %}
-    <div class="flex flex-col xs:flex-row mr-[2rem] jusity-center items-center xs:justify-between">
+    <div class="flex flex-col xs:flex-row ml-[4rem] jusity-center items-center xs:justify-between">
         <div class="inline-flex mt-2 xs:mt-0 gap-4 ">
             <!-- Pagination Next and Previous -->
             {% if restaurantList.has_previous %}

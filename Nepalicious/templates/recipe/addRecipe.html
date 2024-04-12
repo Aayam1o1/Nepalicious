@@ -5,6 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Recipe</title>
+
+    <script>
+        function discardChanges() {
+            // Clear input fields
+            document.getElementById("recipeForm").reset();
+    
+            // Clear image container
+            document.getElementById("image-container").innerHTML = '';
+            document.getElementById('product-img-heading').style.display = "block";
+    
+            // Clear steps container
+            document.getElementById("recipeContainer").innerHTML = '';
+            document.getElementById("recipeContainerWrapper").style.display = "none";
+    
+            // Clear ingredients container
+            document.getElementById("ingredientsContainer").innerHTML = '';
+            document.getElementById("ingredientsContainerWrapper").style.display = "none";
+    
+            // Uncheck all checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+    
+            // Reset cuisine type toggle text
+            document.getElementById('cuisineTypeToggle').textContent = 'Select Cuisine Type';
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100">
@@ -22,16 +50,11 @@
 
                     <!-- for dispalying errors -->
                     
-
-
                 </div>
                 <div class="flex justify-between mt-5 mr-5">
                     
-
-                    {% comment %} script for discard {% endcomment %}
                     <script>
                        
-
                         function buttondisabledimage() {
                             Swal.fire({
                                 title: 'Error',
@@ -53,7 +76,10 @@
                             });
                         });
                     </script>
-
+                    
+                    <button type="button" onclick="discardChanges()" class="border-2 border-red-600 rounded-xl w-[10rem] h-10 mr-10">
+                        <span class="text-red-600">Discard Changes</span>
+                    </button>
                     <button type="submit" class=" rounded-xl w-[10rem] h-10 bg-[#FFC061]">
                         <span class="text-white">Add Recipe</span>
                     </button>

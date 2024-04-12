@@ -40,17 +40,31 @@
                     {% comment %} script for discard {% endcomment %}
                     <script>
                         function discardChanges() {
-                            // Get the form element and reset it
+                            // Reset the form
                             var form = document.querySelector('form');
                             form.reset();
-
+                    
                             // Remove uploaded images
                             var imageContainer = document.getElementById('image-container');
                             imageContainer.innerHTML = '';
-
+                    
                             // Reset the image heading
                             var imageHeading = document.getElementById('product-img-heading');
                             imageHeading.style.display = 'block';
+                    
+                            // Clear the clicked location info
+                            var clickedLocationInfo = document.getElementById('clickedLocationInfo');
+                            clickedLocationInfo.textContent = 'Click a location on the map.';
+                    
+                            // Reset the hidden input fields for latitude, longitude, and address
+                            document.getElementById('latitude').value = '';
+                            document.getElementById('longitude').value = '';
+                            document.getElementById('address').value = '';
+                    
+                            // Remove any existing marker on the map
+                            if (typeof marker !== 'undefined') {
+                                map.removeLayer(marker);
+                            }
                         }
                         function buttondisabledimage() {
                             Swal.fire({
