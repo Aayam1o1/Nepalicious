@@ -18,7 +18,23 @@ from django.http import Http404
 def is_user(user):
     return user.groups.filter(name = 'vendor').exists()
 
+def is_user_user(user):
+    return user.groups.filter(name = 'user').exists() or user.groups.filter(name = ' ').exists()
 
+def is_user_user(user):
+    return user.groups.filter(name = 'user').exists() or user.groups.filter(name = ' ').exists()
+
+def is_all_user(user):
+    if user.usersdetail.hasBlockedUser == True:
+         return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+
+    elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
+        return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+        
+        
 # Create your views here.
 def marketplace(request):
     productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
@@ -51,93 +67,47 @@ def marketplace(request):
                 Q(productCategory__icontains=category) &
                 Q(productPrice__lt=pricerange) &
                 Q(productfeedback__rating=ratingrange, isdeleted = False, productStock__gt = 0)).distinct()
-        
+        for product in productList:
+            # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance    
 
 
     elif category is None and ratingrange is None and (pricerange is not None and pricerange != 0):
         productList = productList.filter(
                 Q(productPrice__lt=pricerange))
-        
+        for product in productList:
+            # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+            
     elif category is not None:
         productList = productList.filter(
                 Q(productCategory__icontains=category))
-        
-        
+        for product in productList:
+        # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+            
     elif category is not None and pricerange is not None and pricerange != 0 : # if category and price is provided
-        print("ya cahi ako xa")
         productList = productList.filter(
                 Q(productCategory__icontains=category) and
                 Q(productPrice__lt=pricerange)).distinct()
+        for product in productList:
+        # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+    elif category is None and ratingrange != 0 and ratingrange is not None:
+        productList = productList.filter(
+                Q(productfeedback__rating=ratingrange, isdeleted = False, productStock__gt = 0)).distinct()
         
-        
-            
-    # if category:
-    #     productList = productList.filter(
-    #             Q(productCategory__icontains=category)).distinct()
-    # if pricerange is not None and pricerange != 0:
-    #     productList = productList.filter(
-    #             Q(productPrice__lt=pricerange)).distinct()
-    # if ratingrange is not None:
-    #     print("yah")
-    #     if ratingrange != 0:
-    #         float_range = float(ratingrange)
-    #         print("float_range", float_range)
-    #         productList = productList.filter(
-    #                 Q(productfeedback__rating=float_range)).distinct()
-
-    
-    
-    
-    # Search by category and price range 
-    # if category:
-    #     print("a")
-    #     if  ratingrange is None:
-    #         print("b")
-            
-    #         print("only category")
-    #         productList = addProducts.objects.filter(productCategory=category)
-    #         for product in productList:
-    #             print("c")
+        for product in productList:
+            # Calculate average rating for each product
+            avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+   
                 
-    #             # Calculate average rating for each product
-    #             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-    #             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-    
-    #     else:
-    #         print("d")
-            
-    #         print("cat and price")
-    #         productList = addProducts.objects.filter(productCategory=category, productPrice__lt=pricerange)
-    #         for product in productList:
-    #             print("e")
-                
-    #             # Calculate average rating for each product
-    #             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-    #             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-                
-    # elif category is None and ratingrange is not None and ratingrange != 0:
-    #     print("f")
-        
-    #     rating = float(ratingrange)
-    #     print("aaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbb", rating)
-    #     productList = addProducts.objects.filter(productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
-    #     for product in productList:
-    #         print("g")
-            
-    #         # Calculate average rating for each product
-    #         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-    #         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-        
-    # if category is not None and ratingrange is not None:
-    #     print("h")
-    #     rating = float(ratingrange)
-    #     productList = addProducts.objects.filter(productCategory=category, productfeedback__rating=rating, isdeleted = False, productStock__gt = 0)
-    #     for product in productList:
-    #         print("i")
-    #         # Calculate average rating for each product
-    #         avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
-    #         product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-
+           
     print("productList", productList)
     # ratingrange = request.GET.get("rating")
 
@@ -161,6 +131,8 @@ def marketplace(request):
 # for adding products for markteplace
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def addProduct(request):
     
     # getting data from forms.py
@@ -212,6 +184,7 @@ def addProduct(request):
 
 
 # for product descriptiion.
+
 def productDetail(request, product_id):
     
     productList = addProducts.objects.all()
@@ -272,6 +245,8 @@ def productDetail(request, product_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def your_product(request):
     if request.method == 'POST':
         if "edit" in request.POST:
@@ -317,6 +292,8 @@ def your_product(request):
 #for delete product
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def delete_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     product = addProducts.objects.get(id=product_id)
@@ -335,53 +312,66 @@ def delete_product(request, product_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def edit_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     # Retrieve the product instance
-    product_instance = get_object_or_404(addProducts, pk=product_id)
-    if not product_instance:
-
-        if not (request.user.is_superuser or request.user == product_instance.user):
-            raise Http404("Room not found")
-
+    try:
         product_instance = get_object_or_404(addProducts, pk=product_id)
-    if request.method == 'POST':
-        # If it's a POST request, process the form data
-        form = editProductForm(request.POST, instance=product_instance)
-        if form.is_valid():
-            form.save()
-            
-            new_images = request.FILES.getlist('productImage')
-            
-            # Get the list of existing images
-            old_images = product_instance.images.all()
-            
-            # Delete old images not included in the new set
-            
-            # Handle product images
-            if new_images:
-                print("print1")
-                for old_image in old_images:
-                    if old_image.image not in new_images:
-                        old_image.delete()
-                        
-                for uploaded_file in new_images:
-                    productImage.objects.create(addProducts=product_instance, image=uploaded_file)
-            sweetify.success(request, "Successfully edited product")
-            return redirect('productDetail', product_id=product_instance.id)
+        if request.user == product_instance.user:
+            if not product_instance:
+
+                if not (request.user.is_superuser or request.user == product_instance.user):
+                    raise Http404("Room not found")
+            if not product_instance:
+
+                if not (request.user.is_superuser or request.user == product_instance.user):
+                    raise Http404("Room not found")
+
+                product_instance = get_object_or_404(addProducts, pk=product_id)
+            if request.method == 'POST':
+                # If it's a POST request, process the form data
+                form = editProductForm(request.POST, instance=product_instance)
+                if form.is_valid():
+                    form.save()
+                    
+                    new_images = request.FILES.getlist('productImage')
+                    
+                    # Get the list of existing images
+                    old_images = product_instance.images.all()
+                    
+                    # Delete old images not included in the new set
+                    
+                    # Handle product images
+                    if new_images:
+                        print("print1")
+                        for old_image in old_images:
+                            if old_image.image not in new_images:
+                                old_image.delete()
+                                
+                        for uploaded_file in new_images:
+                            productImage.objects.create(addProducts=product_instance, image=uploaded_file)
+                    sweetify.success(request, "Successfully edited product")
+                    return redirect('productDetail', product_id=product_instance.id)
+                else:
+                    error_messages = []
+                    for field, errors in form.errors.items():
+                        for error in errors:
+                            error_messages.append(f"{field}: {error}")
+                    # Display error messages
+                    for error in error_messages:
+                        sweetify.error(request, error)
+                    return redirect(url)
+            else:
+            # If it's not a POST request, populate the form with instance data
+                form = editProductForm(instance=product_instance)
         else:
-            error_messages = []
-            for field, errors in form.errors.items():
-                for error in errors:
-                    error_messages.append(f"{field}: {error}")
-            # Display error messages
-            for error in error_messages:
-                sweetify.error(request, error)
-            return redirect(url)
-    else:
-        # If it's not a POST request, populate the form with instance data
-        form = editProductForm(instance=product_instance)
-        
+            return render(request, '404.html')
+    except:
+        sweetify.error(request, "There was an error. Please try again.")     
+        return redirect(url)
+    
     
     context = {
         'form': form,
@@ -390,6 +380,9 @@ def edit_product(request, product_id):
     }
     return render(request, 'marketplace/editProduct.html', context)
 
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def submit_review_product(request, product_id):
     # getting the url fort the same webpage
@@ -420,7 +413,10 @@ def submit_review_product(request, product_id):
             sweetify.error(request, 'You cannot review this product because you have not purchased it.')
     return redirect(url)
         
-        
+@login_required
+@user_passes_test(is_user_user)  
+@user_passes_test(is_all_user)
+
 def delete_comment_product(request, comment_id):
     url  = request.META.get('HTTP_REFERER')
 
@@ -441,6 +437,9 @@ def delete_comment_product(request, comment_id):
 
 # for add to cart button
 @login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(addProducts, id=product_id)
 
@@ -485,6 +484,9 @@ def add_to_cart(request, product_id):
 
 
 @login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
+
 def cart_view(request):
     
     user_cart = Cart.objects.filter(user=request.user).first()
@@ -499,6 +501,9 @@ def cart_view(request):
     return render(request, 'marketplace/cart.html', context)
 
 # for update cart button
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 def update_cart(request):
     if request.method == 'POST':
         # Print request.POST data
@@ -559,7 +564,9 @@ def update_cart(request):
     return redirect('cart')
 
 
-
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 def initkhalti(request):
     
     user = request.user.username
@@ -587,13 +594,13 @@ def initkhalti(request):
         }
     })
     headers = {
-        'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede', 
+        'Authorization': 'key 6090e58e633343b0b2110e2d0e33ca7f', 
         'Content-Type': 'application/json',
     }
     
     response = requests.request("POST", url, headers=headers, data=payload)
     new_res = json.loads(response.text)
-    
+    print("new_resnew_resnew_res",new_res)
     
     if new_res['payment_url']:
         
@@ -610,14 +617,16 @@ def initkhalti(request):
      
 
     
-
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 def verifyKhalti(request):
     print('url hai::')
     url = "https://a.khalti.com/api/v2/epayment/lookup/"
     
     if request.method == 'GET':
         headers = {
-            'Authorization': 'key 74a324b745f74fa8aa2d8be8128e5ede',
+            'Authorization': 'key 6090e58e633343b0b2110e2d0e33ca7f',
             'Content-Type': 'application/json',
         }
         pidx = request.GET.get('pidx')
@@ -701,7 +710,9 @@ def verifyKhalti(request):
         return redirect('error')
     
 
-
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 def checkout(request):
     if request.method == 'POST':
     
@@ -736,7 +747,9 @@ def error(request):
 
 
 
-
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 def order_history(request):
     
     user= request.user
@@ -756,6 +769,7 @@ def order_history(request):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
 def pending_orders(request):
     if request.method == 'POST' and 'Update' in request.POST:
         status =  request.POST.get("status")
@@ -836,6 +850,7 @@ def pending_orders(request):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
 def vendor_order(request):
     user = request.user
     

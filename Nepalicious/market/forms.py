@@ -21,7 +21,7 @@ class addProductForm(ModelForm):
     productPrice = forms.FloatField(
         label='Product Price',
         validators=[MaxValueValidator(20000)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 0, 'step': 0.1})    )
+        widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 1000, 'step': 0.1})    )
     
     productDescription = forms.CharField(
         label = 'Productr Description',
@@ -72,7 +72,7 @@ class editProductForm(ModelForm):
     productPrice = forms.FloatField(
         label='Product Price',
         validators=[MaxValueValidator(20000)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 0, 'step': 0.1})    )
+        widget=forms.NumberInput(attrs={'placeholder': 'Product Price', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 1000, 'step': 0.1})    )
     
     productDescription = forms.CharField(
         label = 'Productr Description',

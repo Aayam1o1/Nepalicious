@@ -14,6 +14,24 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 
 def is_user(user):
     return user.groups.filter(name = 'restaurant').exists()
+
+def is_user_user(user):
+    return user.groups.filter(name = 'user').exists() or user.groups.filter(name = ' ').exists()
+
+
+def is_all_user(user):
+    if user.usersdetail.hasBlockedUser == True:
+         return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+
+    elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
+        return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+
+
+
+
 # Create your views here.
 def restaurant(request):
     restaurant_list = addRestaurant.objects.all()
@@ -74,6 +92,8 @@ def restaurant(request):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def addRestaurantdetail(request):
     if request.method == 'POST':
         form = addRestaurantForm(request.POST, request.FILES)
@@ -210,6 +230,9 @@ def restaurant_detail(request, restaurant_id):
 
     return render(request, 'restaurant/restaurantDetail.html', context)
 
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def submit_review_restaurant(request, restaurant_id):
     # getting the url fort the same webpage
@@ -234,6 +257,9 @@ def submit_review_restaurant(request, restaurant_id):
                 sweetify.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
             
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def delete_comment_restaurant(request, comment_id):
     url  = request.META.get('HTTP_REFERER')
@@ -258,6 +284,8 @@ def delete_comment_restaurant(request, comment_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def edit_restaurant(request, restaurant_id):
     url  = request.META.get('HTTP_REFERER')
     try:
@@ -351,8 +379,8 @@ def edit_restaurant(request, restaurant_id):
         else:
             return render(request, '404.html')
     except addRestaurant.DoesNotExist:
-        pass    
-    
+        sweetify.error(request, "Something went wrong. Please try again.")     
+        return redirect(url)
     context = {
         'form':form,
         'restaurant': restaurant, 
@@ -365,6 +393,8 @@ def edit_restaurant(request, restaurant_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def delete_restaurant(request, restaurant_id):
     url  = request.META.get('HTTP_REFERER')
     restaurant = addRestaurant.objects.get(id=restaurant_id)

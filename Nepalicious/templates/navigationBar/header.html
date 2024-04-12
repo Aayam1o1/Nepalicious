@@ -10,32 +10,41 @@
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head> 
+</head>
 
-<body> 
+<body>
   <!-- import header -->
   <div class="bg-white w-full pb-3 mb-1">
     <!-- import header here -->
-    <header>
+    <header class="">
       <div class="row-header-1 flex justify-around items-center">
         <!-- logo -->
         <div class="logo">
-          <a href="{% url 'home' %}"><img src="{% static 'images/headerFooter/logo.png' %}" alt="" class="w-60 ml-6 mt-2" /></a>
+          <a href="{% url 'home' %}"><img src="{% static 'images/headerFooter/logo.png' %}" alt=""
+              class="w-60 mt-2" /></a>
         </div>
 
-        <!-- search box -->
-        <div class="search-box-section w-[50%] h-6">
-          <!-- search -->
-          <div class="search flex items-center w-full border py-1 rounded-lg">
-            <input type="search" class="h-8 w-full pl-2 focus:outline-none" placeholder="What are you looking for?" />
-            <span class="search-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" viewBox="0 0 45 40" fill="none">
-                <path
-                  d="M37.3556 35L25.4556 24.15C24.5111 24.8389 23.425 25.3843 22.1972 25.7861C20.9694 26.188 19.663 26.3889 18.2778 26.3889C14.8463 26.3889 11.9424 25.305 9.56622 23.1373C7.19 20.9696 6.00126 18.322 6 15.1944C6 12.0657 7.18874 9.41811 9.56622 7.25156C11.9437 5.085 14.8476 4.00115 18.2778 4C21.7093 4 24.6137 5.08385 26.9912 7.25156C29.3687 9.41926 30.5568 12.0669 30.5556 15.1944C30.5556 16.4574 30.3352 17.6486 29.8944 18.7681C29.4537 19.8875 28.8556 20.8778 28.1 21.7389L40 32.5889L37.3556 35ZM18.2778 22.9444C20.6389 22.9444 22.6461 22.1913 24.2996 20.6849C25.953 19.1785 26.779 17.3484 26.7778 15.1944C26.7778 13.0417 25.9517 11.2121 24.2996 9.70572C22.6474 8.19935 20.6401 7.44559 18.2778 7.44444C15.9167 7.44444 13.91 8.1982 12.2579 9.70572C10.6057 11.2132 9.77904 13.0428 9.77778 15.1944C9.77778 17.3472 10.6045 19.1774 12.2579 20.6849C13.9113 22.1924 15.9179 22.9456 18.2778 22.9444Z"
-                  fill="black" />
-              </svg>
-            </span>
-          </div>
+        <!-- row header 2 -->
+        <div class="row-header-2 hidden md:block">
+          <nav class="navigation-bar-menu">
+            <ul class="flex justify-center items-center gap-x-10 text-xl mt-3 mr-12">
+              <li class="{% if request.path == '/' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+                <a href="{% url 'home' %}">Home</a>
+              </li>
+              |
+              <li class="{% if request.path == '/recipe' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+                <a href="{% url 'recipe' %}">Recipes</a>
+              </li>
+              |
+              <li class="{% if request.path == '/restaurant' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+                <a href="{% url 'restaurant' %}">Restaurants</a>
+              </li>
+              |
+              <li class="{% if request.path == '/marketplace' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+                <a href="{% url 'marketplace' %}">Market</a>
+              </li>
+            </ul>
+          </nav>
         </div>
 
         <!-- cart and profile -->
@@ -48,19 +57,19 @@
           </button>
           {% else %}
 
-            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
-            <a href="{% url 'cart' %}">
-              <span class="cart">
-                <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
-              </span>
-            </a>
-            {% else %}
-            <button onclick="error()">
-              <span class="cart">
-                <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
-              </span>
-            </button>
-            {% endif %}
+          {% if request.user|has_group:" " or request.user|has_group:"user" %}
+          <a href="{% url 'cart' %}">
+            <span class="cart">
+              <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+            </span>
+          </a>
+          {% else %}
+          <button onclick="error()">
+            <span class="cart">
+              <img class="h-[2.8rem] hover:animate-bounce" src="../../static/images/headerFooter/cart.svg" alt="">
+            </span>
+          </button>
+          {% endif %}
           {% endif %}
 
           <!-- profile -->
@@ -68,7 +77,8 @@
           <div class="relative inline-block text-left">
             {% if request.user.is_authenticated %}
             <span id="profileToggle" class="cursor-pointer profile">
-              <img class="h-[2.4rem] w-[2.4rem] ml-4 mt-1 rounded-full object-cover" src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
+              <img class="h-[2.4rem] w-[2.4rem] ml-4 mt-1 rounded-full object-cover"
+                src="{{request.user.userprofilepicture.profileImage.url}}" alt="profile">
             </span>
             {% else %}
             <span id="profileToggle" class="cursor-pointer profile">
@@ -80,54 +90,40 @@
               class="origin-top-right absolute z-20 left-[0.1111px]  mt-2 w-[6rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
               <div class="py-1">
                 {% if request.user.is_authenticated %}
-                <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'profile' %}"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
 
                 {% else %}
 
                 <a href="{% url 'login' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</a>
 
                 {% endif %}
-                
+
                 {% if request.user.is_authenticated %}
 
                 <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
 
                 {% else %}
 
-                <a href="{% url 'register' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Register</a>
+                <a href="{% url 'register' %}"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Register</a>
 
                 {% endif %}
-              
+
               </div>
             </div>
           </div>
         </div>
+        <button onclick="showHamburger()" id="showHamburgerMenu" class="relative z-[120] w-12 h-12 cursor-pointer block sm:hidden mt-3"><img src="{% static 'images/headerFooter/hamburger.svg' %}" alt=""></button>
       </div>
-      <!-- row header 2 -->
-      <div class="row-header-2">
-        <nav class="navigation-bar-menu">
-          <ul class="flex justify-center items-center gap-x-10 text-xl mt-2 ml-[4rem]">
-            <li class="{% if request.path == '/' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
-              <a href="{% url 'home' %}">Home</a>
-            </li>
-            |
-            <li class="{% if request.path == '/recipe' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
-              <a href="{% url 'recipe' %}">Recipes</a>
-            </li>
-            |
-            <li class="{% if request.path == '/restaurant' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
-              <a href="{% url 'restaurant' %}">Restaurants</a>
-            </li>
-            |
-            <li class="{% if request.path == '/marketplace' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
-              <a href="{% url 'marketplace' %}">Market</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+
+      <!-- hamburger menu -->
+
+
     </header>
+
   </div>
-{% comment %} toggle script {% endcomment %}
+  {% comment %} toggle script {% endcomment %}
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('profileToggle').addEventListener('click', function () {
@@ -145,7 +141,36 @@
       });
     });
   </script>
+  <div onclick="showHamburger()" class="fixed inset-0 z-[100] h-[100vh] bg-[rgba(0,0,0,0.4)] text-white flex items-center justify-center"
+    style="display: none;" id="hamburgerMenu">
+    <nav class="fixed inset-0 z-[100] text-center h-[100vh] bg-[rgba(0,0,0,0.7)] text-white flex items-center justify-center">
+      <ul class=" space-y-12">
+        <li class="{% if request.path == '/' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+          <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="{% if request.path == '/recipe' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+          <a href="{% url 'recipe' %}">Recipes</a>
+        </li>
+        <li class="{% if request.path == '/restaurant' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+          <a href="{% url 'restaurant' %}">Restaurants</a>
+        </li>
+        <li class="{% if request.path == '/marketplace' %} text-[#F89500] {% endif %} hover:text-[#F89500]">
+          <a href="{% url 'marketplace' %}">Market</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <script>
+    const hamburger = document.getElementById("hamburgerMenu")
+    const showHamburger = () => {
+      if (hamburger.style.display == "none") {
+        hamburger.style.display = "block"
+      } else {
+        hamburger.style.display = "none"
+      }
 
+    }
+  </script>
 </body>
 <script>
 
@@ -166,5 +191,6 @@
       confirmButtonText: 'Ok'
     });
   }
-  </script>
-</html> 
+</script>
+
+</html>

@@ -14,7 +14,7 @@
 <div class="bg-white">
     <hr class="m-2">
     <div class="wrapper grid grid-cols-4 gap-4 m-2">
-        <div class="ml-[5rem]">
+        <div class="ml-[5rem] hidden md:block">
             <img src="{% static 'images/headerFooter/logo.png' %}" class="w-60" alt="">
             <div class="ml-3 mt-4">
                 <p>Nepalicious, the ultimate</p>
@@ -22,7 +22,7 @@
             </div>
 
         </div>
-        <div class="mb-8 lg:mb-0 ml-[9rem]">
+        <div class="mb-8 lg:mb-0 ml-[9rem] hidden md:block">
             <p class="mb-3 text-2xl font-bold mt-3">Company</p>
             <ul class="flex flex-col space-y-1 text-[14px] font-medium text-gray-500">
                 <a href="{% url 'home' %}"><li class="hover:text-[#F89500]">Home</li ></a>
@@ -33,18 +33,18 @@
 
             </ul>
         </div>
-        <div class="mb-8 lg:mb-0 ml-[9rem]">
+        <div class="mb-8 lg:mb-0 ml-[9rem] hidden md:block">
             <p class="mb-3 text-2xl font-bold mt-3">Account</p>
             <ul class="flex flex-col space-y-1 text-[14px]  font-medium text-gray-500">
                 <a href="{% url 'register' %}"><li class="hover:text-[#F89500]">Sign Up</li></a>
                 <a href="{% url 'login' %}"><li class="hover:text-[#F89500]">Sign In</li></a>
             </ul>
         </div>
-        <div class="mb-8 lg:mb-0 ml-[6rem]">
+        <div class="mb-8 lg:mb-0 ml-[6rem] hidden md:block">
             <p class="mb-6 text-2xl font-bold mt-3 ml-6">Follow Us</p>
             <div class="-m-1.5 flex flex-wrap mr-5">
                 <div class="w-auto p-1.5">
-                    <a href="#">
+                    <a href="https://www.facebook.com/">
                         <div
                             class="flex h-7 w-8 mr-2 items-center justify-center rounded-full border border-gray-300 hover:border-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" width="51" height="52" viewBox="0 0 51 52" fill="none">
@@ -62,7 +62,7 @@
                     </a>
                 </div>
                 <div class="w-auto p-1.5">
-                    <a href="#">
+                    <a href="https://www.instagram.com/nepalicious__?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
                         <div
                             class="flex h-8 w-8 mr-2 ml-2 items-center justify-center rounded-full hover:border-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
@@ -92,7 +92,7 @@
                     </a>
                 </div>
                 <div class="w-auto p-1.5">
-                    <a href="#">
+                    <a href="https://www.youtube.com/">
                         <div
                             class="flex h-8 w-8 ml-2 items-center justify-center rounded-full hover:border-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="44" viewBox="0 0 48 44" fill="none">

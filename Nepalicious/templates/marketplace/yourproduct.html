@@ -199,6 +199,14 @@
 
         {% endfor %}
     </div>
+    {% else %}
+    <div class=" w-[50%] mx-auto flex jusitfy-center">
+        <div class="flex flex-col">
+
+            <p class=" text-2xl text-gray-500 font-bold w-full ml-8 mt-10 flex justify-center">Pleaes add some Products first.</p>
+            <img src="../../static/images/marketplace/not_found.jpg" class="h-[25rem] w-[25rem] ml-10" alt="">
+        </div>
+    </div>
     {% endif %}
     {% comment %} pagination {% endcomment %}
     <div class="flex flex-col xs:flex-row mt-10 jusity-center items-center xs:justify-between">

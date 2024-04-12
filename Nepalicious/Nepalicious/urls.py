@@ -19,6 +19,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+handler404 = 'core.views.error_404' 
+handler500 = 'core.views.error_500'
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -28,10 +33,10 @@ urlpatterns = [
     path('', include("recipe.urls")),
     path('', include("market.urls")),
     path('', include("restaurant.urls")),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 # for viewing image through url
-
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

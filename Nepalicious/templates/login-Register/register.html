@@ -156,9 +156,19 @@
                         </div>
 
                         <!-- for profile image  -->
-                        <div class="border border-[#B6B6B6] rounded-full h-[6rem] w-[6rem] ml-[6.2rem] mt-4 mb-[3rem] bg-orange-500 relative" id="profileImageField">
-                            <img id="image-preview" src="../../static/images/defaultUserProfilePictures/defaultProfile.jpg" alt="" class="h-[100%] w-[100%] object-cover rounded-full mb-4">
-                            <input id="image-input" class="" type="file" name="profileImg" accept="image/png, image/jpeg" multiple>
+                        <div class=" flex justify-center"> 
+                            <div>
+                                <div class="border border-[#B6B6B6] rounded-full h-[6rem] w-[6rem] mt-4 ml-[5rem] relative" id="profileImageField">
+                                    <img id="image-preview" src="../../static/images/defaultUserProfilePictures/defaultProfile.jpg" alt="" class=" h-[100%] w-[100%] object-cover rounded-full mb-4">
+                                </div>
+                                <div class="w-[10rem] mr-10 mt-2 ml-[4rem]">
+                                    <label for="image-input" class="w-[10rem]">
+                                        <span class="cursor-pointer hover:text-blue-700 hover:underline hover:underline-offset-2 w-[10rem]">Add profile picture</span>
+                                        
+                                        <input hidden id="image-input" class="" type="file" name="profileImg" accept="image/png, image/jpeg" multiple>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <!-- for other input text fields -->
                         

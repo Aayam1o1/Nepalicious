@@ -14,6 +14,20 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 def is_user(user):
     return user.groups.filter(name = 'chef').exists()
 
+def is_user_user(user):
+    return user.groups.filter(name = 'user').exists() or user.groups.filter(name = ' ').exists()
+
+def is_all_user(user):
+    if user.usersdetail.hasBlockedUser == True:
+         return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+
+    elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
+        return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+        
+        
 def recipe(request):
     recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
     top_four_recipe = addRecipe.objects.annotate(num_likes=Count('likedislikerecipe', filter=models.Q(likedislikerecipe__choice='like'))).order_by('-num_likes')[:4]
@@ -70,6 +84,7 @@ def recipe(request):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
 def add_Recipe(request):
     if request.method == 'POST':
         form = addRecipeForm(request.POST, request.FILES)
@@ -253,7 +268,9 @@ def recipeDetail(request, recipe_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
 def your_recipe(request):
+    
     if request.method == 'POST':
         if "edit" in request.POST:
             recipe_id = request.POST.get("recipe_id")
@@ -287,6 +304,8 @@ def your_recipe(request):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def delete_recipe(request, recipe_id):
     url  = request.META.get('HTTP_REFERER')
     recipe = addRecipe.objects.get(id=recipe_id)
@@ -302,93 +321,104 @@ def delete_recipe(request, recipe_id):
 
 @login_required
 @user_passes_test(is_user)
+@user_passes_test(is_all_user)
+
 def edit_recipe(request, recipe_id):
-    recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
-    if not recipe_instance:
+    url  = request.META.get('HTTP_REFERER')
 
-        if not (request.user.is_superuser or request.user == recipe_instance.user):
-            raise Http404("Room not found")
-
+    try:
         recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
-    else:
-        pass
-    recipeStepsString = recipe_instance.recipeSteps
-    recipeSteps = []
-    current_step = ""
-    for step in recipeStepsString.split(','):
-        current_step += step.strip()
-        if current_step.endswith('.'):
-            recipeSteps.append(current_step)
+        if request.user == recipe_instance.user:
+            
+            if not recipe_instance:
+
+                if not (request.user.is_superuser or request.user == recipe_instance.user):
+                    raise Http404("Room not found")
+
+                recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
+            else:
+                pass
+            recipeStepsString = recipe_instance.recipeSteps
+            recipeSteps = []
             current_step = ""
-        else:
-            current_step += ', '    
-            
-    recipeIngredientString = recipe_instance.recipeIngredient     
-    # Split the rules string into individual rules and append them to the list
-    recipeIngredient = recipeIngredientString.split(", ")   
-                 
-    if request.method == 'POST':
-        # If it's a POST request, process the form data
-        form = editRecipeForm(request.POST, instance=recipe_instance)
-  
-        
-        if form.is_valid():
-            form.save()
-            steps_string = request.POST.get('steps', '')
-            ingredients_string = request.POST.get('ingredients', '')
-            
-            print('steps:::', steps_string)
-            print('ingree', ingredients_string)
-            
-            if steps_string:
-                print('steps', steps_string)
-                
-                steps = steps_string.split(", ")
-                recipe_instance.recipeSteps = ", ".join(steps)            
-        
-                # Save the instance again to update the fields
-                recipe_instance.save()
-            else:
-                sweetify.error(request, 'There was an error adding the recipe steps')
-                
-            
-            if ingredients_string:
-                #step4: Add ingredients for the recipe
-                ingredients = ingredients_string.split(", ")
-                recipe_instance.recipeIngredient = ", ".join(ingredients)
-                recipe_instance.save()
-
-                
-            else:
-                sweetify.error(request, 'There was an error adding the recipe ingredients')
-                
-            #for image
-            new_images = request.FILES.getlist('recipeImage')
-
-            # Get the list of existing images
-            old_images = recipe_instance.images.all()
+            for step in recipeStepsString.split(','):
+                current_step += step.strip()
+                if current_step.endswith('.'):
+                    recipeSteps.append(current_step)
+                    current_step = ""
+                else:
+                    current_step += ', '    
+                    
+            recipeIngredientString = recipe_instance.recipeIngredient     
+            # Split the rules string into individual rules and append them to the list
+            recipeIngredient = recipeIngredientString.split(", ")   
                         
-            if new_images:
-                for old_image in old_images:
-                    if old_image.image not in new_images:
-                        old_image.delete()
-
-                for uploaded_file in new_images:
-                    recipeImage.objects.create(addRecipe=recipe_instance, image=uploaded_file)
-            else:
-                sweetify.error(request, 'There was an error uplodaing image.')
-            sweetify.success(request, "Successfully edited Recipe")
-            return redirect('recipeDetail', recipe_id=recipe_instance.id)
-        else:
-            errors = form.errors.as_data()
-            for field, error_list in errors.items():
-                for error in error_list:
-                    sweetify.error(request, f"{field}: {error}")
-            
-    else:
-        # If it's not a POST request, populate the form with instance data
-        form = editRecipeForm(instance=recipe_instance)
+            if request.method == 'POST':
+                # If it's a POST request, process the form data
+                form = editRecipeForm(request.POST, instance=recipe_instance)
         
+                
+                if form.is_valid():
+                    form.save()
+                    steps_string = request.POST.get('steps', '')
+                    ingredients_string = request.POST.get('ingredients', '')
+                    
+                    print('steps:::', steps_string)
+                    print('ingree', ingredients_string)
+                    
+                    if steps_string:
+                        print('steps', steps_string)
+                        
+                        steps = steps_string.split(", ")
+                        recipe_instance.recipeSteps = ", ".join(steps)            
+                
+                        # Save the instance again to update the fields
+                        recipe_instance.save()
+                    else:
+                        sweetify.error(request, 'There was an error adding the recipe steps')
+                        
+                    
+                    if ingredients_string:
+                        #step4: Add ingredients for the recipe
+                        ingredients = ingredients_string.split(", ")
+                        recipe_instance.recipeIngredient = ", ".join(ingredients)
+                        recipe_instance.save()
+
+                        
+                    else:
+                        sweetify.error(request, 'There was an error adding the recipe ingredients')
+                        
+                    #for image
+                    new_images = request.FILES.getlist('recipeImage')
+
+                    # Get the list of existing images
+                    old_images = recipe_instance.images.all()
+                                
+                    if new_images:
+                        for old_image in old_images:
+                            if old_image.image not in new_images:
+                                old_image.delete()
+
+                        for uploaded_file in new_images:
+                            recipeImage.objects.create(addRecipe=recipe_instance, image=uploaded_file)
+                    else:
+                        sweetify.error(request, 'There was an error uplodaing image.')
+                    sweetify.success(request, "Successfully edited Recipe")
+                    return redirect('recipeDetail', recipe_id=recipe_instance.id)
+                else:
+                    errors = form.errors.as_data()
+                    for field, error_list in errors.items():
+                        for error in error_list:
+                            sweetify.error(request, f"{field}: {error}")
+                    
+            else:
+                # If it's not a POST request, populate the form with instance data
+                form = editRecipeForm(instance=recipe_instance)
+        else:
+            return render(request,'404.html')
+    except:
+        sweetify.error(request,"Something went wrong. Please try again")
+        return redirect(url) 
     
     context = {
         'form': form,
@@ -399,6 +429,11 @@ def edit_recipe(request, recipe_id):
     
     return render(request, 'recipe/editRecipe.html', context)
 #submt review
+
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
+
 def submit_review_recipe(request, recipe_id):
     # getting the url fort the same webpage
     url  = request.META.get('HTTP_REFERER')
@@ -420,7 +455,11 @@ def submit_review_recipe(request, recipe_id):
                 data.save()
                 sweetify.success(request, 'Thank you, Your review has been submitted')
                 return redirect(url)
+  
             
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def save_recipe(request, recipe_id):
     url  = request.META.get('HTTP_REFERER')
@@ -451,6 +490,9 @@ def save_recipe(request, recipe_id):
     
     return render(request, 'profiles/savedRecipe.html')
 
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def viewSavedRecipe(request):
     saved_recipes = savedRecipe.objects.filter(user=request.user)
@@ -459,6 +501,10 @@ def viewSavedRecipe(request):
         'saved_recipes': saved_recipes,
     }
     return render(request, 'profiles/savedRecipe.html', context)
+
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def deleteSavedRecipe(request, saved_recipe_id):
     url  = request.META.get('HTTP_REFERER')
@@ -471,10 +517,18 @@ def deleteSavedRecipe(request, saved_recipe_id):
             saved_recipe.delete()
             sweetify.success(request, 'The recipe was removed from bookmark')
             return redirect(url)
+        else:
+            print('Recipe bookmark already removed')
+            # Add a warning message
+            sweetify.warning(request, 'Recipe bookmark already removed')
     return render(request, 'profiles/savedRecipe.html')
 
 
 # for like recipe
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
+
 def like_recipe(request, recipe_id):
     url  = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
@@ -516,6 +570,11 @@ def like_recipe(request, recipe_id):
          
     return redirect(url)
 
+
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
+
 def dislike_recipe(request, recipe_id):
     url = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
@@ -554,6 +613,9 @@ def dislike_recipe(request, recipe_id):
         
     return redirect(url)
 
+@login_required
+@user_passes_test(is_user_user)
+@user_passes_test(is_all_user)
 
 def delete_comment(request, comment_id):
     url  = request.META.get('HTTP_REFERER')

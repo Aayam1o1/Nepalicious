@@ -156,9 +156,18 @@ def logoutUser(request):
 def is_superuser(user):
     return user.is_superuser
 
+def is_all_user(user):
+    if user.usersdetail.hasBlockedUser == True:
+         return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
 
+    elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
+        return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+        
+        
 
-#for displaying users in admin dashboard
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
 def adminDashboard(request):
@@ -225,6 +234,8 @@ def adminDashboard(request):
     return render(request, 'admin/adminDashboard.html', context)
 
 # admin side user request handling
+@login_required(login_url='login')
+@user_passes_test(is_superuser)
 def userRequests(request, userID):
     allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', '', 'restaurant'])
 
@@ -291,6 +302,7 @@ def userRequests(request, userID):
 
 # Profile
 @login_required(login_url='login')
+# @user_passes_test(is_all_user)
 def profile(request):
     #getting profile image for displating
     profile_image_url = None
@@ -387,6 +399,7 @@ def editprofile(request):
     return render(request, 'profiles/editprofile.html', context)
 
 # for change password
+@login_required(login_url='login')
 def changePassword(request):
     if request.method == 'POST':
         if "user" in request.POST:
@@ -420,7 +433,8 @@ def changePassword(request):
                     update_session_auth_hash(request, request.user)
     return render(request, 'profiles/changepassword.html')
 
-
+@login_required(login_url='login')
+@user_passes_test(is_superuser)
 def pendingRequests(request):
     
     requestedUsers = User.objects.filter(groups__isnull=True).exclude(is_superuser=True)
