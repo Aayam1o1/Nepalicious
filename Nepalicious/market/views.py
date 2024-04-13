@@ -847,12 +847,6 @@ def cash_on_delivery(request):
         cart = Cart.objects.get(user=buyer)
         cartItems = CartItem.objects.filter(cart=cart) # Assuming you want the first cart item
         
-        # for cartItem in cartItems:
-        #     product = cartItem.product
-        #     seller = cartItem.product.user
-        #     quantity = cartItem.quantity
-        #     ordered_phone_number = cart.new_number
-        #     ordered_address = cart.new_address
 
         if request.method == 'POST':
             with transaction.atomic():
