@@ -23,6 +23,8 @@ urlpatterns = [
     
     # FOR PAYMENT
     path('initiate', views.initkhalti, name='initiate'),
+    path('cash_on_delivery', views.cash_on_delivery, name='cash_on_delivery'),
+
     path('paymentSucessful', views.verifyKhalti, name='paymentSucessful'),
     path('error', views.error, name='error'),
 

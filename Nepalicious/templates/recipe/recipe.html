@@ -10,28 +10,32 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
+    {% if random_recipe %}
+      
     <div class="wrapper1 mt-[4rem] w-[70%] mx-auto flex justify-between">
         <div class="grid grid-cols-2 items-center m-2 ml-[8rem]">
             <div class="mb-[5rem]">
                 {% if random_recipe %}
-                    <img class="h-[30rem] rounded-xl object-cover" src="{{ random_recipe.images.first.image.url }}" alt="">
+                <img class="h-[30rem] rounded-xl object-cover" src="{{ random_recipe.images.first.image.url }}" alt="">
                 {% endif %}
             </div>
-    
+            
             <div class="flex flex-col justify-content-center ml-[5rem] mb-[5rem]">
                 {% if random_recipe %}
-                    <h1 class="text-5xl font-bold text-[#F89500]">{{ random_recipe.recipeName }}</h1>
-                    <p class="mt-8 ml-1 w-[25rem]">{{ random_recipe.recipeDescription }}</p>
-                    <a href="{% url 'recipeDetail' random_recipe.id %}">                        
-                        <div class="mt-[2rem]">
-                            <p class="text-[#F89500] ml-1 hover:underline ease transition">Check it out > </p>
-                        </div>
-                    </a>
+                <h1 class="text-5xl font-bold text-[#F89500]">{{ random_recipe.recipeName }}</h1>
+                <p class="mt-8 ml-1 w-[25rem]">{{ random_recipe.recipeDescription }}</p>
+                <a href="{% url 'recipeDetail' random_recipe.id %}">                        
+                    <div class="mt-[2rem]">
+                        <p class="text-[#F89500] ml-1 hover:underline ease transition">Check it out > </p>
+                    </div>
+                </a>
                 {% endif %}
             </div>
         </div>
     </div>
-
+    {% else %}
+        
+    {% endif %}
     
 
     <!-- Newari Cuisine -->
