@@ -34,57 +34,61 @@ def is_all_user(user):
 
 # Create your views here.
 def restaurant(request):
-    restaurant_list = addRestaurant.objects.all()
-    
-    search = request.GET.get('search_for')
-    cuisineType = request.GET.get('cuisineType')
-    print("search", search)
-    
-    if search:
-        if search:
-            restaurant_list = restaurant_list.filter(
-                Q(user__usersdetail__restaurant_name__icontains=search) |
-                Q(user__usersdetail__address__icontains=search)
-            ).distinct()
-        print("restaurant_list", restaurant_list)
-        print("Search results count:", restaurant_list.count())  # Check the count of search results
-    elif cuisineType:
-        restaurant_list = restaurant_list.filter(Q(restaurantType__icontains=cuisineType))
-    else:
-        restaurant_list = addRestaurant.objects.all()
-        print("No search query provided.")
-        
-    print("Final restaurant_list count:", restaurant_list.count()) 
-    items_per_page = 4
-    
-    
-    page = request.GET.get('page', 1)
-    
-    
-     # Create a Paginator object
-    paginator = Paginator(restaurant_list, items_per_page)
-
+    url  = request.META.get('HTTP_REFERER')
     try:
-        # Get the current page
-        restaurant_list = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, delivering the first page
-        restaurant_list = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, delivering the last page of results
-        restaurant_list = paginator.page(paginator.num_pages)
-    # Get the current page number from the request's GET parameters
-    page = request.GET.get('page', 1)
     
-    
-    for restaurant in restaurant_list:
-        # Calculate average rating for each product
-        avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
-        restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
-    
-    
-       
+        restaurant_list = addRestaurant.objects.all()
         
+        search = request.GET.get('search_for')
+        cuisineType = request.GET.get('cuisineType')
+        print("search", search)
+        
+        if search:
+            if search:
+                restaurant_list = restaurant_list.filter(
+                    Q(user__usersdetail__restaurant_name__icontains=search) |
+                    Q(user__usersdetail__address__icontains=search)
+                ).distinct()
+            print("restaurant_list", restaurant_list)
+            print("Search results count:", restaurant_list.count())  # Check the count of search results
+        elif cuisineType:
+            restaurant_list = restaurant_list.filter(Q(restaurantType__icontains=cuisineType))
+        else:
+            restaurant_list = addRestaurant.objects.all()
+            print("No search query provided.")
+            
+        print("Final restaurant_list count:", restaurant_list.count()) 
+        items_per_page = 4
+        
+        
+        page = request.GET.get('page', 1)
+        
+        
+        # Create a Paginator object
+        paginator = Paginator(restaurant_list, items_per_page)
+
+        try:
+            # Get the current page
+            restaurant_list = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, delivering the first page
+            restaurant_list = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, delivering the last page of results
+            restaurant_list = paginator.page(paginator.num_pages)
+        # Get the current page number from the request's GET parameters
+        page = request.GET.get('page', 1)
+        
+        
+        for restaurant in restaurant_list:
+            # Calculate average rating for each product
+            avg_rating = restaurant.restaurantfeedback_set.aggregate(Avg('rating'))['rating__avg']
+            restaurant.avg_rating = avg_rating  # Add avg_rating attribute to product instance
+        
+    except:     
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
+    
     context = {
         'restaurantList': restaurant_list
     }
@@ -96,58 +100,64 @@ def restaurant(request):
 @user_passes_test(is_all_user)
 
 def addRestaurantdetail(request):
-    if request.method == 'POST':
-        form = addRestaurantForm(request.POST, request.FILES)
-        if form.is_valid():
-             # Save latitude and longitude
-            latitude = request.POST.get('latitude')
-            longitude = request.POST.get('longitude')
-            map_addres = request.POST.get('address')
-            third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
-            # Extract the substring up to the third comma
-            map_addres = map_addres[:third_comma_index]
-            
-            
-            print('lat:', latitude)
-            print('long:', longitude)
-            print('map_addres:', map_addres)
-            instance = form.save(commit=False)
-            instance.user = request.user
-            print('user', instance.user)
-            
-            # for saving restaurant type
-            selected_restaurant_type = form.cleaned_data['restaurantType']
-            instance.restaurantType = selected_restaurant_type
-            
-            
-            print('selected restarunt type:: ', selected_restaurant_type)
-            instance.save()
-
-            # for images
-            restaurant_image = request.FILES.getlist('restaurantImage')
-            for image in restaurant_image:
-                restaurantImage.objects.create(addRestaurant=instance, image=image)
+    url  = request.META.get('HTTP_REFERER')
+    try:
+        
+        if request.method == 'POST':
+            form = addRestaurantForm(request.POST, request.FILES)
+            if form.is_valid():
+                # Save latitude and longitude
+                latitude = request.POST.get('latitude')
+                longitude = request.POST.get('longitude')
+                map_addres = request.POST.get('address')
+                third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
+                # Extract the substring up to the third comma
+                map_addres = map_addres[:third_comma_index]
                 
-            print('selected restarunt image: ', restaurant_image)
-    
-            instance.save()
-            
-            
-            location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude, map_addres=map_addres)
-            print(location)
-            
-            user_detail = get_object_or_404(usersDetail, user=request.user)
-            user_detail.address = map_addres
-            user_detail.save()
+                
+                print('lat:', latitude)
+                print('long:', longitude)
+                print('map_addres:', map_addres)
+                instance = form.save(commit=False)
+                instance.user = request.user
+                print('user', instance.user)
+                
+                # for saving restaurant type
+                selected_restaurant_type = form.cleaned_data['restaurantType']
+                instance.restaurantType = selected_restaurant_type
+                
+                
+                print('selected restarunt type:: ', selected_restaurant_type)
+                instance.save()
 
-            messages.success(request, "Sucessfully added Restaurant!!")   
-            return redirect('restaurant') 
+                # for images
+                restaurant_image = request.FILES.getlist('restaurantImage')
+                for image in restaurant_image:
+                    restaurantImage.objects.create(addRestaurant=instance, image=image)
+                    
+                print('selected restarunt image: ', restaurant_image)
+        
+                instance.save()
+                
+                
+                location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude, map_addres=map_addres)
+                print(location)
+                
+                user_detail = get_object_or_404(usersDetail, user=request.user)
+                user_detail.address = map_addres
+                user_detail.save()
+
+                messages.success(request, "Sucessfully added Restaurant!!")   
+                return redirect('restaurant') 
+            else:
+                print(form.errors)
+                
         else:
-            print(form.errors)
+            form = addRestaurantForm()
             
-    else:
-        form = addRestaurantForm()
-    
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
     
     context = {
         'form': form,
@@ -162,60 +172,66 @@ def view_details(request, restaurant_id):
     return redirect('restaurant_detail', restaurant_id=restaurant_id)
     
 def restaurant_detail(request, restaurant_id):
-    # Retrieve the restaurant object
-    # restaurant = addRestaurant.objects.get(pk=restaurant_id)
-    restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
     
-    if not restaurant:
-        if not (request.user.is_superuser or request.user.id == restaurant.user_id):
-            raise Http404("Restaurant not found")
+    url  = request.META.get('HTTP_REFERER')
+    try:
+        # Retrieve the restaurant object
+        # restaurant = addRestaurant.objects.get(pk=restaurant_id)
         restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
+        
+        if not restaurant:
+            if not (request.user.is_superuser or request.user.id == restaurant.user_id):
+                raise Http404("Restaurant not found")
+            restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
 
-    # Access the related images
-    restaurant_images = restaurant.images.all()
-    
-    #getting location for map    
-    restaurant_location = Location.objects.filter(restaurant=restaurant).first()
-    
-    feedback_comments = restaurantFeedback.objects.filter(restaurant=restaurant) 
-     # Calculate average rating
-    avg_rating = restaurantFeedback.objects.filter(restaurant=restaurant).aggregate(Avg('rating'))['rating__avg']
-    
-    # Count the number of reviews
-    num_reviews = feedback_comments.count()
-    
-    if restaurant_location:
-        # Create a map centered at the restaurant's location
-        maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
+        # Access the related images
+        restaurant_images = restaurant.images.all()
         
-         # Add a marker for the restaurant's location
-        marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br><strong>Address:</strong>{restaurant_location.map_addres}</div></div>"
+        #getting location for map    
+        restaurant_location = Location.objects.filter(restaurant=restaurant).first()
         
-        folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
-                  tooltip='Click for details', 
-                  popup=marker_popup, max_width=400).add_to(maps)
+        feedback_comments = restaurantFeedback.objects.filter(restaurant=restaurant) 
+        # Calculate average rating
+        avg_rating = restaurantFeedback.objects.filter(restaurant=restaurant).aggregate(Avg('rating'))['rating__avg']
         
-        # Get the HTML representation of the map
-        maps = maps._repr_html_()
+        # Count the number of reviews
+        num_reviews = feedback_comments.count()
         
-        coordinates = {
-        'latitude': restaurant_location.latitude,
-        'longitude': restaurant_location.longitude
-    }
-    else:
-        # If no location is available, provide a default map centered at a specific location
-        maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
+        if restaurant_location:
+            # Create a map centered at the restaurant's location
+            maps = folium.Map(location=[restaurant_location.latitude, restaurant_location.longitude], zoom_start=12)
+            
+            # Add a marker for the restaurant's location
+            marker_popup = f"<div style='width: 90px;'>{restaurant.user.usersdetail.restaurant_name}<br><strong>Address:</strong>{restaurant_location.map_addres}</div></div>"
+            
+            folium.Marker([restaurant_location.latitude, restaurant_location.longitude], 
+                    tooltip='Click for details', 
+                    popup=marker_popup, max_width=400).add_to(maps)
+            
+            # Get the HTML representation of the map
+            maps = maps._repr_html_()
+            
+            coordinates = {
+            'latitude': restaurant_location.latitude,
+            'longitude': restaurant_location.longitude
+        }
+        else:
+            # If no location is available, provide a default map centered at a specific location
+            maps = folium.Map(location=[27.7172, 85.3240], zoom_start=14)._repr_html_()
+            
         
-    
-    filtered_restaurant = list(addRestaurant.objects.filter(restaurantType=restaurant.restaurantType).exclude(id=restaurant_id))
-    random.shuffle(filtered_restaurant) 
-    
-    category_restaurants = filtered_restaurant[:4]
-    
-    for cat_restaurant in category_restaurants:
-        avg_rating_category = restaurantFeedback.objects.filter(restaurant=cat_restaurant).aggregate(Avg('rating'))['rating__avg']
-        cat_restaurant.avg_rating = avg_rating_category
+        filtered_restaurant = list(addRestaurant.objects.filter(restaurantType=restaurant.restaurantType).exclude(id=restaurant_id))
+        random.shuffle(filtered_restaurant) 
         
+        category_restaurants = filtered_restaurant[:4]
+        
+        for cat_restaurant in category_restaurants:
+            avg_rating_category = restaurantFeedback.objects.filter(restaurant=cat_restaurant).aggregate(Avg('rating'))['rating__avg']
+            cat_restaurant.avg_rating = avg_rating_category
+            
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
     context = {
         'restaurant': restaurant,
         'restaurant_images': restaurant_images,
@@ -238,47 +254,56 @@ def restaurant_detail(request, restaurant_id):
 def submit_review_restaurant(request, restaurant_id):
     # getting the url fort the same webpage
     url  = request.META.get('HTTP_REFERER')
-    if request.method == 'POST':
-        try:
-            # to check if review is already submitted
-            reviews = restaurantFeedback.objects.get(user__id=request.user.id, restaurant__id = restaurant_id)
-            form = FeedbackForm(request.POST, instance=reviews)
-            form.save()
-            sweetify.success(request, 'Thank you, Your review has been updated')
-            return redirect(url)
-        except:
-            form = FeedbackForm(request.POST)
-            if form.is_valid():
-                data = restaurantFeedback()
-                data.rating = form.cleaned_data['rating']
-                data.feedback = form.cleaned_data['feedback']
-                data.restaurant_id = restaurant_id
-                data.user_id = request.user.id
-                data.save()
-                sweetify.success(request, 'Thank you, Your review has been submitted')
+    try:
+        if request.method == 'POST':
+            try:
+                # to check if review is already submitted
+                reviews = restaurantFeedback.objects.get(user__id=request.user.id, restaurant__id = restaurant_id)
+                form = FeedbackForm(request.POST, instance=reviews)
+                form.save()
+                sweetify.success(request, 'Thank you, Your review has been updated')
                 return redirect(url)
-            
+            except:
+                form = FeedbackForm(request.POST)
+                if form.is_valid():
+                    data = restaurantFeedback()
+                    data.rating = form.cleaned_data['rating']
+                    data.feedback = form.cleaned_data['feedback']
+                    data.restaurant_id = restaurant_id
+                    data.user_id = request.user.id
+                    data.save()
+                    sweetify.success(request, 'Thank you, Your review has been submitted')
+                    return redirect(url)
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
+        
+               
 @login_required
 @user_passes_test(is_user_user)
 @user_passes_test(is_all_user)
 
 def delete_comment_restaurant(request, comment_id):
     url  = request.META.get('HTTP_REFERER')
-
+    try:
+        
     # Fetch the comment object to be deleted
-    comment = get_object_or_404(restaurantFeedback, id=comment_id)
+        comment = get_object_or_404(restaurantFeedback, id=comment_id)
 
-    # Check if the logged-in user is the owner of the comment
-    if comment.user == request.user:
-        # Delete the comment
-        comment.delete()
-        sweetify.success(request, 'Comment deleted')
-    else:
-        sweetify.error(request, 'There was an error deleting the comment')
-        pass
+        # Check if the logged-in user is the owner of the comment
+        if comment.user == request.user:
+            # Delete the comment
+            comment.delete()
+            sweetify.success(request, 'Comment deleted')
+        else:
+            sweetify.error(request, 'There was an error deleting the comment')
+            pass
 
-    # Redirect back to the page where the comment was deleted from
-    return redirect(url)
+        # Redirect back to the page where the comment was deleted from
+        return redirect(url)
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
 
 
 
@@ -379,6 +404,7 @@ def edit_restaurant(request, restaurant_id):
                 form = editRestaurantForm(instance=restaurant)
         else:
             return render(request, '404.html')
+        
     except addRestaurant.DoesNotExist:
         sweetify.error(request, "Something went wrong. Please try again.")     
         return redirect(url)
@@ -398,13 +424,18 @@ def edit_restaurant(request, restaurant_id):
 
 def delete_restaurant(request, restaurant_id):
     url  = request.META.get('HTTP_REFERER')
-    restaurant = addRestaurant.objects.get(id=restaurant_id)
-    if request.method == 'POST':
-        try:
-            restaurant.delete()
-            sweetify.success(request, "Restaurant has been deleted successfully", timer=3000)
-            return redirect('restaurant')
-        except Exception as e:
-            sweetify.error(request, f"Error deleting Resturant: {str(e)}")
-            return redirect(url)
-    return redirect('restaurant')
+    try:
+        
+        restaurant = addRestaurant.objects.get(id=restaurant_id)
+        if request.method == 'POST':
+            try:
+                restaurant.delete()
+                sweetify.success(request, "Restaurant has been deleted successfully", timer=3000)
+                return redirect('restaurant')
+            except Exception as e:
+                sweetify.error(request, f"Error deleting Resturant: {str(e)}")
+                return redirect(url)
+        return redirect('restaurant')
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)

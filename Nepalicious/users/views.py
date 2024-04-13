@@ -237,58 +237,64 @@ def adminDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
 def userRequests(request, userID):
-    allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', '', 'restaurant'])
+    url  = request.META.get('HTTP_REFERER')
+    try:
+        allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', '', 'restaurant'])
 
-    if request.method == 'POST':
-        if "approve" in request.POST:
-            if "user" in request.POST:
-                username = request.POST.get("user")
-                user = User.objects.get(username=username)
+        if request.method == 'POST':
+            if "approve" in request.POST:
+                if "user" in request.POST:
+                    username = request.POST.get("user")
+                    user = User.objects.get(username=username)
 
-                UserEmail = user.email
-                requestedGroup = request.POST.get("requestedGroup").lower()
-                
-                # CODE FOR allocating DIFF USER group
-                # FOR VENDOR group
-                group, created = Group.objects.get_or_create(name=requestedGroup)
-                user.groups.add(group)
+                    UserEmail = user.email
+                    requestedGroup = request.POST.get("requestedGroup").lower()
+                    
+                    # CODE FOR allocating DIFF USER group
+                    # FOR VENDOR group
+                    group, created = Group.objects.get_or_create(name=requestedGroup)
+                    user.groups.add(group)
 
-                # Sending mail after user is approved
-                send_mail(
-                "Account Approved",
-                "Your account has been approved on Nepalicious.",
-                "nepalicious.webapp@gmail.com",
-                [UserEmail],
-                fail_silently=False,
-                )
-                return redirect('adminHome')
-            
-        else:
-            if "user" in request.POST:
-                username = request.POST.get("user")
-                user = User.objects.get(username=username)
-                UserEmail = user.email 
-                # Sending mail after user is rejected
-                send_mail(
-                    "Account Rejected",
-                    "Your account has been rejected on Nepalicious.",
+                    # Sending mail after user is approved
+                    send_mail(
+                    "Account Approved",
+                    "Your account has been approved on Nepalicious.",
                     "nepalicious.webapp@gmail.com",
                     [UserEmail],
-                    fail_silently=False,)
-                user.delete()
-                return redirect('adminHome')
+                    fail_silently=False,
+                    )
+                    return redirect('adminHome')
+                
+            else:
+                if "user" in request.POST:
+                    username = request.POST.get("user")
+                    user = User.objects.get(username=username)
+                    UserEmail = user.email 
+                    # Sending mail after user is rejected
+                    send_mail(
+                        "Account Rejected",
+                        "Your account has been rejected on Nepalicious.",
+                        "nepalicious.webapp@gmail.com",
+                        [UserEmail],
+                        fail_silently=False,)
+                    user.delete()
+                    return redirect('adminHome')
+        
+        print("USER ID IS: ", userID)
+        
+        userData = get_object_or_404(User, id=userID)
+        documentImages = userDocument.objects.filter(user=userID)
+        
+        # Fetch UserProfilePicture object for the userData
+        userProfilePicture = UserProfilePicture.objects.filter(user=userData).first()
+        document = userDocument.objects.filter(user=userData)
+        
+        requestedUserType = usersDetail.objects.all()
+        print('userProfilePicture : ', userProfilePicture)
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)  
     
-    print("USER ID IS: ", userID)
-    
-    userData = get_object_or_404(User, id=userID)
-    documentImages = userDocument.objects.filter(user=userID)
-    
-    # Fetch UserProfilePicture object for the userData
-    userProfilePicture = UserProfilePicture.objects.filter(user=userData).first()
-    document = userDocument.objects.filter(user=userData)
-    
-    requestedUserType = usersDetail.objects.all()
-    print('userProfilePicture : ', userProfilePicture)
     context = {
         'requestedUserType': requestedUserType,
         'document': document,
@@ -304,19 +310,16 @@ def userRequests(request, userID):
 @login_required(login_url='login')
 # @user_passes_test(is_all_user)
 def profile(request):
+    url  = request.META.get('HTTP_REFERER')
+
     #getting profile image for displating
     profile_image_url = None
     try:
         profile_image_url = request.user.userprofilepicture.profileImage.url
     except UserProfilePicture.DoesNotExist:
-        pass
-    
-    # restaurant = None
-    # if request.user.is_authenticated and request.user.groups.filter(name='restaurant').exists():
-    #     try:
-    #         restaurant = addRestaurant.objects.get(user=request.user)
-    #     except addRestaurant.DoesNotExist:
-    #         pass    
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)
+       
     context = {
         
         'profile_image_url': profile_image_url,
@@ -328,70 +331,74 @@ def profile(request):
 #edit profile page
 @login_required(login_url='login')
 def editprofile(request):
-    #getting profile image for displating
-    profile_image_url = None
+    url  = request.META.get('HTTP_REFERER')
     try:
-        profile_image_url = request.user.userprofilepicture.profileImage.url
-    except UserProfilePicture.DoesNotExist:
-        pass
-    
-    if request.method == 'POST':
-        if "user" in request.POST:
-                username = request.POST.get('user')
-                user = User.objects.get(username=username)
-                
-        if "update" in request.POST:
-            # UPDATING USER MODEL
-            user.first_name = request.POST.get('first_name', '')
-            user.last_name = request.POST.get('last_name', '')
-            user.email = request.POST.get('email')
-            if User.objects.filter(email=request.POST.get('email')).exists():
-                sweetify.error(request, "Email already registered!")
-                return redirect('editprofile')
-            #saving the updated data
-            user.save()
-            
-            # UPDATING userdetail MODEL
-            user.usersdetail = user.usersdetail
-
-            
-            user.usersdetail.phone_number = request.POST.get('phone_number')
-            if not re.match(r'^(98|97)\d{8}$', user.usersdetail.phone_number):
-                    sweetify.error(request,"Invalid contact number")
+        #getting profile image for displating
+        profile_image_url = None
+        try:
+            profile_image_url = request.user.userprofilepicture.profileImage.url
+        except UserProfilePicture.DoesNotExist:
+            pass
+        
+        if request.method == 'POST':
+            if "user" in request.POST:
+                    username = request.POST.get('user')
+                    user = User.objects.get(username=username)
+                    
+            if "update" in request.POST:
+                # UPDATING USER MODEL
+                user.first_name = request.POST.get('first_name', '')
+                user.last_name = request.POST.get('last_name', '')
+                user.email = request.POST.get('email')
+                if User.objects.filter(email=request.POST.get('email')).exists():
+                    sweetify.error(request, "Email already registered!")
                     return redirect('editprofile')
-            user.usersdetail.address = request.POST.get('address')
-            user.usersdetail.restaurant_name = request.POST.get('restaurant_name', '')
-            
-            #saving the updated data
-            user.usersdetail.save()
-            msg = "Profile Updated"
-            sweetify.success(request, 'Profile Updated')           
-            return redirect('editprofile')   
-        #  for uploading new profile picture
-        if "saveImage" in request.POST:
-            if request.FILES:
-                # Saving user New profile
-                user_profile = UserProfilePicture.objects.get(user=user)
-                user_profile.profileImage  = request.FILES['img']
-                user_profile.save()
-                sweetify.success(request, 'Profile Picture Updated')
-                return redirect('editprofile')   
-            else:
-                sweetify.info(request, "Please select an image first")
-        # for setting default profile
-        if "deleteImage" in request.POST:
-            user_profile = UserProfilePicture.objects.get(user=user)
-            user_profile.delete()
-            # Saving user default profile
-            user_default_profile_picture, created = UserProfilePicture.objects.get_or_create(user=user)
+                #saving the updated data
+                user.save()
+                
+                # UPDATING userdetail MODEL
+                user.usersdetail = user.usersdetail
 
-            if not created:
-                user_default_profile_picture.profileImage = defaultProfilePicture()
-                user_default_profile_picture.save()
-          
-            sweetify.success(request, 'Profile Picture updated.')         
-            return redirect('editprofile')   
-    
+                
+                user.usersdetail.phone_number = request.POST.get('phone_number')
+                if not re.match(r'^(98|97)\d{8}$', user.usersdetail.phone_number):
+                        sweetify.error(request,"Invalid contact number")
+                        return redirect('editprofile')
+                user.usersdetail.address = request.POST.get('address')
+                user.usersdetail.restaurant_name = request.POST.get('restaurant_name', '')
+                
+                #saving the updated data
+                user.usersdetail.save()
+                msg = "Profile Updated"
+                sweetify.success(request, 'Profile Updated')           
+                return redirect('editprofile')   
+            #  for uploading new profile picture
+            if "saveImage" in request.POST:
+                if request.FILES:
+                    # Saving user New profile
+                    user_profile = UserProfilePicture.objects.get(user=user)
+                    user_profile.profileImage  = request.FILES['img']
+                    user_profile.save()
+                    sweetify.success(request, 'Profile Picture Updated')
+                    return redirect('editprofile')   
+                else:
+                    sweetify.info(request, "Please select an image first")
+            # for setting default profile
+            if "deleteImage" in request.POST:
+                user_profile = UserProfilePicture.objects.get(user=user)
+                user_profile.delete()
+                # Saving user default profile
+                user_default_profile_picture, created = UserProfilePicture.objects.get_or_create(user=user)
+
+                if not created:
+                    user_default_profile_picture.profileImage = defaultProfilePicture()
+                    user_default_profile_picture.save()
+            
+                sweetify.success(request, 'Profile Picture updated.')         
+                return redirect('editprofile')   
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)    
     context = {
         
         'profile_image_url': profile_image_url, 
@@ -401,44 +408,58 @@ def editprofile(request):
 # for change password
 @login_required(login_url='login')
 def changePassword(request):
-    if request.method == 'POST':
-        if "user" in request.POST:
-                username = request.POST.get('user')
-                user = User.objects.get(username=username)
+    url  = request.META.get('HTTP_REFERER')
+    try:
+    
+    
+        if request.method == 'POST':
+            if "user" in request.POST:
+                    username = request.POST.get('user')
+                    user = User.objects.get(username=username)
 
 
-        if "changePassword" in request.POST:
-            current_password = request.POST.get('currentPassword')
-            new_password = request.POST.get('newpassword1')
-            confirm_new_password = request.POST.get('newpassword2')
+            if "changePassword" in request.POST:
+                current_password = request.POST.get('currentPassword')
+                new_password = request.POST.get('newpassword1')
+                confirm_new_password = request.POST.get('newpassword2')
 
 
-            if not request.user.check_password(current_password):
-                sweetify.error(request, 'Current password is incorrect.')
-
-
-            else:
-                # If password doesnt match display error messaage
-                if new_password != confirm_new_password:
-                    sweetify.error(request, 'New password and confirm password do not match.')
+                if not request.user.check_password(current_password):
+                    sweetify.error(request, 'Current password is incorrect.')
 
 
                 else:
-                    # Change the password
-                    request.user.set_password(new_password)
-                    request.user.save()
-                    sweetify.success(request, 'Password Changed')
-                    
-                    # Updating the session to prevent logout
-                    update_session_auth_hash(request, request.user)
-    return render(request, 'profiles/changepassword.html')
+                    # If password doesnt match display error messaage
+                    if new_password != confirm_new_password:
+                        sweetify.error(request, 'New password and confirm password do not match.')
+
+
+                    else:
+                        # Change the password
+                        request.user.set_password(new_password)
+                        request.user.save()
+                        sweetify.success(request, 'Password Changed')
+                        
+                        # Updating the session to prevent logout
+                        update_session_auth_hash(request, request.user)
+        return render(request, 'profiles/changepassword.html')
+
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)  
+    
 
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
 def pendingRequests(request):
-    
-    requestedUsers = User.objects.filter(groups__isnull=True).exclude(is_superuser=True)
+    url  = request.META.get('HTTP_REFERER')
+    try:
         
+        requestedUsers = User.objects.filter(groups__isnull=True).exclude(is_superuser=True)
+        
+    except:
+        sweetify.error(request, "Something went wrong. Please try again")
+        return redirect(url)        
     context = {
         'requestedUsers': requestedUsers,
     } 
@@ -447,27 +468,33 @@ def pendingRequests(request):
 
 
 def contact_us(request):
-    if request.method == 'POST':
-        sender_email = request.POST.get('email')
-        message = request.POST.get('message')
-        subject = f'{sender_email}: {request.POST.get("subject")}' 
+    url  = request.META.get('HTTP_REFERER')
+    try:
+        if request.method == 'POST':
+            sender_email = request.POST.get('email')
+            message = request.POST.get('message')
+            subject = f'{sender_email}: {request.POST.get("subject")}' 
 
-        print("email", sender_email)
-        print("subject", subject)
-        print("mess", message)
-        
-        try:
-            send_mail(
-                subject,
-                message,
-                sender_email,  # Set sender's email 
-                ['nepalicious.webapp@gmail.com'],  # Set recipient's email
-                fail_silently=False,
-                
-            )
-            sweetify.success(request, 'Email sent successfully!')
-            return redirect('contact_us')
-        except Exception as e:
-            sweetify.error(request, 'Failed to send email.')
-            return redirect('contact_us')    
-    return render(request, 'contact/contactus.html')
+            print("email", sender_email)
+            print("subject", subject)
+            print("mess", message)
+            
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    sender_email,  # Set sender's email 
+                    ['nepalicious.webapp@gmail.com'],  # Set recipient's email
+                    fail_silently=False,
+                    
+                )
+                sweetify.success(request, 'Email sent successfully!')
+                return redirect('contact_us')
+            except Exception as e:
+                sweetify.error(request, 'Failed to send email.')
+                return redirect('contact_us')    
+        return render(request, 'contact/contactus.html')
+    
+    except:
+            sweetify.error(request, "Something went wrong. Please try again")
+            return redirect(url)  
