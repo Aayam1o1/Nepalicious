@@ -85,6 +85,13 @@
                                     buttondisabledimage(); // Call the error function
                                 }
                             });
+                            imageInput.addEventListener('change', function (event) {
+                                var files = event.target.files;
+                                if (files.length !== 3) {
+                                
+                                    buttondisabledimage(); // Disable submit button if the number of images is not 3
+                                }
+                            });
                         });
                     </script>
 

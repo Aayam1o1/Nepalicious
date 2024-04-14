@@ -272,39 +272,37 @@
                             </button>
                             <script>
                                 document.addEventListener("DOMContentLoaded", function () {
-                                    const documentImageField = document.getElementById("documentImageField");
                                     const documentInput = document.getElementById("id_document_image");
-                                    const userTypeInput = document.getElementById("UserRequestedGroup");
+                                    const documentImageField = document.getElementById("documentImageField");
                             
-                                    function selectUserType(userType, event) {
-                                        event.preventDefault();
-                            
-                                        // Toggle the display of documentImageField based on user type
-                                        documentImageField.style.display = userType.toLowerCase() !== "user" ? "block" : "none";
-                            
+                                    function selectUserType(userType) {
                                         // Set the required attribute of the file input based on user type
                                         const requiresDocument = ['chef', 'vendor', 'restaurant'].includes(userType.toLowerCase());
                                         documentInput.required = requiresDocument;
-                            
-                                        // Set the value of the requested_group field
-                                        userTypeInput.value = userType.toLowerCase();
+                                        
+                                        // Show or hide the document image field based on requirement
+                                        documentImageField.style.display = requiresDocument ? "block" : "none";
                                     }
+                            
+                                    // Set the default user type to "user" and trigger the selection
+                                    selectUserType("user");
                             
                                     // Attach click event handlers to each list item
                                     const listItems = document.querySelectorAll(".user-type-choose ul li");
                                     listItems.forEach(function (item) {
-                                        item.addEventListener("click", function (event) {
+                                        item.addEventListener("click", function () {
                                             const userType = this.innerText.trim().toLowerCase(); // Extract user type from the list item text
-                                            selectUserType(userType, event);
+                                            selectUserType(userType);
                                         });
                                     });
                             
                                     // Set the default user type to "user" and trigger the click event
-                                    selectUserType("user", { currentTarget: listItems[0] });
                                     listItems[0].classList.add("active-user"); // Set the active class for the default user type
                                     listItems[0].style.color = "#F89500"; // Set color for the default user type
                                 });
                             </script>
+                            
+                            
                             
                         </div>
                             <div>

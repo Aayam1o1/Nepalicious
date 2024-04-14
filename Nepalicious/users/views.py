@@ -34,147 +34,159 @@ def header(request):
 
 #Login
 def loginUser(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-            
-        if user is not None:
-            if user.is_superuser:
-                login(request, user)
-                sweetify.success(request, f"logged in as admin")
-                return redirect('adminHome')
-            elif user.usersdetail.hasBlockedUser == True:
-                sweetify.error(request, 'Your account has been blocked.')
-                return redirect('login')
-            
-            else:
+    url  = request.META.get('HTTP_REFERER')
+
+    try:
+        
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
                 
-                login(request, user)
+            if user is not None:
+                if user.is_superuser:
+                    login(request, user)
+                    sweetify.success(request, f"logged in as admin")
+                    return redirect('adminHome')
+                elif user.usersdetail.hasBlockedUser == True:
+                    sweetify.error(request, 'Your account has been blocked.')
+                    return redirect('login')
+                
+                else:
+                    
+                    login(request, user)
 
-            
-                try:
-                    user_profile = usersDetail.objects.get(user=user)
-                    user_type = user_profile.requestedGroup
-                    sweetify.success(request, f"Logged in as {username}.")
-                except usersDetail.DoesNotExist:
-                    sweetify.warning(request, f"User profile not found for {username}")
-                return redirect('index')
+                
+                    try:
+                        user_profile = usersDetail.objects.get(user=user)
+                        user_type = user_profile.requestedGroup
+                        sweetify.success(request, f"Logged in as {username}.")
+                    except usersDetail.DoesNotExist:
+                        sweetify.warning(request, f"User profile not found for {username}")
+                    return redirect('index')
 
-        else:
-            sweetify.error(request, 'Username or Password is incorrect')
-
+            else:
+                sweetify.error(request, 'Username or Password is incorrect')
+    except:
+        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        return redirect(url)
     return render(request, 'login-Register/login.html')
 
 
 
 # REGISTER
 def registerUser(request):
-    form = CreateUserForm()
-    
-    # Get the requested group
-    if "UserRequestedGroup" in request.POST:
-        userRequestedGroup = request.POST.get('UserRequestedGroup')
-    
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST, request.FILES)
+    url  = request.META.get('HTTP_REFERER')
+
+    try:
         
-        if form.is_valid():
+        form = CreateUserForm()
+        
+        # Get the requested group
+        if "UserRequestedGroup" in request.POST:
+            userRequestedGroup = request.POST.get('UserRequestedGroup')
+        
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST, request.FILES)
             
-            if User.objects.filter(email=request.POST.get('email')).exists():
-                sweetify.error(request, "Email already registered!")
-                return redirect('register')
-            if 'contact_number' in request.POST:
-                contact_number = request.POST.get('contact_number')
-                if not re.match(r'^(98|97)\d{8}$', contact_number):
-                    sweetify.error(request,"Invalid contact number")
+            if form.is_valid():
+                
+                if User.objects.filter(email=request.POST.get('email')).exists():
+                    sweetify.error(request, "Email already registered!")
                     return redirect('register')
-            #Getting Username
-            username = form.cleaned_data.get('username')
-            
-            #Getting profilePicture
-            profilePicture = request.FILES.get('profileImg')
-            print("This is: ",profilePicture)
-            #transcation holds the process until the process is completed
-            #and only lets the process complete when all the conditions are met
-            #if condition are not met it undo all the changes made
-            with transaction.atomic():
-                user = form.save(commit=False)
-                user.is_active = False
-                user.save()
-                # saving details of the user
-                userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'), restaurant_name = request.POST.get('restaurant_name'), requestedGroup = userRequestedGroup)
-                userDetails.save()
+                if 'contact_number' in request.POST:
+                    contact_number = request.POST.get('contact_number')
+                    if not re.match(r'^(98|97)\d{8}$', contact_number):
+                        sweetify.error(request,"Invalid contact number")
+                        return redirect('register')
+                #Getting Username
+                username = form.cleaned_data.get('username')
                 
-                if not userRequestedGroup or userRequestedGroup== "User":
-                    group, create = Group.objects.get_or_create(name = 'user')
-                    user.groups.add(group)
-                    sweetify.success(request,"Account Created for " + username)
-                
-                 #Creating an instance and saving it to the database is necessary
-                # to persist the user's profile picture information. In the first case, we save the user's uploaded picture,
-                # and in the second case, we save a default picture or an empty picture, 
-                # indicating that the user did not provide a custom profile picture.
-
-                # Without creating and saving an instance,
-                # the information about the user's profile picture 
-                # (whether it's a custom picture or default) won't be stored in the database,
-                # and you won't be able to retrieve it later when needed.
-
-                if profilePicture:
-                    profilePictureInstance = UserProfilePicture(user=user, profileImage=profilePicture)
-                    profilePictureInstance.save()
-                else:
-                    # If no picture is uploaded, use the default picture
-                    profilePictureInstance = UserProfilePicture(user=user)
-                    profilePictureInstance.save()
-                if request.FILES:
-                    if not userRequestedGroup or userRequestedGroup == "User":
-                        pass
-                    else:
-                        images=request.FILES.getlist('documentImage')
-
-                        for img in images:
-                            documentImg = userDocument(user=user, documentImage=img)
-                            documentImg.save()
+                #Getting profilePicture
+                profilePicture = request.FILES.get('profileImg')
+                print("This is: ",profilePicture)
+                #transcation holds the process until the process is completed
+                #and only lets the process complete when all the conditions are met
+                #if condition are not met it undo all the changes made
+                with transaction.atomic():
+                    user = form.save(commit=False)
+                    user.is_active = False
+                    user.save()
+                    # saving details of the user
+                    userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'), restaurant_name = request.POST.get('restaurant_name'), requestedGroup = userRequestedGroup)
+                    userDetails.save()
                     
-                else:
-                    group, create = Group.objects.get_or_create(name = 'user')
-                    user.groups.add(group)
-                # SEND MAIL
-                # Send welcome email
-                subject = "Welcome to Nepalicious Website"
-                message = f"Hello {user.username}!\n\nThank you for registering on our website. Please confirm your email address to activate your account.\n\nRegards,\nNepalicious"
-                from_email = settings.EMAIL_HOST_USER
-                to_list = [user.email]
-                send_mail(subject, message, from_email, to_list, fail_silently=True)
-                
-                # Send email confirmation link
-                current_site = get_current_site(request)
-                email_subject = "Confirm Your Email Address"
-                message2 = render_to_string('login-Register/emailConfirmation.html', {
-                'name': user.username,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': generate_token.make_token(user)
-                })
-                email = EmailMessage(
-                email_subject,
-                message2,
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                )
-                send_mail(email_subject, message2, from_email, to_list, fail_silently=True)
-                sweetify.success(request, "Please check your email to confirm your email address and activate your account.", button='Ok', timer=0)    
-                    # sweetify.success(request,"Account Created for " + username)
-                print("Choosen Group is: ", userRequestedGroup)
-                return redirect('login')
-        
-        else:
-            messasg_error = next(iter(form.errors.values()))[0]     # Retrieving the first error message from the form errors
-            sweetify.error(request, messasg_error)
+                    if not userRequestedGroup or userRequestedGroup== "User":
+                        group, create = Group.objects.get_or_create(name = 'user')
+                        user.groups.add(group)
+                        sweetify.success(request,"Account Created for " + username)
+                    
+                    #Creating an instance and saving it to the database is necessary
+                    # to persist the user's profile picture information. In the first case, we save the user's uploaded picture,
+                    # and in the second case, we save a default picture or an empty picture, 
+                    # indicating that the user did not provide a custom profile picture.
 
-     
+                    # Without creating and saving an instance,
+                    # the information about the user's profile picture 
+                    # (whether it's a custom picture or default) won't be stored in the database,
+                    # and you won't be able to retrieve it later when needed.
+
+                    if profilePicture:
+                        profilePictureInstance = UserProfilePicture(user=user, profileImage=profilePicture)
+                        profilePictureInstance.save()
+                    else:
+                        # If no picture is uploaded, use the default picture
+                        profilePictureInstance = UserProfilePicture(user=user)
+                        profilePictureInstance.save()
+                    if request.FILES:
+                        if not userRequestedGroup or userRequestedGroup == "User":
+                            pass
+                        else:
+                            images=request.FILES.getlist('documentImage')
+
+                            for img in images:
+                                documentImg = userDocument(user=user, documentImage=img)
+                                documentImg.save()
+                        
+                    else:
+                        group, create = Group.objects.get_or_create(name = 'user')
+                        user.groups.add(group)
+                    # SEND MAIL
+                    # Send welcome email
+                    subject = "Welcome to Nepalicious Website"
+                    message = f"Hello {user.username}!\n\nThank you for registering on our website. Please confirm your email address to activate your account.\n\nRegards,\nNepalicious"
+                    from_email = settings.EMAIL_HOST_USER
+                    to_list = [user.email]
+                    send_mail(subject, message, from_email, to_list, fail_silently=True)
+                    
+                    # Send email confirmation link
+                    current_site = get_current_site(request)
+                    email_subject = "Confirm Your Email Address"
+                    message2 = render_to_string('login-Register/emailConfirmation.html', {
+                    'name': user.username,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': generate_token.make_token(user)
+                    })
+                    email = EmailMessage(
+                    email_subject,
+                    message2,
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                    )
+                    send_mail(email_subject, message2, from_email, to_list, fail_silently=True)
+                    sweetify.success(request, "Please check your email to confirm your email address and activate your account.", button='Ok', timer=0)    
+                        # sweetify.success(request,"Account Created for " + username)
+                    print("Choosen Group is: ", userRequestedGroup)
+                    return redirect('login')
+            
+            else:
+                messasg_error = next(iter(form.errors.values()))[0]     # Retrieving the first error message from the form errors
+                sweetify.error(request, messasg_error)
+    except:
+        
+        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        return redirect(url)
     context={
         'form': form
     }
@@ -227,56 +239,62 @@ def is_all_user(user):
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
 def adminDashboard(request):
-    
-    if request.method == 'POST':
-        print("CLICKED")
+    url  = request.META.get('HTTP_REFERER')
+
+    try:
         
-        if "block" in request.POST:
-            username = request.POST.get("username")
-            user = User.objects.get(username=username)
-            userDetail = usersDetail.objects.get(user=user)
-            UserEmail = request.POST.get("email")
-            print("EMAIL" , UserEmail)
-            userDetail.hasBlockedUser = True
-            print("BLOCKED", userDetail.hasBlockedUser)
-            userDetail.save()
+        if request.method == 'POST':
+            print("CLICKED")
             
-            send_mail(
-                "Account Blocked",
-                "Your account has been blocked. Please contact your admin for more information :(",
-                "nepalicious.webapp@gmail.com",
-                [UserEmail],
-                fail_silently=False,
-                )
-            sweetify.success(request, 'User Blocked successfully')
+            if "block" in request.POST:
+                username = request.POST.get("username")
+                user = User.objects.get(username=username)
+                userDetail = usersDetail.objects.get(user=user)
+                UserEmail = request.POST.get("email")
+                print("EMAIL" , UserEmail)
+                userDetail.hasBlockedUser = True
+                print("BLOCKED", userDetail.hasBlockedUser)
+                userDetail.save()
+                
+                send_mail(
+                    "Account Blocked",
+                    "Your account has been blocked. Please contact your admin for more information :(",
+                    "nepalicious.webapp@gmail.com",
+                    [UserEmail],
+                    fail_silently=False,
+                    )
+                sweetify.success(request, 'User Blocked successfully')
+            
+            elif "unblock" in request.POST:
+                username = request.POST.get("username")
+                user = User.objects.get(username=username)
+                userDetail = usersDetail.objects.get(user=user)
+                UserEmail = request.POST.get("email")
+                userDetail.hasBlockedUser = False
+                
+                send_mail(
+                    "Account Unblocked",
+                    "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)",
+                    "Please press the link below to login to the account 'http://127.0.0.1:8000/login/' "
+                    "nepalicious.webapp@gmail.com",
+                    [UserEmail],
+                    fail_silently=False,
+                    )
+                userDetail.save()
+                sweetify.success(request, 'User Unblocked successfully')
         
-        elif "unblock" in request.POST:
-            username = request.POST.get("username")
-            user = User.objects.get(username=username)
-            userDetail = usersDetail.objects.get(user=user)
-            UserEmail = request.POST.get("email")
-            userDetail.hasBlockedUser = False
-            
-            send_mail(
-                "Account Unblocked",
-                "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)",
-                "Please press the link below to login to the account 'http://127.0.0.1:8000/login/' "
-                "nepalicious.webapp@gmail.com",
-                [UserEmail],
-                fail_silently=False,
-                )
-            userDetail.save()
-            sweetify.success(request, 'User Unblocked successfully')
-    
-    requestedUserType = usersDetail.objects.all() 
-    
-    allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', 'restaurant'])
-    
-    totalChef = User.objects.filter(groups__name='chef').exclude(is_superuser=True).count()
-    totalRestaurant = User.objects.filter(groups__name='restaurant').exclude(is_superuser=True).count()
-    totalVendor = User.objects.filter(groups__name='vendor').exclude(is_superuser=True).count()
-    requestedRestaurant = usersDetail.objects.filter(requestedGroup='restaurant')
-    print(requestedRestaurant)
+        requestedUserType = usersDetail.objects.all() 
+        
+        allApprovedUsers = User.objects.filter(groups__name__in=['chef', 'vendor', 'user', 'restaurant'])
+        
+        totalChef = User.objects.filter(groups__name='chef').exclude(is_superuser=True).count()
+        totalRestaurant = User.objects.filter(groups__name='restaurant').exclude(is_superuser=True).count()
+        totalVendor = User.objects.filter(groups__name='vendor').exclude(is_superuser=True).count()
+        requestedRestaurant = usersDetail.objects.filter(requestedGroup='restaurant')
+        print(requestedRestaurant)
+    except:
+        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        return redirect(url)
     
     context = {
         'requestedUserType': requestedUserType,
@@ -309,7 +327,7 @@ def userRequests(request, userID):
                     print('sureee') 
                     message = f""" 
                         Your account has been approved on Nepalicious
-                        Please click on the link below to
+                        Please click on the link below to "http://127.0.0.1:8000/"
                         Please contact our customer support for further information 
                         Contact Number: 9840033590 
                         
@@ -323,7 +341,7 @@ def userRequests(request, userID):
                     # Sending mail after user is approved
                     send_mail(
                     "Account Approved",
-                    "Your account has been approved on Nepalicious.",
+                    message,    
                     "nepalicious.webapp@gmail.com",
                     [UserEmail],
                     fail_silently=False,
@@ -335,14 +353,22 @@ def userRequests(request, userID):
                     username = request.POST.get("user")
                     user = User.objects.get(username=username)
                     UserEmail = user.email 
+                    message = f""" 
+                        Your account has been rejected on Nepalicious
+                        Please click on the link below to "http://127.0.0.1:8000/"
+                        Please contact our customer support for further information 
+                        Contact Number: 9840033590 
+                        
+                    Regards,
+                    [Nepalicious]"""
                     # Sending mail after user is rejected
                     send_mail(
-                        "Account Rejected",
-                        "Your account has been rejected on Nepalicious.",
-                        "nepalicious.webapp@gmail.com",
-                        [UserEmail],
-                        fail_silently=False,)
-                    user.delete()
+                    "Account Approved",
+                    message,    
+                    "nepalicious.webapp@gmail.com",
+                    [UserEmail],
+                    fail_silently=False,
+                    )
                     return redirect('adminHome')
         
         print("USER ID IS: ", userID)
@@ -376,7 +402,7 @@ def userRequests(request, userID):
 # @user_passes_test(is_all_user)
 def profile(request):
     url  = request.META.get('HTTP_REFERER')
-
+    
     #getting profile image for displating
     profile_image_url = None
     try:

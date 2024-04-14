@@ -505,30 +505,32 @@
             <p class="text-4xl font-bold">
                 Products You may require
             </p>
+            {% if selected_products %}
+              
             {% for product in selected_products %}
             <div class="grid grid-row-2 w-[90%] mx-auto">
-
-
+                
+                
                 <div class="py-4 flex">
                     <!-- displaying product picture -->
                     <div id="gallery" class="relative w-full" data-carousel="slide">
                         <!-- Carousel wrapper -->
-
+                        
                         <div class="relative h-[12rem] w-[12rem] overflow-hidden rounded-lg">
                             {% for image in product.images.all %}
                             <div class="hidden duration-700 ease-in-out" data-carousel-item>
                                 <a href="{% url 'productDetail' product.id %}"><img src="{{ image.image.url }}" alt=""
-                                        class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                                    class="rounded-md md:aspect-auto w-full h-[15rem] rounded-lg object-cover " /></a>
+                                </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
+                            
                         </div>
-
-                    </div>
-
-
-                    <!-- display other data -->
-                    <div class="w-full mt-10">
-                        <h1 class="text-lg font-medium  ">{{ product.productName }}</h1>
+                        
+                        
+                        <!-- display other data -->
+                        <div class="w-full mt-10">
+                            <h1 class="text-lg font-medium  ">{{ product.productName }}</h1>
                         <p class="mt-2 text-sm"> Rs {{ product.productPrice }}</p>
                         <p class="rating-stars">
                             <!-- Display average rating as stars -->
@@ -544,18 +546,22 @@
                                     No reviews yet
                                 </p>
                                 {% endif %}
-                        </p>
-                        <p id="rating-message" class="mt-2 text-gray-600"></p>
-
-
+                            </p>
+                            <p id="rating-message" class="mt-2 text-gray-600"></p>
+                            
+                            
+                        </div>
                     </div>
+                    
+                    
+                    <!-- Add more details as needed -->
                 </div>
-
-
-                <!-- Add more details as needed -->
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+            {% else %}
+            <p>There is no product available</p>
+            {% endif %}
+
     </div>
 
     </div>

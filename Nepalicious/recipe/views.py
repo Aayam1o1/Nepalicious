@@ -131,16 +131,25 @@ def add_Recipe(request):
                     recipeImage.objects.create(addRecipe=instance, image=image)
                 
                 # STEP 3: Add steps for your recipe
-                steps_string = request.POST.get('steps')
                 
-                # Split the rules string into individual rules and append them to the list
-                steps = steps_string.split(", ")
-                instance.recipeSteps = ", ".join(steps)            
+                steps_string = request.POST.get('steps')
+                if not steps_string:
+                    sweetify.error(request, "Please add steps for the recipe")      
+                    return redirect(url)
+                else:
+                    # Split the rules string into individual rules and append them to the list
+                    steps = steps_string.split(", ")
+                    instance.recipeSteps = ", ".join(steps)      
                 
                 #step4: Add ingredients for the recipe
                 ingredients_string = request.POST.get('ingredients')
-                ingredients = ingredients_string.split(", ")
-                instance.recipeIngredient = ", ".join(ingredients)
+                if not ingredients_string:
+                    sweetify.error(request, "Please add ingreidents for the recipe")      
+                    return redirect(url)
+                
+                else:
+                    ingredients = ingredients_string.split(", ")
+                    instance.recipeIngredient = ", ".join(ingredients)
 
                 # Save the instance again to update the fields
                 instance.save()
