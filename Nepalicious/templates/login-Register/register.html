@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('image-input');
@@ -26,7 +28,10 @@
                 }
             });
         });
+        
+        
     </script>
+    
     <style>
         .active-user {
             color: #F89500;
@@ -43,8 +48,6 @@
     
     
     <script>
-
-      
 
         document.addEventListener("DOMContentLoaded", function () {
             const userGroup = document.getElementById('UserRequestedGroup');
@@ -137,7 +140,7 @@
                     <h1 class="uppercase text-3xl text-center pb-4 font-semibold tracking-widest">
                         Register
                     </h1>
-                    <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-y-5" >
+                    <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-y-5">
                         {% csrf_token %}
                         <!-- choose user type -->
                         <div class="user-type-choose">
@@ -256,7 +259,7 @@
                                 file:mr-4 file:py-2 file:px-4 file:rounded-md
                                 file:border-0 file:text-sm file:font-semibold
                                 file:bg-pink-100 file:text-pink-600
-                                hover:file:bg-pink-100" type="file" name="documentImage" id="id_document_image" accept="image/png, image/jpeg, image/svg " multiple>
+                                hover:file:bg-pink-100" type="file" required name="documentImage" id="id_document_image" accept="image/png, image/jpeg, image/svg " multiple>
                         </div>
 
                         <!-- signin button -->
@@ -267,6 +270,42 @@
                                 
                                 Sign Up
                             </button>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const documentImageField = document.getElementById("documentImageField");
+                                    const documentInput = document.getElementById("id_document_image");
+                                    const userTypeInput = document.getElementById("UserRequestedGroup");
+                            
+                                    function selectUserType(userType, event) {
+                                        event.preventDefault();
+                            
+                                        // Toggle the display of documentImageField based on user type
+                                        documentImageField.style.display = userType.toLowerCase() !== "user" ? "block" : "none";
+                            
+                                        // Set the required attribute of the file input based on user type
+                                        const requiresDocument = ['chef', 'vendor', 'restaurant'].includes(userType.toLowerCase());
+                                        documentInput.required = requiresDocument;
+                            
+                                        // Set the value of the requested_group field
+                                        userTypeInput.value = userType.toLowerCase();
+                                    }
+                            
+                                    // Attach click event handlers to each list item
+                                    const listItems = document.querySelectorAll(".user-type-choose ul li");
+                                    listItems.forEach(function (item) {
+                                        item.addEventListener("click", function (event) {
+                                            const userType = this.innerText.trim().toLowerCase(); // Extract user type from the list item text
+                                            selectUserType(userType, event);
+                                        });
+                                    });
+                            
+                                    // Set the default user type to "user" and trigger the click event
+                                    selectUserType("user", { currentTarget: listItems[0] });
+                                    listItems[0].classList.add("active-user"); // Set the active class for the default user type
+                                    listItems[0].style.color = "#F89500"; // Set color for the default user type
+                                });
+                            </script>
+                            
                         </div>
                             <div>
                                 Already have an account?

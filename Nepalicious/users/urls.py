@@ -16,7 +16,7 @@ urlpatterns = [
     path('changePassword', views.changePassword, name='changePassword'),
     path('pendingRequests', views.pendingRequests, name='pendingRequests'),
     path('contact_us', views.contact_us, name='contact_us'),
-    
+    path('activate/<uidb64>/<token>', views.activate, name='activate'),
     
     path('reset_password', auth_views.PasswordResetView.as_view(
     template_name="login-Register/sentResetPassword.html"), 

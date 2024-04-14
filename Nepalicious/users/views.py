@@ -11,6 +11,14 @@ from django.db import transaction
 from django.contrib.auth.models import User,Group
 import sweetify
 import re
+from django.core.mail import send_mail, EmailMessage # For sending email 
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_str
+from .token import generate_token
+from django.conf import settings
+
 
 # SEND MAIL
 from django.core.mail import send_mail
@@ -91,7 +99,9 @@ def registerUser(request):
             #and only lets the process complete when all the conditions are met
             #if condition are not met it undo all the changes made
             with transaction.atomic():
-                user = form.save()
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
                 # saving details of the user
                 userDetails = usersDetail(user=user, address = request.POST.get('address'), phone_number = request.POST.get('contact_number'), restaurant_name = request.POST.get('restaurant_name'), requestedGroup = userRequestedGroup)
                 userDetails.save()
@@ -99,7 +109,7 @@ def registerUser(request):
                 if not userRequestedGroup or userRequestedGroup== "User":
                     group, create = Group.objects.get_or_create(name = 'user')
                     user.groups.add(group)
-                
+                    sweetify.success(request,"Account Created for " + username)
                 
                  #Creating an instance and saving it to the database is necessary
                 # to persist the user's profile picture information. In the first case, we save the user's uploaded picture,
@@ -127,12 +137,36 @@ def registerUser(request):
                         for img in images:
                             documentImg = userDocument(user=user, documentImage=img)
                             documentImg.save()
-                        sweetify.success(request,"Account Created for " + username + " Please wait before we verify.")
                     
                 else:
                     group, create = Group.objects.get_or_create(name = 'user')
                     user.groups.add(group)
-                    sweetify.success(request,"Account Created for " + username)
+                # SEND MAIL
+                # Send welcome email
+                subject = "Welcome to Nepalicious Website"
+                message = f"Hello {user.username}!\n\nThank you for registering on our website. Please confirm your email address to activate your account.\n\nRegards,\nNepalicious"
+                from_email = settings.EMAIL_HOST_USER
+                to_list = [user.email]
+                send_mail(subject, message, from_email, to_list, fail_silently=True)
+                
+                # Send email confirmation link
+                current_site = get_current_site(request)
+                email_subject = "Confirm Your Email Address"
+                message2 = render_to_string('login-Register/emailConfirmation.html', {
+                'name': user.username,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': generate_token.make_token(user)
+                })
+                email = EmailMessage(
+                email_subject,
+                message2,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                )
+                send_mail(email_subject, message2, from_email, to_list, fail_silently=True)
+                sweetify.success(request, "Please check your email to confirm your email address and activate your account.", button='Ok', timer=0)    
+                    # sweetify.success(request,"Account Created for " + username)
                 print("Choosen Group is: ", userRequestedGroup)
                 return redirect('login')
         
@@ -147,6 +181,28 @@ def registerUser(request):
                     
     return render(request, 'login-Register/register.html', context)
 
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and generate_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        target_groups = [' ', 'user']
+        if user.groups.filter(name__in=target_groups).exists():
+            sweetify.success(request, "Account activated successfully.!", button='Ok', timer=0)
+            return redirect('home')
+        else:
+            sweetify.success(request, "Account activated successfully.. Please wait for the admin approval.", button='Ok', timer=0)
+        return redirect('home')
+    else:
+        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        return redirect('login')
 
 #Logout
 def logoutUser(request):
@@ -204,6 +260,7 @@ def adminDashboard(request):
             send_mail(
                 "Account Unblocked",
                 "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)",
+                "Please press the link below to login to the account 'http://127.0.0.1:8000/login/' "
                 "nepalicious.webapp@gmail.com",
                 [UserEmail],
                 fail_silently=False,
@@ -249,7 +306,15 @@ def userRequests(request, userID):
 
                     UserEmail = user.email
                     requestedGroup = request.POST.get("requestedGroup").lower()
-                    
+                    print('sureee') 
+                    message = f""" 
+                        Your account has been approved on Nepalicious
+                        Please click on the link below to
+                        Please contact our customer support for further information 
+                        Contact Number: 9840033590 
+                        
+                    Regards,
+                    [Nepalicious]"""
                     # CODE FOR allocating DIFF USER group
                     # FOR VENDOR group
                     group, created = Group.objects.get_or_create(name=requestedGroup)

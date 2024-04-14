@@ -775,6 +775,7 @@ def verifyKhalti(request):
                     new_order.save()
                     # Clear the cart
                     cart.delete()
+                    
                     # cart.cartitem_set.all().delete()
 
             # Redirect  to payment success page
@@ -885,6 +886,7 @@ def cash_on_delivery(request):
                 new_order.save()
                 # Clear the cart
                 cart.delete()
+                sweetify.success(request, " Order has been placed successfully")
                 return redirect('order_history')
     except:
         sweetify.error(request, "Something went wrong. Please try again")
@@ -938,13 +940,13 @@ def pending_orders(request):
                 orderdetails.save()
                 print('sureee') 
                 message = f"""Dear {orderdetails.order_for.buyer.username}, 
-                    Your order id - {orderdetails.id} - {orderdetails.product.productName} has been delivered. 
-                    Your paid amount is {orderdetails.total_each_product}. 
-                    Please contact our customer support for further information 
-                    Contact Number: 9840033590 
-                    
-                    Regards,
-                    [Nepalicious]"""
+                Your order id - {orderdetails.id} - {orderdetails.product.productName} has been delivered. 
+                Your paid amount is {orderdetails.total_each_product}. 
+                Please contact our customer support for further information 
+                Contact Number: 9840033590 
+                
+                Regards,
+                [Nepalicious]"""
                     
                     
                 # Sending mail after user is approved
