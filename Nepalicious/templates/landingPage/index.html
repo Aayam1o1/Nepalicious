@@ -10,17 +10,15 @@
 <body>
     {% extends '../navigationBar/base.html' %}
     {% block content %}
-    <div class="wrapper1 mt-[5rem] h-[70vh]">
-        <div class="grid grid-cols-2 items-center m-2">
-            <div class="flex flex-col justify-content-center mt-5 ml-[14rem] mb-10">
-                <h1 class="text-5xl font-bold">Cooking Made Fun</h1>
-                <br>
-                <h1 class="text-5xl font-bold">and Easy: Unleash</h1>
-                <br>
-                <h1 class="text-5xl font-bold">Your Inner Chef</h1>
+    <div class="h-[80vh] max-sm:h-[100vh] ml-0 sm:ml-[10rem]  flex items-center justify-center">
+        <div class="flex items-center gap-8 md:gap-8 flex-col md:flex-row justify-around w-[70%] mx-auto">
+            <div class="w-full space-y-4 ml-0 sm:ml-[15rem]">
+                <h1 class="text-2xl md:text-5xl font-semibold">Cooking Made Fun</h1>
+                <h1 class="text-2xl md:text-5xl font-semibold">and Easy: Unleash</h1>
+                <h1 class="text-2xl md:text-5xl font-semibold">Your Inner Chef</h1>
                 
-                <p class="mt-5 ml-2 ">Discover different <span class="text-[#F89500]"> recipes</span>. Help you to find the easiest way to cook</p>
-                <div class="mt-[2rem]">
+                <p class="w-[90%]">Discover different <span class="text-[#F89500]"> recipes</span>. Help you to find the easiest way to cook</p>
+                <div class="">
                     <a href="{% url 'recipe' %}">
                         <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
                         Explore recipes
@@ -28,20 +26,19 @@
                     </a>
                 </div>
             </div>
-            <div class="ml-[6rem] mb-[4rem]">
-                <img class="h-[90%] w-[35rem]" src="../../static/images/homepage/curry.avif" alt="">
+            <div class="w-full h-full sm:mb-[3rem] sm:ml-20">  
+                <img class="" src="../../static/images/homepage/curry.avif" alt="">
             </div>
             
         </div>
        
     </div>
 
-    <div id="aboutNepalicious" class="my-[3rem] items-center h-[70vh]">
-        <div class="text-center text-5xl">
+    <div id="aboutNepalicious" class="my-[3rem] h-[100vh] items-center ">
+        <div class="text-center text-2xl md:text-5xl">
             <h1>Why Nepalicious ?? </h1>
-           
         </div>
-        <div class="mt-8 ml-[9rem] flex justify-around items-center w-[80%] ">
+        <div class="flex flex-col md:flex-row items-center justify-around  sm:w-[80%] mx-auto mt-12">
             <div class="w-[20rem] text-center ">
                 <img src="../../static/images/homepage/chefkiss.svg" alt="" class="ml-[1rem] mb-[3rem]">
                 <p class="">Unbeatable quality We source directly from top-rated chefs, so we can provide the finest quality recipes.</p>
@@ -59,40 +56,37 @@
         </div>
     </div>
 
-    <div class="wrapper1 mt-[7rem] h-[70vh]">
-        <div class="grid grid-cols-2 items-center m-2">
-            <div class="ml-[9em] mb-[4rem]">
-                <img class="h-[29rem] w-[35rem]" src="../../static/images/homepage/restaurant.svg" alt="">
+    <div class="h-[100vh] mt-[35rem] sm:mt-[-10rem]">
+        <div class="flex flex-col md:gap-[6rem] w-[80%] mx-auto text-center sm:text-left justify-center md:flex-row items-center md:justify-evenly ">
+            <div class="w-[100%] ml-4 flex justify-center sm:justify-left sm:block">
+                <img class="w-[100%]" src="../../static/images/homepage/restaurant.svg" alt="">
             </div>
 
-            <div class="flex flex-col justify-content-center ml-[4.5rem] mb-[6rem]">
-                <h1 class="text-5xl font-bold">Dine at local</h1>
-                <br>
-                <h1 class="text-5xl font-bold">restaurants: Enjoy</h1>
-                <br>
-                <h1 class="text-5xl font-bold"> Nepalese Cuisines</h1>
+            <div class="space-y-4 w-full">
+                <h1 class="text-3xl sm:text-5xl font-semibold">Dine at local</h1>
+                <h1 class="text-3xl sm:text-5xl font-semibold">restaurants: Enjoy</h1>
+                <h1 class="text-3xl  sm:text-5xl font-semibold"> Nepalese Cuisines</h1>
                 
-                <p class="mt-8 w-[30rem]">Discover different <span class="text-[#F89500]">restaurants</span>. Help you find the local restaurant for authentic Nepalese taste.</p>
-                <div class="mt-[2rem]">
+                <p class="w-[100%] sm:w-[90%]">Discover different <span class="text-[#F89500]">restaurants</span>. Help you find the local restaurant for authentic Nepalese taste.</p>
+                <div class="">
                     <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
                         Explore restaurant
                     </button>
                 </div>
             </div>
         </div>
-       
     </div>
 
-    <div class="wrapper3 mb-[8rem] h-[70vh] mt-10">
-        <div class="grid grid-cols-2 items-center m-2">
-            <div class="flex flex-col justify-content-center mt-5 ml-[15rem] mb-10">
-                <h1 class="text-5xl font-bold">Get Local Products</h1>
+    <div class="wrapper3 h-[100vh] mb-[7rem] sm:mb-0 sm:h-[80vh]">
+        <div class="flex flex-col sm:flex-row items-center w-[70%] mx-auto">
+            <div class="flex flex-col justify-content-center mt-5 ml-0 md:ml-[20rem] mb-10">
+                <h1 class="text-3xl sm:text-5xl font-bold">Get Local Products</h1>
                 <br>
-                <h1 class="text-5xl font-bold">and equipments:</h1>
+                <h1 class="text-3xl sm:text-5xl font-bold">and equipments:</h1>
                 <br>
-                <h1 class="text-5xl font-bold">Ease Access</h1>
+                <h1 class="text-3xl sm:text-5xl font-bold">Ease Access</h1>
                 
-                <p class="mt-7 ">Discover different <span class="text-[#F89500]">products</span>. Help you find the best products and recipes for ease cooking.</p>
+                <p class="mt-7 sm:w-[90%]">Discover different <span class="text-[#F89500]">products</span>. Help you find the best products and recipes for ease cooking.</p>
                 <div class="mt-[3rem]">
                     <a href="{% url 'marketplace' %}">
                             <button class="bg-[#FFC061] text-white h-[3rem] w-[13rem] rounded-xl">
@@ -101,7 +95,7 @@
                     </a>
                 </div>
             </div>
-            <div class="ml-[5rem] mb-[4rem]">
+            <div class="ml-0 sm:ml-[5rem]  mb-[4rem]">
                 <img class="h-[90%] w-[35rem]" src="../../static/images/homepage/market.svg" alt="">
             </div>
             

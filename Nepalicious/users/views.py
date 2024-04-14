@@ -382,20 +382,19 @@ def userRequests(request, userID):
         
         requestedUserType = usersDetail.objects.all()
         print('userProfilePicture : ', userProfilePicture)
+    
+        context = {
+            'requestedUserType': requestedUserType,
+            'document': document,
+            'userData': userData,
+            'documentImages' : documentImages,
+            'allApprovedUsers': allApprovedUsers,
+            'userProfilePicture': userProfilePicture,
+        }
+        
+        return render(request, 'admin/userRequests.html', context)
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)  
-    
-    context = {
-        'requestedUserType': requestedUserType,
-        'document': document,
-        'userData': userData,
-        'documentImages' : documentImages,
-        'allApprovedUsers': allApprovedUsers,
-        'userProfilePicture': userProfilePicture,
-    }
-    
-    return render(request, 'admin/userRequests.html', context)
+        return render(request, '404.html')
 
 # Profile
 @login_required(login_url='login')

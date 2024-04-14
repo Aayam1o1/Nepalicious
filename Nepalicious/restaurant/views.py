@@ -229,23 +229,22 @@ def restaurant_detail(request, restaurant_id):
             avg_rating_category = restaurantFeedback.objects.filter(restaurant=cat_restaurant).aggregate(Avg('rating'))['rating__avg']
             cat_restaurant.avg_rating = avg_rating_category
             
+        context = {
+            'restaurant': restaurant,
+            'restaurant_images': restaurant_images,
+            'maps': maps,
+            'coordinates': coordinates,
+            'feedback_comments': feedback_comments,
+            'avg_rating': avg_rating,
+            'num_reviews': num_reviews,
+            'filtered_restaurant': filtered_restaurant,
+            'category_restaurants': category_restaurants,
+
+        }
+
+        return render(request, 'restaurant/restaurantDetail.html', context)
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
-    context = {
-        'restaurant': restaurant,
-        'restaurant_images': restaurant_images,
-        'maps': maps,
-        'coordinates': coordinates,
-        'feedback_comments': feedback_comments,
-        'avg_rating': avg_rating,
-        'num_reviews': num_reviews,
-        'filtered_restaurant': filtered_restaurant,
-        'category_restaurants': category_restaurants,
-
-    }
-
-    return render(request, 'restaurant/restaurantDetail.html', context)
+        return render(request, '404.html')
 
 @login_required
 @user_passes_test(is_user_user)
@@ -320,7 +319,7 @@ def edit_restaurant(request, restaurant_id):
             if not restaurant:
 
                 if not (request.user.is_superuser or request.user == restaurant.user):
-                    raise Http404("Room not found")
+                    raise Http404("Not found")
 
             restaurant = get_object_or_404(addRestaurant, pk=restaurant_id)
             new_location = Location.objects.get(restaurant=restaurant)
@@ -405,18 +404,17 @@ def edit_restaurant(request, restaurant_id):
         else:
             return render(request, '404.html')
         
-    except addRestaurant.DoesNotExist:
-        sweetify.error(request, "Something went wrong. Please try again.")     
-        return redirect(url)
-    context = {
-        'form':form,
-        'restaurant': restaurant, 
-        'maps': maps,
+        context = {
+            'form':form,
+            'restaurant': restaurant, 
+            'maps': maps,
 
-    }
+        }
     
     
-    return render(request, 'restaurant/editRestaurant.html', context)
+        return render(request, 'restaurant/editRestaurant.html', context)
+    except addRestaurant.DoesNotExist:
+        return render(request, '404.html')  
 
 @login_required
 @user_passes_test(is_user)

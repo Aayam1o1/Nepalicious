@@ -29,7 +29,6 @@ def is_all_user(user):
         
         
 def recipe(request):
-    url  = request.META.get('HTTP_REFERER')
     try:
         
         recipe_list = addRecipe.objects.filter(cuisineType='Newari').order_by('-id')[:4]
@@ -78,23 +77,21 @@ def recipe(request):
         random_recipe = filtered_recipe[0] if filtered_recipe else None
         print(random_recipe)
         
-    except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return(url)
         
-    context = {
-        'recipeList': recipe_list,
-        'top_four_recipe': top_four_recipe,
-        'latest_recipe': latest_recipe,
-        'random_recipe': random_recipe
-    }
-    return render(request, 'recipe/recipe.html', context)
+        context = {
+            'recipeList': recipe_list,
+            'top_four_recipe': top_four_recipe,
+            'latest_recipe': latest_recipe,
+            'random_recipe': random_recipe
+        }
+        return render(request, 'recipe/recipe.html', context)
+    except:
+        return render(request,'404.html')
 
 @login_required
 @user_passes_test(is_user)
 @user_passes_test(is_all_user)
 def add_Recipe(request):
-    url  = request.META.get('HTTP_REFERER')
     try:
         if request.method == 'POST':
             form = addRecipeForm(request.POST, request.FILES)
@@ -165,28 +162,25 @@ def add_Recipe(request):
                 
         else:
             form = addRecipeForm()
+        context = {
+            'form': form,
+            
+        }
+            
+        return render(request, 'recipe/addRecipe.html', context)
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
-    context = {
-        'form': form,
-        
-    }
-        
-    return render(request, 'recipe/addRecipe.html', context)
+        return render(request,'404.html')
 
 
 # for recipe descriptiion.
 def recipeDetail(request, recipe_id):
-    url  = request.META.get('HTTP_REFERER')
-
     try:
         
         recipetList = addRecipe.objects.all()
         if not recipetList:
 
             if not (request.user.is_superuser or request.user == recipetList.user):
-                raise Http404("Room not found")
+                raise Http404("Not found")
 
             recipetList = get_object_or_404(addRecipe, pk=recipe_id)
         # to get the details of the product
@@ -196,7 +190,7 @@ def recipeDetail(request, recipe_id):
         # for steps
         recipeStepsString = recipeDetail.recipeSteps
         
-    # Split by commas and then combine steps that were split incorrectly
+        # Split by commas and then combine steps that were split incorrectly
         recipeSteps = []
         current_step = ""
         for step in recipeStepsString.split(','):
@@ -269,31 +263,30 @@ def recipeDetail(request, recipe_id):
             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
         
         videos = [recipeDetail.video] if recipeDetail.video else []
+    
+        context = {
+            'recipetList': recipetList,
+            'recipedetailForImage' : recipedetailForImage,
+            'recipe_image' : recipe_image,
+            'recipeDetail': recipeDetail,
+            'recipeSteps': recipeSteps,
+            'recipeIngredient': recipeIngredient,
+            'feedback_comments': feedback_comments,
+            'saved_recipe': saved_recipe,
+            'liked_recipe': liked_recipe,
+            'disliked_recipe': disliked_recipe,
+            'total_likes': total_likes,
+            'selected_products': selected_products,
+            'similar_recipes': similar_recipes,
+            'avg_rating': avg_rating,
+            'videos': videos
+        }
+        
+        return render(request, 'recipe/recipeDetail.html', context)
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
-    
-    
-    context = {
-        'recipetList': recipetList,
-        'recipedetailForImage' : recipedetailForImage,
-        'recipe_image' : recipe_image,
-        'recipeDetail': recipeDetail,
-        'recipeSteps': recipeSteps,
-        'recipeIngredient': recipeIngredient,
-        'feedback_comments': feedback_comments,
-        'saved_recipe': saved_recipe,
-        'liked_recipe': liked_recipe,
-        'disliked_recipe': disliked_recipe,
-        'total_likes': total_likes,
-        'selected_products': selected_products,
-        'similar_recipes': similar_recipes,
-        'avg_rating': avg_rating,
-        'videos': videos
-    }
-    
-    return render(request, 'recipe/recipeDetail.html', context)
+        return render(request,'404.html')
 
+    
 @login_required
 @user_passes_test(is_user)
 @user_passes_test(is_all_user)
@@ -328,7 +321,7 @@ def your_recipe(request):
             latest_recipe = paginator.page(paginator.num_pages)
     except:
         sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
+        return render(url)
 
     context = {
         'latest_recipe': latest_recipe,
@@ -355,16 +348,12 @@ def delete_recipe(request, recipe_id):
                 return redirect(url)
         return redirect(url)
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
+        return render(request, '404.html')
 
 @login_required
 @user_passes_test(is_user)
 @user_passes_test(is_all_user)
-
 def edit_recipe(request, recipe_id):
-    url  = request.META.get('HTTP_REFERER')
-
     try:
         recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
         if request.user == recipe_instance.user:
@@ -372,7 +361,7 @@ def edit_recipe(request, recipe_id):
             if not recipe_instance:
 
                 if not (request.user.is_superuser or request.user == recipe_instance.user):
-                    raise Http404("Room not found")
+                    raise Http404("Not found")
 
                 recipe_instance = get_object_or_404(addRecipe, pk=recipe_id)
             else:
@@ -455,18 +444,17 @@ def edit_recipe(request, recipe_id):
                 form = editRecipeForm(instance=recipe_instance)
         else:
             return render(request,'404.html')
+    
+        context = {
+            'form': form,
+            'recipe_instance': recipe_instance,
+            'recipeSteps': recipeSteps,  
+            'recipeIngredient': recipeIngredient
+        }    
+        return render(request, 'recipe/editRecipe.html', context)
+    
     except:
-        sweetify.error(request,"Something went wrong. Please try again")
-        return redirect(url) 
-    
-    context = {
-        'form': form,
-        'recipe_instance': recipe_instance,
-        'recipeSteps': recipeSteps,  
-        'recipeIngredient': recipeIngredient
-    }    
-    
-    return render(request, 'recipe/editRecipe.html', context)
+        return render(request,'404.html')
 #submt review
 
 @login_required
@@ -530,11 +518,11 @@ def save_recipe(request, recipe_id):
             
             # Redirect to the same page
             return redirect('recipeDetail', recipe_id=recipe_id)
+    
+        return render(request, 'profiles/savedRecipe.html')
     except:
         sweetify.error(request, "Something went wrong. Please try again")
         return redirect(url)
-    
-    return render(request, 'profiles/savedRecipe.html')
 
 @login_required
 @user_passes_test(is_user_user)
@@ -575,10 +563,9 @@ def deleteSavedRecipe(request, saved_recipe_id):
                 print('Recipe bookmark already removed')
                 # Add a warning message
                 sweetify.warning(request, 'Recipe bookmark already removed')
+        return render(request, 'profiles/savedRecipe.html')
     except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)        
-    return render(request, 'profiles/savedRecipe.html')
+        return render(request, '404.html')     
 
 
 # for like recipe
@@ -625,11 +612,11 @@ def like_recipe(request, recipe_id):
                 # Handle the case where the recipe with the given ID does not exist
                 # Add an appropriate error message
                 messages.add_message(request, messages.ERROR, 'Recipe does not exist')
+    
+        return redirect(url)
     except:
         sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)     
-    
-    return redirect(url)
+        return redirect(url)   
 
 
 @login_required
@@ -673,10 +660,10 @@ def dislike_recipe(request, recipe_id):
             except addRecipe.DoesNotExist:
                 # Handle the case where the recipe with the given ID does not exist
                 sweetify.error(request, 'Recipe does not exist')
+        return redirect(url)
     except:
         sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)    
-    return redirect(url)
+        return redirect(url)
 
 @login_required
 @user_passes_test(is_user_user)
