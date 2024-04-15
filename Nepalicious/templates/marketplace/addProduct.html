@@ -50,6 +50,14 @@
                         function buttondisabledimage() {
                             Swal.fire({
                                 title: 'Error',
+                                text: 'Forms not filled properly. Please fill the form properly.',
+                                icon: 'error',
+                                confirmButtonText: 'Ok'
+                            });
+                        }
+                        function buttondisabledimage2() {
+                            Swal.fire({
+                                title: 'Error',
                                 text: 'Please upload exactly 3 images.',
                                 icon: 'error',
                                 confirmButtonText: 'Ok'
@@ -70,7 +78,7 @@
                                 var files = event.target.files;
                                 if (files.length !== 3) {
                                 
-                                    buttondisabledimage(); // Disable submit button if the number of images is not 3
+                                    buttondisabledimage2(); // Disable submit button if the number of images is not 3
                                 }
                             });
                         });

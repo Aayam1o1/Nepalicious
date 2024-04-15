@@ -1,5 +1,5 @@
-{% load custom_tags %}
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -185,13 +185,13 @@
 
   {% comment %} sidebar start {% endcomment %}
   <div class="flex h-screen relative">
-    <button onclick="sidebarHamburgerMenu()" class="absolute top-4 left-8 block sm:hidden">
+    <button onclick="sidebarHamburgerMenu()" class="absolute top-4 left-8 z-30 block sm:hidden">
       <img class="w-8 h-8" src="{% static 'images/headerFooter/hamburger.svg' %}" alt="">
     
     
     </button>
 
-    <div class="sidebar h-full hidden md:block" id="sidebarHamburger">
+    <div class="sidebar h-full hidden absolute z-20" id="sidebarHamburger">
       <div class="wrapper w-[17rem] mt-4 h-full pt-5 rounded-xl bg-white">
         <div>
           <div class="h-[8rem] mt-[1rem]">
@@ -224,7 +224,7 @@
             {% if request.user.is_authenticated and request.user|has_group:" "  or request.user|has_group:"user" %}
 
             <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
-              <img src="../../../static/images/profileDashboards/history.svg" class="ml-[1.4rem] h-[2rem]" alt="" />
+              <img src="{% static 'images/profileDashboards/history.svg' %}" class="ml-[1.4rem] h-[2rem]" alt="" />
               <a href="{% url 'order_history' %}"><p class="text-l ml-5">Order History</p> </a>
             </div>
             {% endif %}
@@ -266,7 +266,126 @@
             {% if request.user.is_authenticated and  request.user|has_group:"chef" %}
             <a href="{% url 'your_recipe' %}"> 
               <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
-              <img src="../../../static/images/profileDashboards/savedrecipe.jpg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <img src="{% static 'images/profileDashboards/savedrecipe.jpg' %}" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Your Recipe</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/edit.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <a href="{% url 'your_product' %}"><p class="text-l ml-5">Your Products</p> </a>
+            </div>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'pending_orders' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/pending.png" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Pending Orders</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'vendor_order' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/history.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Orders History</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if not request.user|has_group:"vendor" and not request.user|has_group:"restaurant" and not request.user|has_group:"chef" %}
+            {% if request.user|has_group:" "  or request.user|has_group:"user" %}
+
+            {% else %}
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              
+              <p class="text-l ml-5">Account not apprroved yet</p>
+            </div>
+            {% endif %}
+            {% else %}
+            
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar bg-red-500 h-full hidden md:block">
+      <div class="wrapper w-[17rem] mt-4 h-full pt-5 rounded-xl bg-white">
+        <div>
+          <div class="h-[8rem] mt-[1rem]">
+            <div class="border border-[#B6B6B6] rounded-full h-[5rem] w-[5rem] ml-[6rem]"
+            id="profileImageField">
+            <img id="image-preview" src="{{ request.user.userprofilepicture.profileImage.url }}" alt="profile"
+            class="h-[100%] w-[100%] object-cover rounded-full" />
+          </div>  
+          <div class=" mt-4 flex justify-center">
+            <p class="justify-self-center text-l pl-2">{{request.user}}</p> 
+          </div>
+        </div>
+        <div class="mt-4">
+          
+          <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+            <img src="../../../static/images/profileDashboards/profile.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+            <a href="{% url 'profile' %}"><p class="text-l ml-5">Profile Details</p> </a>
+          </div>
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/password.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <a href="{% url 'changePassword' %}"><p class="text-l ml-5">Change Password</p> </a>
+            </div>
+            {% if request.user.is_authenticated and request.user|has_group:" "  or request.user|has_group:"user" %}
+
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/recipebook.png" class="ml-[1.4rem] h-[2rem]" alt="" />
+              <a href="{% url 'viewSavedRecipe' %}"><p class="text-l ml-5">Saved Recipe</p> </a>
+            </div>
+            {% endif %}
+            {% if request.user.is_authenticated and request.user|has_group:" "  or request.user|has_group:"user" %}
+
+            <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="{% static 'images/profileDashboards/history.svg' %}" class="ml-[1.4rem] h-[2rem]" alt="" />
+              <a href="{% url 'order_history' %}"><p class="text-l ml-5">Order History</p> </a>
+            </div>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"vendor" %}
+            <a href="{% url 'addProduct' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Add Product</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"restaurant" %}
+              {% if not request.user.addrestaurant %}
+              <a href="{% url 'addRestaurant' %}"> 
+                <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+                <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+                <p class="text-l ml-5">Add Restaruant</p>
+              </div>
+              </a>
+
+              {% else %}
+
+              <a href="{% url 'edit_restaurant' request.user.addrestaurant.id %}"> 
+                <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+                <img src="../../../static/images/profileDashboards/addProduct.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+                <p class="text-l ml-5">Edit Restaruant</p>
+              </div>
+              </a>
+              {% endif %}
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"chef" %}
+            <a href="{% url 'addRecipe' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="../../../static/images/profileDashboards/recipe.svg" class="ml-[1.3rem] h-[2rem]" alt="" />
+              <p class="text-l ml-5">Add Recipe</p>
+            </div>
+            </a>
+            {% endif %}
+            {% if request.user.is_authenticated and  request.user|has_group:"chef" %}
+            <a href="{% url 'your_recipe' %}"> 
+              <div class="flex hover:bg-gray-300 h-[4rem] w-[16rem] items-center rounded-2xl">
+              <img src="{% static 'images/profileDashboards/savedrecipe.jpg' %}" class="ml-[1.3rem] h-[2rem]" alt="" />
               <p class="text-l ml-5">Your Recipe</p>
             </div>
             </a>

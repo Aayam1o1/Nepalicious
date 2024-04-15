@@ -108,8 +108,8 @@
     <div class="mt-[5rem]">
 
     <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
-        <div class="w-[20%] pl-[3rem] mt-3" id="container2">
-            <div class="flex-col justify-around items-center w-[15rem]  ">
+        <div class="w-[20%] pl-[3rem] mt-3 hidden md:block" id="container2">
+            <div class="flex-col justify-around items-center w-[15rem] ">
                 <form action="{% url 'marketplace' %}" role="search">
                     {% csrf_token %}
 
@@ -203,7 +203,7 @@
 
         <!-- display products -->
         {% if productList %}
-        <div class="w-[100%] grid grid-cols-4 gap-3">
+        <div class="w-[100%] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
 
             {% for product in productList %}
 

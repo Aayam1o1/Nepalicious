@@ -11,11 +11,12 @@
 
 <body>
   {% extends '../navigationBar/base.html' %} {% block content %}
+  {% load static %}
   <!-- background wrapper and background image -->
   <section class="wrapper-login-page-parent relative h-[100vh] flex items-center justify-center overflow-y-hidden">
     <div class="bg-image w-full h-[100vh] absolute inset-0 -z-10 flex w-full">
       <div>
-        <img src="../../static/images/loginRegister/background.jpg" alt=""
+        <img src="{% static 'images/loginRegister/background.jpg' %}" alt=""
           class="w-[100%] h-[150%] object-cover relative" />
         <!-- overlay filter -->
         <div class="overlay h-[150%] absolute inset-0 bg-[rgba(0,0,0,0.3)]"></div>

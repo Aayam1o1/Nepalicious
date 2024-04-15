@@ -125,8 +125,16 @@
 
 <body>
     {% extends '../navigationBar/base.html' %} {% block content %}
+    {% load static %}
     <section class="wrapper-register-page-parent relative flex items-center justify-center overflow-y-hidden py-10 ">
-
+        <div class="bg-image w-full h-[100vh] absolute inset-0 -z-10 flex w-full">
+            <div>
+              <img src="{% static 'images/loginRegister/background.jpg' %}" alt=""
+                class="w-[100%] h-[150%] object-cover relative" />
+              <!-- overlay filter -->
+              <div class="overlay h-[150%] absolute inset-0 bg-[rgba(0,0,0,0.3)]"></div>
+            </div>
+          </div>
         
         <div class="register-page-child flex w-full h-full">
             <div

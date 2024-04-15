@@ -100,10 +100,10 @@
     {% load custom_tags %}
     <div class="container mt-[5rem] w-[80%] h-full mx-auto overflow-x-hidden">
 
-        <div class="product-description flex ml-10 w-full justify-around">
+        <div class="product-description flex flex-col md:flex-row ml-10 w-full justify-around">
 
             <!-- displaying product picture -->
-            <div id="gallery" class="relative w-[38%] h-[30rem] ml-[10rem] overflow-hidden" data-carousel="slide">
+            <div id="gallery" class="relative w-[90%] md:w-[38%]  h-[30rem] ml-0 md:ml-[10rem] overflow-hidden" data-carousel="slide">
                 <!-- Carousel wrapper -->
                 <div class="relative h-full w-[50%] overflow-hidden rounded-lg"></div>
                 {% for image in product_image %}
@@ -116,7 +116,7 @@
 
 
             <!-- product Details -->
-            <div class="w-[50%]  pl-[2rem]">
+            <div class="w-[90%] md:w-[50%]  md:p-[2rem]">
                 <div class="px-4">
                     <h1 class="text-2xl text-[#F89500] font-semibold">{{ productDetail.productName }}</h1>
                     {% comment %} for avg stars {% endcomment %}
@@ -195,7 +195,7 @@
             </div>
             <div class="flex justify-center">
 
-                <div class="grid grid-cols-4 ml-[4rem] ">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:ml-[4rem] ">
 
                     {% for product in category_products %}
                     <div class="w-[18rem] py-4">
@@ -276,7 +276,7 @@
 
         <!-- for commment -->
         <div class="commnet-container flex justify-around mt-[5rem]">
-            <div class="w-[60%] ml-[7rem]">
+            <div class="w-[90%] md:w-[60%] md:ml-[7rem]">
                 <div>
                     <h1 class="text-5xl font-medium ml-4">Already Bought This??</h1>
                 </div>
@@ -479,7 +479,7 @@
             </div>
         </div>
         <!-- recommend other products -->
-        <div class=" w-[40%]">
+        <div class=" w-[40%] hidden md:block">
 
         </div>
     </div>

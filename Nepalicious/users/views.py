@@ -35,42 +35,41 @@ def header(request):
 #Login
 def loginUser(request):
     url  = request.META.get('HTTP_REFERER')
-
-    try:
+    # try   :
         
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
-                
-            if user is not None:
-                if user.is_superuser:
-                    login(request, user)
-                    sweetify.success(request, f"logged in as admin")
-                    return redirect('adminHome')
-                elif user.usersdetail.hasBlockedUser == True:
-                    sweetify.error(request, 'Your account has been blocked.')
-                    return redirect('login')
-                
-                else:
-                    
-                    login(request, user)
-
-                
-                    try:
-                        user_profile = usersDetail.objects.get(user=user)
-                        user_type = user_profile.requestedGroup
-                        sweetify.success(request, f"Logged in as {username}.")
-                    except usersDetail.DoesNotExist:
-                        sweetify.warning(request, f"User profile not found for {username}")
-                    return redirect('index')
-
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+            
+        if user is not None:
+            if user.is_superuser:
+                login(request, user)
+                sweetify.success(request, f"logged in as admin")
+                return redirect('adminHome')
+            elif user.usersdetail.hasBlockedUser == True:
+                sweetify.error(request, 'Your account has been blocked.')
+                return redirect('login')
+            
             else:
-                sweetify.error(request, 'Username or Password is incorrect')
-    except:
-        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
-        return redirect(url)
+                
+                login(request, user)
+
+            
+                try:
+                    user_profile = usersDetail.objects.get(user=user)
+                    user_type = user_profile.requestedGroup
+                    sweetify.success(request, f"Logged in as {username}.")
+                except usersDetail.DoesNotExist:
+                    sweetify.warning(request, f"User profile not found for {username}")
+                return redirect('index')
+
+        else:
+            sweetify.error(request, 'Username or Password is incorrect')
     return render(request, 'login-Register/login.html')
+    # except:
+    #     sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+    #     return redirect('login')
 
 
 
@@ -183,15 +182,15 @@ def registerUser(request):
             else:
                 messasg_error = next(iter(form.errors.values()))[0]     # Retrieving the first error message from the form errors
                 sweetify.error(request, messasg_error)
+        context={
+            'form': form
+        }
+                        
+        return render(request, 'login-Register/register.html', context)
     except:
         
         sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
-        return redirect(url)
-    context={
-        'form': form
-    }
-                    
-    return render(request, 'login-Register/register.html', context)
+        return redirect('register')
 
 
 def activate(request, uidb64, token):
@@ -213,7 +212,7 @@ def activate(request, uidb64, token):
             sweetify.success(request, "Account activated successfully.. Please wait for the admin approval.", button='Ok', timer=0)
         return redirect('home')
     else:
-        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        sweetify.error(request, "Something went wrong while activating your act", button='Ok', timer=0)
         return redirect('login')
 
 #Logout
@@ -292,21 +291,21 @@ def adminDashboard(request):
         totalVendor = User.objects.filter(groups__name='vendor').exclude(is_superuser=True).count()
         requestedRestaurant = usersDetail.objects.filter(requestedGroup='restaurant')
         print(requestedRestaurant)
+        context = {
+            'requestedUserType': requestedUserType,
+            'totalChef' : totalChef,
+            'totalRestaurant' : totalRestaurant,
+            'totalVendor' : totalVendor,
+            'requestedRestaurant' : requestedRestaurant,
+            'allApprovedUsers': allApprovedUsers,
+            
+        }
+        
+        return render(request, 'admin/adminDashboard.html', context)
     except:
         sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
-        return redirect(url)
+        return render(request, 'admin/adminDashboard.html', context)
     
-    context = {
-        'requestedUserType': requestedUserType,
-        'totalChef' : totalChef,
-        'totalRestaurant' : totalRestaurant,
-        'totalVendor' : totalVendor,
-        'requestedRestaurant' : requestedRestaurant,
-        'allApprovedUsers': allApprovedUsers,
-        
-    }
-    
-    return render(request, 'admin/adminDashboard.html', context)
 
 # admin side user request handling
 @login_required(login_url='login')
@@ -394,7 +393,8 @@ def userRequests(request, userID):
         
         return render(request, 'admin/userRequests.html', context)
     except:
-        return render(request, '404.html')
+        sweetify.error(request, "Something went wrong.")
+        return render(request, 'admin/userRequests.html')
 
 # Profile
 @login_required(login_url='login')
@@ -439,10 +439,7 @@ def editprofile(request):
                 # UPDATING USER MODEL
                 user.first_name = request.POST.get('first_name', '')
                 user.last_name = request.POST.get('last_name', '')
-                user.email = request.POST.get('email')
-                if User.objects.filter(email=request.POST.get('email')).exists():
-                    sweetify.error(request, "Email already registered!")
-                    return redirect('editprofile')
+                
                 #saving the updated data
                 user.save()
                 
