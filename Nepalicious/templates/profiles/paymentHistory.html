@@ -47,6 +47,9 @@
                     <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
                         Status
                     </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-sm font-normal text-gray-700">
+                        Payment type
+                    </th>
                 </tr>
             </thead>
             
@@ -110,7 +113,9 @@
                             {% elif order_detail.is_completed == 'Delivery Pending' %}
                                 <span class="texts-blue-300 h-auto rounded-xl p-1">{{ order_detail.is_completed }}</span>
                             {% endif %}
-                        </td>                        
+                        </td>            
+                        <td class="whitespace-nowrap px-4 py-4">{{ order_detail.delivery_type }}</td>
+            
                         <!-- script for quantity add and minus -->
                         
                         

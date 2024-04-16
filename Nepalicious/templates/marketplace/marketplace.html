@@ -112,7 +112,11 @@
             <div class="flex-col justify-around items-center w-[15rem] ">
                 <form action="{% url 'marketplace' %}" role="search">
                     {% csrf_token %}
-
+                    <div class="mb-5">
+                        <input type="text" name="search_for" id="" placeholder="Search by product."
+                            class="w-[13rem] text-gray-900 border-2 bg-gray-50 text-sm rounded border-gray-300 focus:ring-blue-500 focus:border-blue-500 p-2.5">
+    
+                    </div>
                     <div>
                         <h1 class="text-xl mb-[0.5] ml-[1rem]">Categories</h1>
                     </div>

@@ -100,10 +100,10 @@
     {% load custom_tags %}
     <div class="container mt-[5rem] w-[80%] h-full mx-auto overflow-x-hidden">
 
-        <div class="product-description flex flex-col md:flex-row ml-10 w-full justify-around">
+        <div class="product-description flex flex-col md:flex-row ml-10 md:ml-0 w-[100%] mx-auto justify-center">
 
             <!-- displaying product picture -->
-            <div id="gallery" class="relative w-[90%] md:w-[38%]  h-[30rem] ml-0 md:ml-[10rem] overflow-hidden" data-carousel="slide">
+            <div id="gallery" class="relative w-[90%] md:w-[40%]  h-[30rem] md:ml-[12rem]  overflow-hidden" data-carousel="slide">
                 <!-- Carousel wrapper -->
                 <div class="relative h-full w-[50%] overflow-hidden rounded-lg"></div>
                 {% for image in product_image %}

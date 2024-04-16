@@ -46,9 +46,13 @@
                             <th scope="col" class="pl-7 py-3.5 text-left text-sm font-normal text-gray-700">
                                 Total
                             </th>
+                            <th scope="col" class="pl-7 py-3.5 text-left text-sm font-normal text-gray-700">
+                                Payment Type
+                            </th>
                             <th scope="col" class="pl-8 py-3.5 text-left text-sm font-normal text-gray-700">
                                 Delivery Status
                             </th>
+                            
                             <th scope="col" class="pl-8 py-3.5 text-left text-sm font-normal text-gray-700">
                                 <span class="sr-only">Update</span>
                             </th>
@@ -66,7 +70,7 @@
                                         <a href="{% url 'productDetail' order_detail.product.id %}">
                                             <img src="{{ order_detail.product.images.first.image.url }}"
                                                 alt="{{ order_detail.product.productName }}"
-                                                class="sm:h-38 sm:w-38 h-[8rem] w-[8rem] rounded-xl object-cover" />
+                                                class="sm:h-38 sm:w-38 w-[30rem] rounded-xl object-cover" />
                                         </a>
                                     </div>
                                 </div>
@@ -96,6 +100,8 @@
                             
                             <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-700 pl-10">{{ order_detail.quantity}}</td>
                             <td class="whitespace-nowrap px-4 py-4">Rs {{ order_detail.total_each_product }}</td>
+                            <td class="whitespace-nowrap px-4 py-4">{{ order_detail.delivery_type }}</td>
+
                             <form method="post">
                                 {% csrf_token %}
                                 {% if order_detail.is_completed == 'Delivery Pending' %}
