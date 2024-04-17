@@ -6,7 +6,7 @@ class addRestaurantForm(forms.ModelForm):
     restaurantDescription = forms.CharField(
         label = 'Recipe Description',
         max_length = 400,
-        widget=forms.Textarea(attrs={'placeholder': 'Product Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 w-[25rem] bg-gray-100', 'rows': 6, 'cols': 60})    )
+        widget=forms.Textarea(attrs={'placeholder': 'Restaurant Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 w-[25rem] bg-gray-100', 'rows': 6, 'cols': 60})    )
     
     restaurantType = forms.ChoiceField(
         choices=types,
@@ -32,7 +32,7 @@ class editRestaurantForm(forms.ModelForm):
     restaurantDescription = forms.CharField(
         label = 'Recipe Description',
         max_length = 400,
-        widget=forms.Textarea(attrs={'placeholder': 'Product Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 w-[25rem] bg-gray-100', 'rows': 6, 'cols': 60})    )
+        widget=forms.Textarea(attrs={'placeholder': 'Restaurant Description', 'class': 'border-2 border-gray-400 rounded-xl p-2 mt-2 w-[25rem] bg-gray-100', 'rows': 6, 'cols': 60})    )
     
     restaurantType = forms.ChoiceField(
         choices=types,

@@ -35,29 +35,29 @@
 
                             // Get the URLs of existing images
                             var existingImages = document.querySelectorAll('.product-image');
-                            
+
                             console.log(existingImages.length);
                             // Function to handle change in the image input
                             imageInput.addEventListener('change', function (event) {
                                 var files = event.target.files;
                                 var container = document.getElementById("image-container");
                                 document.getElementById('product-img-heading').style.display = "none";
-                                
+
                                 // Clear existing images
                                 container.innerHTML = '';
                                 console.log("images", imageInput); // Log the image input element itself
                                 console.log("Selected files:", files); // Log the selected files
                                 console.log("Number of selected files:", files.length);
-                                
+
                                 // Display uploaded images
                                 for (let i = 0; i < Math.min(files.length, 3); i++) {
                                     const file = files[i];
                                     const fileURL = URL.createObjectURL(file);
-                                    
+
                                     const imgDiv = document.createElement("div");
                                     imgDiv.classList.add("w-[10rem]", "h-[10rem]", "rounded-xl");
                                     imgDiv.innerHTML = `<img src="${fileURL}" class="w-full h-full rounded-xl object-cover" alt="" />`;
-                                    
+
                                     container.appendChild(imgDiv);
                                 }
                                 if (files.length === 3) {
@@ -75,27 +75,27 @@
                                 confirmButtonText: 'Ok'
                             });
                         }
-                    
+
                         document.addEventListener("DOMContentLoaded", function () {
                             var submitButton = document.querySelector('button[type="submit"]');
                             var imageInput = document.getElementById('product-image');
                             var existingImages = document.querySelectorAll('.product-image');
                             var maxImages = 3;
 
-                            
+
                             // Function to handle submit button click
                             submitButton.addEventListener('click', function (event) {
                                 var files = imageInput.files;
                                 var totalImages = existingImages.length + files.length;
 
-                                if(existingImages.length === 3) return;
+                                if (existingImages.length === 3) return;
 
                                 if (files.length !== 3) {
                                     event.preventDefault(); // Prevent form submission if the number of images is not 3
                                     buttondisabledimage(); // Call the error function
                                 }
                             });
-                            
+
                             // Function to handle change in the image input
                             imageInput.addEventListener('change', function (event) {
                                 var files = event.target.files;
@@ -152,7 +152,7 @@
 
                     <!-- Container for displaying uploaded product images -->
                     
-                    <h1 class="text-center px-5" id="product-img-heading">Images Will be uploaded here Add Up to 3 images</h1>
+                    <h1 class="text-center px-5" id="product-img-heading"></h1>
                     
                     <div id="image-container" class="grid grid-cols-3 gap-3 ml-3">
                         <!-- Display existing images -->

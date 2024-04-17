@@ -42,7 +42,7 @@ def marketplace(request):
         
     
         
-    productList = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
+    productList = addProducts.objects.filter(isdeleted = False)
 
     productList = productList.annotate(
     feedback_count=Count('productfeedback'),
@@ -85,7 +85,7 @@ def marketplace(request):
         productList = productList.filter(
                 Q(productCategory__icontains=category) &
                 Q(productPrice__lt=pricerange) &
-                Q(avg_rating=float(ratingrange), isdeleted = False, productStock__gt = 0)).distinct()
+                Q(avg_rating=float(ratingrange), isdeleted = False)).distinct()
         for product in productList:
             # Calculate average rating for each product
             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
@@ -325,7 +325,7 @@ def your_product(request):
                 return redirect("edit_product", product_id)
                 
         user = request.user
-        productList = addProducts.objects.filter(user=user, isdeleted = False, productStock__gt = 0)
+        productList = addProducts.objects.filter(user=user, isdeleted = False)
         
         items_per_page = 4
         
@@ -378,6 +378,7 @@ def delete_product(request, product_id):
         if request.method == 'POST':
             try:
                 product.isdeleted = True
+                product.productStock = 0
                 product.save()     
                 sweetify.success(request, "Product has been deleted successfully", button='OK', timer=3000)
                 return redirect(url)  
@@ -392,8 +393,6 @@ def delete_product(request, product_id):
 @login_required
 @user_passes_test(is_user)
 @user_passes_test(is_all_user)
-
-
 def edit_product(request, product_id):
     url  = request.META.get('HTTP_REFERER')
     # Retrieve the product instance
@@ -433,7 +432,7 @@ def edit_product(request, product_id):
                         for uploaded_file in new_images:
                             productImage.objects.create(addProducts=product_instance, image=uploaded_file)
                     sweetify.success(request, "Successfully edited product")
-                    return redirect('productDetail', product_id=product_instance.id)
+                    return redirect('your_product')
                 else:
                     error_messages = []
                     for field, errors in form.errors.items():
@@ -530,51 +529,55 @@ def delete_comment_product(request, comment_id):
 
 def add_to_cart(request, product_id):
     url  = request.META.get('HTTP_REFERER')
-    try:
+    # try:
         
     
-        product = get_object_or_404(addProducts, id=product_id)
-
-        # Get or create the user's cart
-        user_cart, created = Cart.objects.get_or_create(user=request.user)
-
-        new_address = request.user.usersdetail.address
-        new_number = request.user.usersdetail.phone_number   
-        seller = product.user
-        
-        print('seller', seller)
-        # Check if the product is already in the cart
-        cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product, seller=seller)
-
-        productquantity = product.productStock
-        cart_item_quantity = cart_item.quantity
-        
-        if not item_created and cart_item_quantity == productquantity:
-            sweetify.error(request, "Maximum quantity reached for the product, Cannot add any more to the cart.") 
-            return redirect('marketplace')
-        # If the item is already in the cart, increase the quantity
-        if not item_created:
-            cart_item.quantity += 1
-            cart_item.save()
-        else:
-            # Set the initial quantity to 1 for a newly added item
-            cart_item.quantity = 1
-            cart_item.save()
-
-        # Update the total amount in the cart
-        user_cart.total_amount = CartItem.objects.filter(cart=user_cart).aggregate(total=Sum(F('product__productPrice') * F('quantity')))['total']
-        
-        user_cart.new_address = new_address
-        user_cart.new_number = new_number
-        
-        user_cart.save()
-
+    product = get_object_or_404(addProducts, id=product_id)
+    quantity = product.productStock
     
-        sweetify.success(request, "Product added to the cart successfully.")
+    if quantity == 0:
+        sweetify.error(request, 'Product is not in stock')
         return redirect('marketplace')
-    except:
+    # Get or create the user's cart
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+    new_address = request.user.usersdetail.address
+    new_number = request.user.usersdetail.phone_number   
+    seller = product.user
+    
+    print('seller', seller)
+    # Check if the product is already in the cart
+    cart_item, item_created = CartItem.objects.get_or_create(cart=user_cart, product=product, seller=seller)
+
+    productquantity = product.productStock
+    cart_item_quantity = cart_item.quantity
+    
+    if not item_created and cart_item_quantity == productquantity:
+        sweetify.error(request, "Maximum quantity reached for the product, Cannot add any more to the cart.") 
+        return redirect('marketplace')
+    # If the item is already in the cart, increase the quantity
+    if not item_created:
+        cart_item.quantity += 1
+        cart_item.save()
+    else:
+        # Set the initial quantity to 1 for a newly added item
+        cart_item.quantity = 1
+        cart_item.save()
+
+    # Update the total amount in the cart
+    user_cart.total_amount = CartItem.objects.filter(cart=user_cart).aggregate(total=Sum(F('product__productPrice') * F('quantity')))['total']
+    
+    user_cart.new_address = new_address
+    user_cart.new_number = new_number
+    
+    user_cart.save()
+
+
+    sweetify.success(request, "Product added to the cart successfully.")
+    return redirect('marketplace')
+    # except:
         
-        return render(request, '404.html')
+    #     return render(request, '404.html')
 
 
 

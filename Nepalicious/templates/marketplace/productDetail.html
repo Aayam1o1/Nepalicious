@@ -190,11 +190,11 @@
 
         {% comment %} Similar products {% endcomment %}
         <div class="w-[85%] mx-auto mt-[7rem]">
-            <div class="text-4xl ml-[6rem] font-bold">
+            <div class="text-4xl sm:ml-[6rem] font-bold">
                 Similar Products
             </div>
+            {% if category_products %}
             <div class="flex justify-center">
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:ml-[4rem] ">
 
                     {% for product in category_products %}
@@ -269,8 +269,15 @@
                     {% endfor %}
 
                 </div>
+                
             </div>
-
+            
+            {% else %}
+            <div class="ml=0 sm:ml-[6rem] mt-0 sm:mt-5">
+    
+                No Similar Products available
+            </div>
+            {% endif %}
         </div>
 
 

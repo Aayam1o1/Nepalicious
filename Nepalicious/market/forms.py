@@ -30,7 +30,7 @@ class addProductForm(ModelForm):
     
     productStock = forms.IntegerField(
         label='Product Stock',
-        widget=forms.NumberInput(attrs={'placeholder': 'Product Stock', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 0, 'step': 1})    )
+        widget=forms.NumberInput(attrs={'placeholder': 'Product Stock', 'class' : 'border-2 border-gray-400 rounded-xl p-2 mt-2 mb-5 w-[25rem] bg-gray-100', 'min': 1, 'step': 1})    )
     
    
     productCategory = ChoiceField(

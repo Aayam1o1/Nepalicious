@@ -101,63 +101,69 @@ def restaurant(request):
 
 def addRestaurantdetail(request):
     url  = request.META.get('HTTP_REFERER')
-    try:
+    # try:
         
-        if request.method == 'POST':
-            form = addRestaurantForm(request.POST, request.FILES)
-            if form.is_valid():
-                # Save latitude and longitude
-                latitude = request.POST.get('latitude')
-                longitude = request.POST.get('longitude')
-                map_addres = request.POST.get('address')
-                third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
-                # Extract the substring up to the third comma
-                map_addres = map_addres[:third_comma_index]
-                
-                
-                print('lat:', latitude)
-                print('long:', longitude)
-                print('map_addres:', map_addres)
-                instance = form.save(commit=False)
-                instance.user = request.user
-                print('user', instance.user)
-                
-                # for saving restaurant type
-                selected_restaurant_type = form.cleaned_data['restaurantType']
-                instance.restaurantType = selected_restaurant_type
-                
-                
-                print('selected restarunt type:: ', selected_restaurant_type)
-                instance.save()
-
-                # for images
-                restaurant_image = request.FILES.getlist('restaurantImage')
-                for image in restaurant_image:
-                    restaurantImage.objects.create(addRestaurant=instance, image=image)
-                    
-                print('selected restarunt image: ', restaurant_image)
-        
-                instance.save()
-                
-                
-                location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude, map_addres=map_addres)
-                print(location)
-                
-                user_detail = get_object_or_404(usersDetail, user=request.user)
-                user_detail.address = map_addres
-                user_detail.save()
-
-                messages.success(request, "Sucessfully added Restaurant!!")   
-                return redirect('restaurant') 
-            else:
-                print(form.errors)
-                
-        else:
-            form = addRestaurantForm()
+    if request.method == 'POST':
+        form = addRestaurantForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Save latitude and longitude
+            latitude = request.POST.get('latitude')
+            longitude = request.POST.get('longitude')
+            map_addres = request.POST.get('address')
             
-    except:
-        sweetify.error(request, "Something went wrong. Please try again")
-        return redirect(url)
+            if not (latitude and longitude and map_addres):
+                sweetify.error(request, "Please provide an address by clicking on the map.")
+                return redirect(url)
+            
+            
+            third_comma_index = map_addres.find(',', map_addres.find(',', map_addres.find(',') + 1) + 1)
+            # Extract the substring up to the third comma
+            map_addres = map_addres[:third_comma_index]
+            
+            
+            print('lat:', latitude)
+            print('long:', longitude)
+            print('map_addres:', map_addres)
+            instance = form.save(commit=False)
+            instance.user = request.user
+            print('user', instance.user)
+            
+            # for saving restaurant type
+            selected_restaurant_type = form.cleaned_data['restaurantType']
+            instance.restaurantType = selected_restaurant_type
+            
+            
+            print('selected restarunt type:: ', selected_restaurant_type)
+            instance.save()
+
+            # for images
+            restaurant_image = request.FILES.getlist('restaurantImage')
+            for image in restaurant_image:
+                restaurantImage.objects.create(addRestaurant=instance, image=image)
+                
+            print('selected restarunt image: ', restaurant_image)
+    
+            instance.save()
+            
+            
+            location = Location.objects.create(restaurant=instance, latitude=latitude, longitude=longitude, map_addres=map_addres)
+            print(location)
+            
+            user_detail = get_object_or_404(usersDetail, user=request.user)
+            user_detail.address = map_addres
+            user_detail.save()
+
+            sweetify.success(request, "Sucessfully added Restaurant!!")   
+            return redirect('restaurant') 
+        else:
+            print(form.errors)
+            
+    else:
+        form = addRestaurantForm()
+            
+    # except:
+    #     sweetify.error(request, "Something went wrong. Please try again")
+    #     return redirect(url)
     
     context = {
         'form': form,

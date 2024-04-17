@@ -92,6 +92,8 @@ def recipe(request):
 @user_passes_test(is_user)
 @user_passes_test(is_all_user)
 def add_Recipe(request):
+    url  = request.META.get('HTTP_REFERER')
+
     try:
         if request.method == 'POST':
             form = addRecipeForm(request.POST, request.FILES)
@@ -131,7 +133,9 @@ def add_Recipe(request):
                 
                 steps_string = request.POST.get('steps')
                 if not steps_string:
+                    instance.delete() 
                     sweetify.error(request, "Please add steps for the recipe")      
+
                     return redirect(url)
                 else:
                     # Split the rules string into individual rules and append them to the list
@@ -141,7 +145,8 @@ def add_Recipe(request):
                 #step4: Add ingredients for the recipe
                 ingredients_string = request.POST.get('ingredients')
                 if not ingredients_string:
-                    sweetify.error(request, "Please add ingreidents for the recipe")      
+                    instance.delete()
+                    sweetify.error(request, "Please add ingreidents for the recipe") 
                     return redirect(url)
                 
                 else:
@@ -169,11 +174,13 @@ def add_Recipe(request):
             
         return render(request, 'recipe/addRecipe.html', context)
     except:
-        return render(request,'404.html')
+        sweetify.error(request, "Something went wrong. Please try again." )
+        return redirect(url)
 
 
 # for recipe descriptiion.
 def recipeDetail(request, recipe_id):
+    
     try:
         
         recipetList = addRecipe.objects.all()
