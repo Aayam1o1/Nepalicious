@@ -5,9 +5,9 @@ Nepalicious is a web application designed to provide users with a seamless exper
 
 ## Features
 - **Recipe Blog:** Browse a diverse collection of Nepalese recipes contributed by home cooks and chefs.
-- **Restaurant Finder:** Discover Nepalese restaurants near you and explore their menus.
+- **Restaurant Finder:** Discover Nepalese restaurants near you.
 - **Online Marketplace:** Shop for authentic Nepalese ingredients and cooking equipment.
-- **User features:** Save your favorite recipes, leave feedback, and connect with other users.
+- **User features:** Save your favorite recipes, leave feedback.
 - **Vendor Profile:** Manage products, track orders, and engage with customers.
 - **Chef Profile:** Showcase your recipes, interact with users, and build a following.
 - **Restaurant Profile:** Make your restaurant online, add restaurant and show location in map.
