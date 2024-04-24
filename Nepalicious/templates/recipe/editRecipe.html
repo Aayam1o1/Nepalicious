@@ -220,13 +220,20 @@
                     <!--FOR steps-->
                     <script>
                         var stepCounter = 1; // Counter for numbering steps
-
+                        function nosteps() {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Steps field cannot be empty Please add a step first',
+                                icon: 'error',
+                                confirmButtonText: 'Ok'
+                            });
+                        }
                         function addStep() {
                             var recipeInput = document.getElementById("recipeInput");
                             var stepValue = recipeInput.value.trim();
 
                             if (stepValue === "") {
-                                alert("Step cannot be empty");
+                                nosteps();
                                 return;
                             }
 
@@ -317,13 +324,21 @@
                         <!-- for ingrident -->
                         <script>
                             var ingredientCounter = 1; // Counter for numbering ingredients
+                            function noingriedents() {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Ingredient field cannot be empty Please add a ingredient first',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok'
+                                });
+                            }
 
                             function addIngredient() {
                                 var ingredientsInput = document.getElementById("ingredientsInput");
                                 var ingredientValue = ingredientsInput.value.trim();
 
                                 if (ingredientValue === "") {
-                                    alert("Ingredient cannot be empty");
+                                    noingriedents();
                                     return;
                                 }
 

@@ -35,41 +35,41 @@ def header(request):
 #Login
 def loginUser(request):
     url  = request.META.get('HTTP_REFERER')
-    # try   :
+    try   :
         
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-            
-        if user is not None:
-            if user.is_superuser:
-                login(request, user)
-                sweetify.success(request, f"logged in as admin")
-                return redirect('adminHome')
-            elif user.usersdetail.hasBlockedUser == True:
-                sweetify.error(request, 'Your account has been blocked.')
-                return redirect('login')
-            
-            else:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
                 
-                login(request, user)
+            if user is not None:
+                if user.is_superuser:
+                    login(request, user)
+                    sweetify.success(request, f"logged in as admin")
+                    return redirect('adminHome')
+                elif user.usersdetail.hasBlockedUser == True:
+                    sweetify.error(request, 'Your account has been blocked.')
+                    return redirect('login')
+                
+                else:
+                    
+                    login(request, user)
 
-            
-                try:
-                    user_profile = usersDetail.objects.get(user=user)
-                    user_type = user_profile.requestedGroup
-                    sweetify.success(request, f"Logged in as {username}.")
-                except usersDetail.DoesNotExist:
-                    sweetify.warning(request, f"User profile not found for {username}")
-                return redirect('index')
+                
+                    try:
+                        user_profile = usersDetail.objects.get(user=user)
+                        user_type = user_profile.requestedGroup
+                        sweetify.success(request, f"Logged in as {username}.")
+                    except usersDetail.DoesNotExist:
+                        sweetify.warning(request, f"User profile not found for {username}")
+                    return redirect('index')
 
-        else:
-            sweetify.error(request, 'Username or Password is incorrect')
-    return render(request, 'login-Register/login.html')
-    # except:
-    #     sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
-    #     return redirect('login')
+            else:
+                sweetify.error(request, 'Username or Password is incorrect')
+        return render(request, 'login-Register/login.html')
+    except:
+        sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
+        return redirect('login')
 
 
 
@@ -224,16 +224,17 @@ def is_superuser(user):
     return user.is_superuser
 
 def is_all_user(user):
-    if user.usersdetail.hasBlockedUser == True:
-         return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
-                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+    if not user.is_superuser:
+        if user.usersdetail.hasBlockedUser == True:
+            return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                                or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
 
-    elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
-                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
-        return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
-                            or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
-        
-        
+        elif user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                                or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists()):
+            return user.is_authenticated and user.usersdetail.hasBlockedUser == False and (user.groups.filter(name=' ').exists() or user.groups.filter(name='user').exists() or user.groups.filter(name='vendor').exists()
+                                or user.groups.filter(name='restaurant').exists() or user.groups.filter(name='chef').exists())
+            
+            
 
 @login_required(login_url='login')
 @user_passes_test(is_superuser)
@@ -273,8 +274,8 @@ def adminDashboard(request):
                 
                 send_mail(
                     "Account Unblocked",
-                    "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)",
-                    "Please press the link below to login to the account 'http://127.0.0.1:8000/login/' "
+                    "Your account has been unblocked. You may now use the features of the webapp Nepalicious :)\n"
+                    "Please press the link below to login to the account: http://127.0.0.1:8000/login/ ",
                     "nepalicious.webapp@gmail.com",
                     [UserEmail],
                     fail_silently=False,
@@ -304,7 +305,7 @@ def adminDashboard(request):
         return render(request, 'admin/adminDashboard.html', context)
     except:
         sweetify.error(request, "Something went wrong while activating your account", button='Ok', timer=0)
-        return render(request, 'admin/adminDashboard.html', context)
+        return redirect(url)
     
 
 # admin side user request handling
@@ -345,6 +346,7 @@ def userRequests(request, userID):
                     [UserEmail],
                     fail_silently=False,
                     )
+                    sweetify.success(request, "The account was accepted") 
                     return redirect('adminHome')
                 
             else:
@@ -354,7 +356,6 @@ def userRequests(request, userID):
                     UserEmail = user.email 
                     message = f""" 
                         Your account has been rejected on Nepalicious
-                        Please click on the link below to "http://127.0.0.1:8000/"
                         Please contact our customer support for further information 
                         Contact Number: 9840033590 
                         
@@ -362,12 +363,14 @@ def userRequests(request, userID):
                     [Nepalicious]"""
                     # Sending mail after user is rejected
                     send_mail(
-                    "Account Approved",
+                    "Account Rejected",
                     message,    
                     "nepalicious.webapp@gmail.com",
                     [UserEmail],
                     fail_silently=False,
                     )
+                    user.delete()
+                    sweetify.success(request, "The account was rejected") 
                     return redirect('adminHome')
         
         print("USER ID IS: ", userID)
@@ -396,9 +399,9 @@ def userRequests(request, userID):
         sweetify.error(request, "Something went wrong.")
         return render(request, 'admin/userRequests.html')
 
+
 # Profile
 @login_required(login_url='login')
-# @user_passes_test(is_all_user)
 def profile(request):
     url  = request.META.get('HTTP_REFERER')
     

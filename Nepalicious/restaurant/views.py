@@ -443,3 +443,4 @@ def delete_restaurant(request, restaurant_id):
     except:
         sweetify.error(request, "Something went wrong. Please try again")
         return redirect(url)
+    

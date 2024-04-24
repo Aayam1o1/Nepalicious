@@ -90,8 +90,13 @@
               class="origin-top-right absolute z-20 left-[0.1111px]  mt-2 w-[6rem] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
               <div class="py-1">
                 {% if request.user.is_authenticated %}
-                <a href="{% url 'profile' %}"
+                {% if request.user.is_superuser %}
+                  <a href="{% url 'adminHome' %}"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                {% else %}
+                  <a href="{% url 'profile' %}"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                {% endif %}
 
                 {% else %}
 

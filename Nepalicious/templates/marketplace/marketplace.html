@@ -93,6 +93,7 @@
             color: #ffb503;
         }
     </style>
+   
 </head>
 
 <body>
@@ -105,12 +106,18 @@
         </div> -->
 
     <!-- filter -->
+    <script>
+        function resetFilters() {
+            window.location.href = "{% url 'marketplace' %}";
+
+        }
+    </script>
     <div class="mt-[5rem]">
 
     <div id="container" class="flex justify-evenly mt-[4rem]  w-[100%] m-auto">
         <div class="w-[20%] pl-[3rem] mt-3 hidden md:block" id="container2">
             <div class="flex-col justify-around items-center w-[15rem] ">
-                <form action="{% url 'marketplace' %}" role="search">
+                <form action="{% url 'marketplace' %}" role="search" id="filterform">
                     {% csrf_token %}
                     <div class="mb-5">
                         <input type="text" name="search_for" id="" placeholder="Search by product."
@@ -196,9 +203,9 @@
                     </div>
             </div>
             <div class="pb-[2rem] flex justify-between mt-4 mr-10" id="rating-product price-product">
-                <button id="reset" class="bg-[#61A0FF] text-white p-2 rounded-xl h-10 w-[40rem]">Reset</button>
+                <button id="reset" class="bg-[#61A0FF] text-white p-2 rounded-xl h-10 w-[40rem]" type="button" onclick="resetFilters()">Reset</button>
 
-                <button id="apply" type="submit" name="searchbycategory"
+                <button id="apply" type="submit" name="searchbycategory" 
                     class="bg-[#FFC061] text-white p-2 rounded-xl h-10 ml-2 w-[40rem]">Apply</button>
             </div>
             </form>

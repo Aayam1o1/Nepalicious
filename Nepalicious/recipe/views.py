@@ -157,7 +157,7 @@ def add_Recipe(request):
                 instance.save()
 
                 sweetify.success(request, "Sucessfully added recipe")
-                return redirect('recipe')
+                return redirect('your_recipe')
             
             else:
                 errors = form.errors.as_data()
@@ -255,7 +255,7 @@ def recipeDetail(request, recipe_id):
         # for tags
         recipe_tags = recipeDetail.recipeProductTags.strip("[]").replace("'", "").replace(", ", " ")
         # Get all products
-        all_products = addProducts.objects.filter(isdeleted = False, productStock__gt = 0)
+        all_products = addProducts.objects.filter(isdeleted = False)
         
         filtered_products = [product for product in all_products if product.productCategory in recipe_tags]
         

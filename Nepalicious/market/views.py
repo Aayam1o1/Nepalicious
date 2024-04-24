@@ -67,9 +67,9 @@ def marketplace(request):
         checkPriceRange = pricerange
     
         
-    print("range", pricerange)
-    print("rating", ratingrange)
-    print("category", category)
+    # print("range", pricerange)
+    # print("rating", ratingrange)
+    # print("category", category)
     
     if search and category is None and ratingrange is None and ratingrange ==0 and pricerange is None and pricerange == 0:
         print("AAAAAAAA")
@@ -92,6 +92,7 @@ def marketplace(request):
             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
             
     elif search and category is None and ratingrange != 0 and pricerange != 0:
+        print("eta ho>>>>")
         productList = productList.filter(
             Q(productName__icontains=search))
 
@@ -106,14 +107,14 @@ def marketplace(request):
             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
             product.avg_rating = avg_rating  # Add avg_rating attribute to product instance
             
-    elif search and category is not None:
+    elif  category is not None:
         print("DDDDDDD")
         
         productList = productList.filter(
             
-                Q(productCategory__icontains=category) &
-                Q(productName__icontains=search))
-
+                Q(productCategory__icontains=category) 
+                
+        )
         for product in productList:
         # Calculate average rating for each product
             avg_rating = product.productfeedback_set.aggregate(Avg('rating'))['rating__avg']
@@ -221,7 +222,7 @@ def addProduct(request):
                 sweetify.success(request, "Sucessfully added product")
                 
                 # Redirect to a page or route after successfully adding a product
-                return redirect('marketplace') 
+                return redirect('your_product') 
             else:
                 # Collect all form errors
                 error_messages = []
@@ -754,19 +755,17 @@ def verifyKhalti(request):
                 # Get user's cart
                 buyer = request.user
                 cart = Cart.objects.get(user=buyer)
-                cartItems = CartItem.objects.filter(cart=cart) # Assuming you want the first cart item
+                cartItems = CartItem.objects.filter(cart=cart) 
                
                 with transaction.atomic():
-                    print("Transaction started")  # Add this line for debugging
+                    print("Transaction started") 
                     
                     new_order = order.objects.create(
                         buyer = buyer, 
                         total_amount=cart.total_amount,
                         ordered_phone_number = cart.new_number,
                         ordered_address = cart.new_address,
-                    )
-                    
-                    # Loop through each cart item and create orderDetail instances
+                    )               
                     for cart_item in cartItems:
                         product = cart_item.product
                         quantity = cart_item.quantity
@@ -829,13 +828,6 @@ def checkout(request):
             
             user_cart, created = Cart.objects.get_or_create(user=request.user)
 
-            # # Check if the cart is empty
-            # if not user_cart.products.exists():
-            #     # If the cart is empty, redirect the user back to the cart page
-            #     return redirect('cart')
-
-            # Update the address and number in the cart
-            # if user_cart.products.exists():
             new_address = request.POST.get('address')
             new_number = request.POST.get('phone_number')
             if not re.match(r'^(98|97)\d{8}$', new_number):
@@ -994,7 +986,7 @@ def pending_orders(request):
                 message = f"""Dear {orderdetails.order_for.buyer.username},
                 Your order id - {orderdetails.id} - {orderdetails.product.productName} delivery has been cancelled. 
                 Your paid amount {orderdetails.total_each_product} will be refunded. 
-                Please contact our customer support for further information 
+                Please contact our finance department regarding your refund. 
                 Contact Number: 9840033590 
                     
                     Regards,
