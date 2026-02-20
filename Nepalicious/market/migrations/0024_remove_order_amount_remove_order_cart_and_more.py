@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cart',
             name='new_number',
-            field=models.CharField(blank=True, default='', max_length=10),
+            field=models.CharField(blank=True, default='', max_length=100),
         ),
         migrations.AddField(
             model_name='order',
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='ordered_number',
-            field=models.CharField(default=5.293619424054206e-05, max_length=10),
+            field=models.CharField(default=5.293619424054206e-05, max_length=100),
             preserve_default=False,
         ),
     ]
